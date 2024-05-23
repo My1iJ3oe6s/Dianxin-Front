@@ -1,7 +1,17 @@
 <template>
   <div class="register">
     <el-form ref="registerForm" :model="registerForm" :rules="registerRules" class="register-form">
-      <h3 class="title">翼启鲲鹏管理系统</h3>
+      <h3 class="title">号卡分销系统</h3>
+      <el-form-item prop="companyName">
+        <el-input v-model="registerForm.companyName" type="text" auto-complete="off" placeholder="公司名称">
+          <svg-icon slot="prefix" icon-class="redis-list" class="el-input__icon input-icon" />
+        </el-input>
+      </el-form-item>
+      <el-form-item prop="phone">
+        <el-input v-model="registerForm.phone" type="text" auto-complete="off" placeholder="手机号">
+          <svg-icon slot="prefix" icon-class="phone" class="el-input__icon input-icon" />
+        </el-input>
+      </el-form-item>
       <el-form-item prop="userAccount">
         <el-input v-model="registerForm.userAccount" type="text" auto-complete="off" placeholder="账号">
           <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />

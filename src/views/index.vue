@@ -1,10 +1,18 @@
 <template>
   <div class="dashboard-editor-container">
-    欢迎使用翼启鲲鹏管理系统~
+    <img :src="welComeImg" />
   </div>
 </template>
 
 <script>
+import welComeImg from '@/assets/images/welcome.png';
+export default {
+  data() {
+    return {
+      welComeImg
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

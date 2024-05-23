@@ -784,3 +784,26 @@ export const prodTypeData = [{
   name: "终端",
   value: 2
 }]
+
+export const productType = [{
+  name: "手动生产",
+  value: 0
+}, {
+  name: "自动生产",
+  value: 1
+}]
+
+export const productStatusData = [
+  { name: "开启", value: '1' },
+  { name: "关闭", value: '0' },
+]
+export const dictData = [
+  { name: "是", value: '1' },
+  { name: "否", value: '0' },
+]
+export const numberingSettingsData = [
+  { name: "不选号", value: '0' },
+  { name: "随机选号", value: '1' },
+  { name: "线上选号", value: '2' },
+  { name: "线下选号", value: '3' },
+]

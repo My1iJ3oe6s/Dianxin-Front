@@ -40,7 +40,7 @@ export default {
   },
   data() {
     return {
-      title: '翼启鲲鹏管理系统',
+      title: '号卡分销系统',
       logo: logoImg
     }
   }

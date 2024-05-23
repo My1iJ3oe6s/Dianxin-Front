@@ -1,55 +1,65 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
-      class="ry_form">
-      <el-form-item label="产品名称" prop="prodName">
-        <el-input v-model="queryParams.queryParameters.prodName" placeholder="请输入产品名称" clearable size="small"
-          @keyup.enter.native="handleQuery" />
-      </el-form-item>
-      <el-form-item label="产品编码" prop="prodSkuNbr">
-        <el-input v-model="queryParams.queryParameters.prodSkuNbr" placeholder="请输入产品编码" clearable size="small"
-          @keyup.enter.native="handleQuery" />
-      </el-form-item>
-      <el-form-item class="flex_one tr">
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
+    <div class="filter-container">
+      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
+        class="ry_form">
+        <el-form-item label="产品名称" prop="prodName">
+          <el-input v-model="queryParams.queryParameters.prodName" placeholder="请输入产品名称" clearable size="small"
+            @keyup.enter.native="handleQuery" />
+        </el-form-item>
+        <el-form-item label="产品编码" prop="productId">
+          <el-input v-model="queryParams.queryParameters.productId" placeholder="请输入产品编码" clearable size="small"
+            @keyup.enter.native="handleQuery" />
+        </el-form-item>
+        <el-form-item class="flex_one tr">
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="table-container">
+      <el-row :gutter="10" class="mb8">
+        <el-col :span="1.5">
+          <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd">新增</el-button>
+        </el-col>
+      </el-row>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd">新增</el-button>
-      </el-col>
-    </el-row>
+      <el-table v-loading="loading" border :data="list" @selection-change="handleSelectionChange">
+        <!-- <el-table-column type="selection" width="55" align="center" /> -->
+        <el-table-column label="产品编码" align="center" prop="productId" />
+        <el-table-column label="产品名称" align="center" prop="productName" />
+        <el-table-column label="产品类型" align="center" prop="productionType">
+          <template slot-scope="scope">{{ returnNameData(prodTypeData, scope.row.productionType) }}</template>
+        </el-table-column>
+        <el-table-column label="产品编码" align="center" prop="productCode" />
+        <el-table-column label="外部供应商ID" align="center" prop="supplierId" />
+        <el-table-column label="外部供应商名称" align="center" prop="supplierName" />
+        <el-table-column label="外部供应商编码" align="center" prop="supplierCode" />
+        <el-table-column label="外部供应商商品ID" align="center" prop="externalProductId" />
+        <el-table-column label="外部供应商商品编码" align="center" prop="externalProductCode" />
+        <el-table-column label="外部供应商商品名称" align="center" prop="externalProductName" />
+        <el-table-column label="备注" align="center" prop="des" />
+        <el-table-column label="是否校验身份证" align="center" prop="checkIdentity" />
+        <el-table-column label="是否选号" align="center" prop="isNumbered" />
+        <el-table-column label="号池ID" align="center" prop="poolId" />
+        <el-table-column label="状态" align="center" prop="des">
+          <template slot-scope="scope">
+            <el-switch v-model="scope.row.productionStatus" active-value="1" inactive-value="0"
+              @change="handleStatusChange(scope.row)" disabled :active-color="activeColor" inactive-color="#ccc">
+            </el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+          <template slot-scope="scope">
+            <el-button size="mini" type="text" @click="handleCheck(scope.row, 1)">详情</el-button>
+            <el-button size="mini" type="text" @click="handleCheck(scope.row, 0)">修改</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
-    <el-table v-loading="loading" border :data="list" @selection-change="handleSelectionChange">
-      <!-- <el-table-column type="selection" width="55" align="center" /> -->
-      <el-table-column label="产品id" align="center" prop="id" />
-      <el-table-column label="产品编码" align="center" prop="prodSkuNbr" />
-      <el-table-column label="产品名称" align="center" prop="prodName" />
-      <el-table-column label="外部产品编码" align="center" prop="externalProdSkuNbr" />
-      <el-table-column label="外部产品id" align="center" prop="externalProdID" />
-      <el-table-column label="外部产品名称" align="center" prop="externalProdName" />
-      <el-table-column label="产品类型" align="center" prop="prodType">
-        <template slot-scope="scope">{{ returnNameData(prodTypeData, scope.row.prodType) }}</template>
-      </el-table-column>
-      <el-table-column label="状态" align="center" prop="productStatus">
-        <template slot-scope="scope">
-          <el-switch v-model="scope.row.productStatus" active-value="1" inactive-value="0"
-            @change="handleStatusChange(scope.row)" disabled active-color="#13ce66" inactive-color="#ccc">
-          </el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button size="mini" type="text" @click="handleCheck(scope.row,1)">详情</el-button>
-          <el-button size="mini" type="text" @click="handleCheck(scope.row,0)">修改</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
-      @pagination="getList" />
+      <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
+        @pagination="getList" />
+    </div>
   </div>
 </template>
 
@@ -57,11 +67,12 @@
 import { getList, add } from "@/api/product/index";
 import { returnName } from "@/utils/index.js";
 import { prodTypeData } from '@/utils/printData';
-
+const storageSetting = JSON.parse(localStorage.getItem('layout-setting')) || ''
 export default {
   name: "PmsProduct",
   data() {
     return {
+      activeColor:storageSetting.theme || '#FF8C00',
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -84,7 +95,7 @@ export default {
         pageSize: 10,
         queryParameters: {
           prodName: '',
-          prodSkuNbr:''
+          productId: ''
         }
       },
       prodTypeData
@@ -94,7 +105,7 @@ export default {
     this.getList();
   },
   methods: {
-    handleStatusChange(row){},
+    handleStatusChange(row) { },
     returnNameData(list, target, value, name) {
       return returnName(list, target, value, name);
     },
@@ -119,8 +130,8 @@ export default {
       const pageReq = { pageNo: pageNum - 1, pageSize: pageSize };
       const query = { ...this.queryParams, pageNum: undefined, pageSize: undefined, ...pageReq };
       getList(query).then(response => {
-        const { list, total } = response
-        this.list = list;
+        const { records, total } = response.data
+        this.list = records;
         this.total = total;
         this.loading = false;
       });
@@ -146,14 +157,14 @@ export default {
       this.$router.push({ path: "/product/detail" });
     },
     /** 查看按钮操作 */
-    handleCheck(row,target) {
+    handleCheck(row, target) {
       // getInfo({ id: row.id }).then((res) => {
       //   this.form = res;
       //   this.title = '查看产品信息'
       //   this.open = true;
       // })
-      const id = row.id;
-      this.$router.push({ path: "/product/detail", query: { id ,target} });
+      const id = row.productId;
+      this.$router.push({ path: "/product/detail", query: { id, target } });
     },
     /** 删除按钮操作 */
     handleDelete(row) {

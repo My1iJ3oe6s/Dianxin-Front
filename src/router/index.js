@@ -74,20 +74,6 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/user',
-    component: Layout,
-    hidden: true,
-    redirect: 'noredirect',
-    children: [
-      {
-        path: 'profile',
-        component: () => import('@/views/system/user/profile/index'),
-        name: 'Profile',
-        meta: { title: '个人中心', icon: 'user' }
-      }
-    ]
-  }
 ]
 
 // 动态路由，基于用户权限动态去加载
@@ -120,6 +106,22 @@ export const dynamicRoutes = [
         component: () => import('@/views/product/detail'),
         name: 'ProductDetail',
         meta: { title: '产品详情' },
+        noCache:true,
+      }
+    ]
+  },
+  {
+    path: '/goods',
+    component: Layout,
+    hidden: true,
+    permissions: ['goods:detail'],
+    noCache:true,
+    children: [
+      {
+        path: 'detail',
+        component: () => import('@/views/goods/detail'),
+        name: 'GoodsDetail',
+        meta: { title: '商品详情' },
         noCache:true,
       }
     ]

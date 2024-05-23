@@ -5,12 +5,12 @@ import { parseTime } from './ruoyi'
  */
 export function formatDate(cellValue) {
   if (cellValue == null || cellValue == "") return "";
-  var date = new Date(cellValue) 
+  var date = new Date(cellValue)
   var year = date.getFullYear()
   var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
-  var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate() 
-  var hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours() 
-  var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes() 
+  var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+  var hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
+  var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
   var seconds = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
   return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
 }
@@ -218,7 +218,7 @@ export function getTime(type) {
 export function debounce(func, wait, immediate) {
   let timeout, args, context, timestamp, result
 
-  const later = function() {
+  const later = function () {
     // 据上一次触发时间间隔
     const last = +new Date() - timestamp
 
@@ -235,7 +235,7 @@ export function debounce(func, wait, immediate) {
     }
   }
 
-  return function(...args) {
+  return function (...args) {
     context = this
     timestamp = +new Date()
     const callNow = immediate && !timeout
@@ -330,7 +330,7 @@ export function makeMap(str, expectsLowerCase) {
     ? val => map[val.toLowerCase()]
     : val => map[val]
 }
- 
+
 export const exportDefault = 'export default '
 
 export const beautifierConf = {
@@ -389,30 +389,112 @@ export function isNumberStr(str) {
 }
 export function formatListQuery(queryParams) {
   const { pageNum, pageSize } = queryParams;
-  let query = {page: pageNum - 1, size: pageSize};
+  let query = { page: pageNum - 1, size: pageSize };
   let body = { ...queryParams, pageNum: undefined, pageSize: undefined };
   return { query, body };
 }
 
-export function returnName(list, target, value, name){
-	value = value ? value : 'value'
-	name = name ? name : 'name'
-    var _name = "";
-    if(!list)return _name;
-    _name = [];
-    let target_arr = [];
-    if(Array.isArray(target)) { // 兼容 target 数组
-        target_arr = target;
-    } else {
-        target_arr.push(target)
-    }
-    for (const item of target_arr) {
-        for(var i in list){
-            if(list[i][value] == item){
-                _name.push(list[i][name]);
-            }
+export function returnName(list, target, value, name) {
+  value = value ? value : 'value'
+  name = name ? name : 'name'
+  var _name = "";
+  if (!list) return _name;
+  _name = [];
+  let target_arr = [];
+  if (Array.isArray(target)) { // 兼容 target 数组
+    target_arr = target;
+  } else {
+    target_arr.push(target)
+  }
+  for (const item of target_arr) {
+    for (var i in list) {
+      if (list[i][value] == item) {
+        _name.push(list[i][name]);
+      }
 
-        }
     }
-    return _name.join(',');
+  }
+  return _name.join(',');
+}
+export const dict = {
+  sys_show_hide: [
+    {
+      "createBy": 1,
+      "createTime": "2022-06-17 17:20:28",
+      "updateBy": null,
+      "updateTime": null,
+      "searchValue": null,
+      "remark": "显示菜单",
+      "params": {},
+      "dictCode": 4,
+      "dictSort": 1,
+      "label": "显示",
+      "value": "0",
+      "dictType": "sys_show_hide",
+      "cssClass": "",
+      "listClass": "primary",
+      "isDefault": "Y",
+      "status": "0",
+      "default": true
+    },
+    {
+      "createBy": 1,
+      "createTime": "2022-06-17 17:20:28",
+      "updateBy": null,
+      "updateTime": null,
+      "searchValue": null,
+      "remark": "隐藏菜单",
+      "params": {},
+      "dictCode": 5,
+      "dictSort": 2,
+      "label": "隐藏",
+      "value": "1",
+      "dictType": "sys_show_hide",
+      "cssClass": "",
+      "listClass": "danger",
+      "isDefault": "N",
+      "status": "0",
+      "default": false
+    }
+  ],
+  sys_normal_disable: [
+    {
+      "createBy": 1,
+      "createTime": "2022-06-17 17:20:28",
+      "updateBy": null,
+      "updateTime": null,
+      "searchValue": null,
+      "remark": "正常状态",
+      "params": {},
+      "dictCode": 6,
+      "dictSort": 1,
+      "label": "正常",
+      "value": "0",
+      "dictType": "sys_normal_disable",
+      "cssClass": "",
+      "listClass": "primary",
+      "isDefault": "Y",
+      "status": "0",
+      "default": true
+    },
+    {
+      "createBy": 1,
+      "createTime": "2022-06-17 17:20:28",
+      "updateBy": null,
+      "updateTime": null,
+      "searchValue": null,
+      "remark": "停用状态",
+      "params": {},
+      "dictCode": 7,
+      "dictSort": 2,
+      "label": "停用",
+      "value": "1",
+      "dictType": "sys_normal_disable",
+      "cssClass": "",
+      "listClass": "danger",
+      "isDefault": "N",
+      "status": "0",
+      "default": false
+    }
+  ]
 }

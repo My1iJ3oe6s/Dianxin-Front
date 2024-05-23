@@ -1,74 +1,80 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
-      class="ry_form">
-      <el-form-item label="外部订单编号" prop="externalOrderNo">
-        <el-input v-model.trim="queryParams.queryParameters.externalOrderNo" placeholder="请输入外部订单编号" clearable
-          size="small" @keyup.enter.native="handleQuery" />
-      </el-form-item>
-      <el-form-item label="来源" prop="apChannel">
-        <el-input v-model.trim="queryParams.queryParameters.apChannel" placeholder="请输入来源" clearable size="small"
-          @keyup.enter.native="handleQuery" />
-      </el-form-item>
-      <el-form-item label="身份证号" prop="idCard">
-        <el-input v-model.trim="queryParams.queryParameters.idCard" placeholder="请输入身份证号" clearable size="small"
-          @keyup.enter.native="handleQuery" />
-      </el-form-item>
-      <el-form-item label="手机号" prop="receiverPhone">
-        <el-input v-model.trim="queryParams.queryParameters.receiverPhone" placeholder="请输入手机号" clearable size="small"
-          @keyup.enter.native="handleQuery" />
-      </el-form-item>
-      <el-form-item label="创建时间">
-        <el-date-picker v-model="queryParams.queryParameters.dateRange" style="width: 240px" value-format="yyyy-MM-dd" type="daterange"
-          range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
-      </el-form-item>
-      <el-form-item class="flex_one tr">
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd">新增订单</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-upload2" size="mini" @click="handleImport">批量导入</el-button>
-      </el-col>
-    </el-row>
-    <el-table v-loading="loading" :data="orderList" border @selection-change="handleSelectionChange"
-      cell-class-name="my-cell">
-      <!-- <el-table-column type="selection" width="55" align="center" /> -->
-      <el-table-column label="订单id" prop="id"  width="80"/>
-      <el-table-column label="外部订单编号" prop="externalOrderNo" />
-      <el-table-column label="姓名" prop="receiverName" width="100" />
-      <el-table-column label="电话" prop="receiverPhone" width="110" />
-      <el-table-column label="身份证号" prop="idCard" width="180" />
-      <el-table-column label="收件信息" prop="receiverName" width="300">
-        <template v-slot="scope">
-          <div>收货姓名：{{ scope.row.receiverName }}</div>
-          <div>手机号：{{ scope.row.receiverPhone }}</div>
-          <div>地址：{{ scope.row.provinceName }}{{ scope.row.cityName }}{{ scope.row.countyName }}{{ scope.row.address }}
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="来源" prop="source" width="100" />
-      <el-table-column label="状态" prop="orderStatusText"></el-table-column>
-      <el-table-column label="办理失败原因" prop="failureRemark" width="180"></el-table-column>
-      <el-table-column label="创建时间" prop="createdTime">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createdTime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" class-name="small-padding fixed-width" fixed="right">
-        <template slot-scope="scope">
-          <el-button size="mini" type="text" @click="goDetail(scope.row)">详情</el-button>
-          <el-popconfirm title="确定撤销吗？" @confirm="handleRevoke(scope.row)"
-            v-if="scope.row.orderStatus === 40706 || scope.row.orderStatus === 40707 || scope.row.orderStatus === 40708 || scope.row.orderStatus === 20100">
-            <el-button slot="reference" size="mini" type="text">撤销</el-button>
-          </el-popconfirm>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="filter-container">
+      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
+        class="ry_form">
+        <el-form-item label="外部订单编号" prop="externalOrderNo">
+          <el-input v-model.trim="queryParams.queryParameters.externalOrderNo" placeholder="请输入外部订单编号" clearable
+            size="small" @keyup.enter.native="handleQuery" />
+        </el-form-item>
+        <el-form-item label="来源" prop="apChannel">
+          <el-input v-model.trim="queryParams.queryParameters.apChannel" placeholder="请输入来源" clearable size="small"
+            @keyup.enter.native="handleQuery" />
+        </el-form-item>
+        <el-form-item label="身份证号" prop="idCard">
+          <el-input v-model.trim="queryParams.queryParameters.idCard" placeholder="请输入身份证号" clearable size="small"
+            @keyup.enter.native="handleQuery" />
+        </el-form-item>
+        <el-form-item label="手机号" prop="receiverPhone">
+          <el-input v-model.trim="queryParams.queryParameters.receiverPhone" placeholder="请输入手机号" clearable size="small"
+            @keyup.enter.native="handleQuery" />
+        </el-form-item>
+        <el-form-item label="创建时间">
+          <el-date-picker v-model="queryParams.queryParameters.dateRange" style="width: 240px" value-format="yyyy-MM-dd"
+            type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+        </el-form-item>
+        <el-form-item class="flex_one tr">
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="table-container">
+      <el-row :gutter="10" class="mb8">
+        <el-col :span="1.5">
+          <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd">新增订单</el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button type="primary" plain icon="el-icon-upload2" size="mini" @click="handleImport">批量导入</el-button>
+        </el-col>
+      </el-row>
+      <el-table v-loading="loading" :data="orderList" border @selection-change="handleSelectionChange"
+        cell-class-name="my-cell">
+        <!-- <el-table-column type="selection" width="55" align="center" /> -->
+        <el-table-column label="订单id" prop="id" width="80" />
+        <el-table-column label="外部订单编号" prop="externalOrderNo" />
+        <el-table-column label="姓名" prop="receiverName" width="100" />
+        <el-table-column label="电话" prop="receiverPhone" width="110" />
+        <el-table-column label="身份证号" prop="idCard" width="180" />
+        <el-table-column label="收件信息" prop="receiverName" width="300">
+          <template v-slot="scope">
+            <div>收货姓名：{{ scope.row.receiverName }}</div>
+            <div>手机号：{{ scope.row.receiverPhone }}</div>
+            <div>地址：{{ scope.row.provinceName }}{{ scope.row.cityName }}{{ scope.row.countyName }}{{ scope.row.address }}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="来源" prop="source" width="100" />
+        <el-table-column label="状态" prop="orderStatusText"></el-table-column>
+        <el-table-column label="办理失败原因" prop="failureRemark" width="180"></el-table-column>
+        <el-table-column label="创建时间" prop="createdTime">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.createdTime) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" class-name="small-padding fixed-width" fixed="right">
+          <template slot-scope="scope">
+            <el-button size="mini" type="text" @click="goDetail(scope.row)">详情</el-button>
+            <el-popconfirm title="确定撤销吗？" @confirm="handleRevoke(scope.row)"
+              v-if="scope.row.orderStatus === 40706 || scope.row.orderStatus === 40707 || scope.row.orderStatus === 40708 || scope.row.orderStatus === 20100">
+              <el-button slot="reference" size="mini" type="text">撤销</el-button>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
+        @pagination="getList" />
+    </div>
     <!-- 添加/修改对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="130px">
@@ -129,8 +135,6 @@
       </div>
     </el-dialog>
 
-    <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
-      @pagination="getList" />
   </div>
 </template>
 
@@ -210,13 +214,13 @@ export default {
         name: [
           { required: true, message: "收货人姓名不能为空", trigger: "blur" },
         ],
-      //   idCard: [{
-      //     required: true,
-      //     message: "身份证号不能为空",
-      //     trigger: "blur",
-      //   }, 
-      //   // { validator: this.validID, trigger: "blur" },
-      // ],
+        //   idCard: [{
+        //     required: true,
+        //     message: "身份证号不能为空",
+        //     trigger: "blur",
+        //   }, 
+        //   // { validator: this.validID, trigger: "blur" },
+        // ],
         receiverName: [
           { required: true, message: "收货人姓名不能为空", trigger: "blur" },
         ],
@@ -272,8 +276,8 @@ export default {
         this.upload.open = false;
       }
       let msg = response.message || '上传成功'
-      if(response.data && Array.isArray(response.data) && response.data.length){
-        msg = response.data.map((v) =>{
+      if (response.data && Array.isArray(response.data) && response.data.length) {
+        msg = response.data.map((v) => {
           return v.message + '<br/>'
         }).join(' ')
       }
@@ -337,7 +341,7 @@ export default {
       if (this.queryParams.queryParameters.dateRange?.length) {
         this.queryParams.queryParameters.createStartDate = this.queryParams.queryParameters.dateRange[0] + ' 00:00:00';
         this.queryParams.queryParameters.createEndDate = this.queryParams.queryParameters.dateRange[1] + ' 23:59:59';
-      }else{
+      } else {
         this.queryParams.queryParameters.createStartDate = null;
         this.queryParams.queryParameters.createEndDate = null;
       }

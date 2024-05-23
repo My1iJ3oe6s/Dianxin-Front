@@ -44,7 +44,7 @@ const permission = {
             "alwaysShow": true,
             "meta": {
               "title": "订单管理",
-              "icon": "date-range",
+              "icon": "shopping",
               "noCache": false,
               "link": null
             },
@@ -72,7 +72,7 @@ const permission = {
             "alwaysShow": true,
             "meta": {
               "title": "产品管理",
-              "icon": "table",
+              "icon": "tab",
               "noCache": false,
               "link": null
             },
@@ -89,6 +89,114 @@ const permission = {
                   "link": null
                 }
               },
+            ]
+          },
+          {
+            "name": "Goods",
+            "path": "/goods",
+            "hidden": false,
+            "redirect": "noRedirect",
+            "component": "Layout",
+            "alwaysShow": true,
+            "meta": {
+              "title": "商品管理",
+              "icon": "table",
+              "noCache": false,
+              "link": null
+            },
+            "children": [
+              {
+                "name": "GoodsList",
+                "path": "index",
+                "hidden": false,
+                "component": "goods/index",
+                "meta": {
+                  "title": "商品列表",
+                  "icon": "#",
+                  "noCache": true,
+                  "link": null
+                }
+              },
+            ]
+          },
+          {
+            "name": "User",
+            "path": "/user",
+            "hidden": false,
+            "redirect": "noRedirect",
+            "component": "Layout",
+            "alwaysShow": true,
+            "meta": {
+              "title": "用户管理",
+              "icon": "user",
+              "noCache": false,
+              "link": null
+            },
+            "children": [
+              {
+                "name": "UserList",
+                "path": "index",
+                "hidden": false,
+                "component": "user/user/index",
+                "meta": {
+                  "title": "用户列表",
+                  "icon": "#",
+                  "noCache": true,
+                  "link": null
+                }
+              },
+              {
+                "name": "RoleList",
+                "path": "role",
+                "hidden": false,
+                "component": "user/role/index",
+                "meta": {
+                  "title": "角色管理",
+                  "icon": "#",
+                  "noCache": true,
+                  "link": null
+                }
+              },
+              {
+                "name": "PermissionList",
+                "path": "permission",
+                "hidden": false,
+                "component": "user/permission/index",
+                "meta": {
+                  "title": "权限管理",
+                  "icon": "#",
+                  "noCache": true,
+                  "link": null
+                }
+              },
+            ]
+          },
+          {
+            "name": "NumberPool",
+            "path": "/numberPool",
+            "hidden": false,
+            "redirect": "noRedirect",
+            "component": "Layout",
+            "alwaysShow": true,
+            "meta": {
+              "title": "号池管理",
+              "icon": "tool",
+              "noCache": false,
+              "link": null
+            },
+            "children": [
+              {
+                "name": "numberPoolList",
+                "path": "index",
+                "hidden": false,
+                "component": "numberPool/index",
+                "meta": {
+                  "title": "号池列表",
+                  "icon": "#",
+                  "noCache": true,
+                  "link": null
+                }
+              }
             ]
           },
         ]
