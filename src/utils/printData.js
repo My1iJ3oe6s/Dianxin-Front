@@ -807,3 +807,7 @@ export const numberingSettingsData = [
   { name: "线上选号", value: '2' },
   { name: "线下选号", value: '3' },
 ]
+export const genderData = [
+  { name: "男", value: '1' },
+  { name: "女", value: '0' },
+]

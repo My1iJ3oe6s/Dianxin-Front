@@ -5,6 +5,7 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { getToken } from '@/utils/auth'
 import { isRelogin } from '@/utils/request'
+import Cookies from "js-cookie";
 
 NProgress.configure({ showSpinner: false })
 
@@ -51,8 +52,10 @@ router.beforeEach((to, from, next) => {
       // 在免登录白名单，直接进入
       next()
     } else {
-      next(`/login?redirect=${to.fullPath}`) // 否则全部重定向到登录页
-      NProgress.done()
+      Cookies.set("Admin-Token", new Date().getTime(), { expires: 24 * 60 * 60 * 1000 });
+      window.location.reload();
+      // next(`/login?redirect=${to.fullPath}`) // 否则全部重定向到登录页
+      // NProgress.done()
     }
   }
 })

@@ -44,7 +44,7 @@
                     <template slot-scope="scope">
                         <el-button size="mini" type="text" @click="handleCheck(scope.row, 1)">详情</el-button>
                         <el-button size="mini" type="text" @click="handleCheck(scope.row, 0)">修改</el-button>
-                        <el-button size="mini" type="text" @click="handleCheck(scope.row, 0)">产品配置</el-button>
+                        <el-button size="mini" type="text" @click="handleProduct(scope.row)">产品配置</el-button>
                         <el-button size="mini" type="text" v-clipboard:copy="11"
                             v-clipboard:success="clipboardSuccess">推广</el-button>
                         <el-popconfirm title="确定删除？" @confirm="handleDelect(scope.row)">
@@ -63,13 +63,29 @@
             <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum"
                 :limit.sync="queryParams.pageSize" @pagination="getList" />
         </div>
+        <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+            <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+                <el-form-item label="产品编码" prop="productCode">
+                    <el-select clearable v-model="form.productCode" style="width: 100%">
+                        <el-option v-for="(item, index) of productList" :key="index" :label="item.productName"
+                            :value="item.productCode">{{
+                                item.productName }}</el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="submitForm">确 定</el-button>
+                <el-button @click="cancel">取 消</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
   
 <script>
-import { getList, add, edit ,handleDelete} from "@/api/goods/index";
+import { getList, add, edit, handleDelete } from "@/api/goods/index";
 import { returnName } from "@/utils/index.js";
 import { productType, productStatusData, dictData } from '@/utils/printData';
+import * as productApi from "@/api/product/index";
 
 export default {
     name: "Goods",
@@ -102,13 +118,39 @@ export default {
             },
             productType,
             productStatusData,
-            dictData
+            dictData,
+            title: "",
+            open: false,
+            form: {
+                productCode: ''
+            },
+            rules: {
+                productCode: [{ required: true, message: "产品编码不能为空", trigger: "blur" }],
+            },
+
+            productList: []
         };
     },
     activated() {
+        this.getProduct();
         this.getList();
     },
     methods: {
+        getProduct() {
+            productApi.getList({
+                pageNo: 0,
+                pageSize: 50
+            }).then(response => {
+                this.productList = response.data.records
+            });
+        },
+        handleProduct(row) {
+            this.form = {
+                goodsId: row.goodsId
+            }
+            this.title = '产品配置';
+            this.open = true;
+        },
         clipboardSuccess() {
             this.$message({
                 message: '地址复制成功!请浏览器打开',
@@ -122,11 +164,8 @@ export default {
         submitForm() {
             this.$refs["form"].validate((valid) => {
                 if (valid) {
-                    add(this.form)
-                        .then((response) => {
-                            this.open = false;
-                            this.getList();
-                        })
+                    console.log(this.form)
+
                 }
             });
         },
@@ -173,11 +212,11 @@ export default {
         },
         handleDelect(row) {
             handleDelete(row.goodsId)
-            .then((res) =>{
-                this.getList();
-                this.$modal.msgSuccess("删除成功");
-            })
-         },
+                .then((res) => {
+                    this.getList();
+                    this.$modal.msgSuccess("删除成功");
+                })
+        },
         // 修改生产类型
         handleCheckType(row) {
             row.productionType = row.productionType == 1 ? 0 : 1;

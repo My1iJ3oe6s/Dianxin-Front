@@ -27,7 +27,7 @@ export function getInfo(id) {
 // 新增产品信息
 export function add(data) {
   return request({
-    url: '/api/selfGoods/save',
+    url: '/api/selfGoods/saveGoodsAndProduct',
     method: 'post',
     data: data
   })
@@ -46,3 +46,17 @@ export function handleDelete (id) {
   })
 }
 
+export function getImg (id) {
+  return request({
+    url: `/api/file/getById/${id}`,
+    method: 'get',
+  })
+}
+// 绑定产品
+export function bindProduct(data) {
+  return request({
+    url: '/api/selfGoods/bindProduct',
+    method: 'post',
+    data: data
+  })
+}

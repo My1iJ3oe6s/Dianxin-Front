@@ -12,7 +12,6 @@
       name="file"
       :on-remove="handleRemove"
       :show-file-list="true"
-      :headers="headers"
       :file-list="fileList"
       :on-preview="handlePictureCardPreview"
       :class="{hide: this.fileList.length >= this.limit}"
@@ -44,6 +43,7 @@
 
 <script>
 import { getToken } from "@/utils/auth";
+import { getImg } from '@/api/goods'
 
 export default {
   props: {
@@ -77,7 +77,7 @@ export default {
       dialogVisible: false,
       hideUpload: false,
       baseUrl: process.env.VUE_APP_BASE_API,
-      uploadImgUrl: process.env.VUE_APP_BASE_API + "/common/upload", // 上传的图片服务器地址
+      uploadImgUrl: process.env.VUE_APP_BASE_API + "api/file/upload", // 上传的图片服务器地址
       headers: {
         Authorization: "Bearer " + getToken(),
       },
@@ -92,13 +92,14 @@ export default {
           const list = Array.isArray(val) ? val : this.value.split(',');
           // 然后将数组转为对象数组
           this.fileList = list.map(item => {
-            if (typeof item === "string") {
-              if (item.indexOf(this.baseUrl) === -1) {
-                  item = { name: this.baseUrl + item, url: this.baseUrl + item };
-              } else {
-                  item = { name: item, url: item };
-              }
-            }
+            // if (typeof item === "string") {
+            //   if (item.indexOf(this.baseUrl) === -1) {
+            //       item = { name: this.baseUrl + item, url: this.baseUrl + item };
+            //   } else {
+            //       item = { name: item, url: item };
+            //   }
+            // }
+            console.log(item)
             return item;
           });
         } else {
@@ -127,14 +128,18 @@ export default {
     },
     // 上传成功回调
     handleUploadSuccess(res) {
-      this.uploadList.push({ name: res.fileName, url: res.fileName });
-      if (this.uploadList.length === this.number) {
-        this.fileList = this.fileList.concat(this.uploadList);
-        this.uploadList = [];
-        this.number = 0;
-        this.$emit("input", this.listToString(this.fileList));
-        this.$modal.closeLoading();
-      }
+      // 获取图片
+      const { id } = res.data;
+      getImg(id).then((res) =>{
+        this.uploadList.push({ name: res.data.name, url: res.data.data });
+        if (this.uploadList.length === this.number) {
+          this.fileList = this.fileList.concat(this.uploadList);
+          this.uploadList = [];
+          this.number = 0;
+          this.$emit("input", this.listToString(this.fileList));
+          this.$modal.closeLoading();
+        }
+      })
     },
     // 上传前loading加载
     handleBeforeUpload(file) {

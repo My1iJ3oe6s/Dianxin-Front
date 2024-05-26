@@ -199,6 +199,34 @@ const permission = {
               }
             ]
           },
+          {
+            "name": "Suppliers",
+            "path": "/suppliers",
+            "hidden": false,
+            "redirect": "noRedirect",
+            "component": "Layout",
+            "alwaysShow": true,
+            "meta": {
+              "title": "供应商管理",
+              "icon": "job",
+              "noCache": false,
+              "link": null
+            },
+            "children": [
+              {
+                "name": "selfSuppliers",
+                "path": "index",
+                "hidden": false,
+                "component": "suppliers/index",
+                "meta": {
+                  "title": "外部供应商列表",
+                  "icon": "#",
+                  "noCache": true,
+                  "link": null
+                }
+              }
+            ]
+          },
         ]
         const sdata = JSON.parse(JSON.stringify(data))
         const rdata = JSON.parse(JSON.stringify(data))
