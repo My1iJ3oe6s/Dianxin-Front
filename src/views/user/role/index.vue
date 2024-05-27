@@ -1,7 +1,8 @@
 <template>
     <div class="app-container">
         <div class="filter-container">
-            <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
+            <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch"
+                label-width="100px">
                 <el-form-item label="角色名称" prop="roleName">
                     <el-input v-model="queryParams.roleName" placeholder="请输入角色名称" clearable style="width: 240px"
                         @keyup.enter.native="handleQuery" />

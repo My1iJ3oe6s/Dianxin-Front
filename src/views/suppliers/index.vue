@@ -1,7 +1,7 @@
 <template>
     <div class="app-container">
         <div class="filter-container">
-            <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="180px"
+            <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="140px"
                 size="medium" class="ry_form">
                 <el-form-item label="外部供应商名称" prop="supplierName">
                     <el-input v-model="queryParams.queryParameters.supplierName" placeholder="请输入外部供应商名称" clearable size="small"

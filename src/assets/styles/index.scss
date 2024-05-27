@@ -218,7 +218,10 @@ aside {
 
 .el-form-item__label {
   text-align: left !important;
-  padding-left: 54px !important;
+  // padding-left: 28px !important;
+}
+.el-form-item{
+  margin-right: 20px !important;
 }
 
 .form_buttons_bottom{
