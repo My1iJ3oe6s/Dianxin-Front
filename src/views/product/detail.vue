@@ -1,7 +1,7 @@
 <template>
     <div class="order_detail_wrapper">
         <el-form label-width="200px" :model="form" ref="form" :rules="rules">
-            <el-card style="margin: 20px 20px; font-size: 14px">
+            <el-card style="margin: 20px 20px; font-size: 14px; min-height: calc(100vh - 200px);">
                 <div slot="header">
                     <span>基本信息</span>
                 </div>

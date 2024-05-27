@@ -126,6 +126,22 @@ export const dynamicRoutes = [
       }
     ]
   },
+  {
+    path: '/suppliers',
+    component: Layout,
+    hidden: true,
+    permissions: ['suppliers:detail'],
+    noCache:true,
+    children: [
+      {
+        path: 'detail',
+        component: () => import('@/views/suppliers/detail'),
+        name: 'SuppliersDetail',
+        meta: { title: '商品详情' },
+        noCache:true,
+      }
+    ]
+  },
 ]
 
 // 防止连续点击多次路由报错

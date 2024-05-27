@@ -126,7 +126,11 @@ export default {
         },
         /** 新增按钮操作 */
         handleAdd() {
-            this.$router.push({ path: "/goods/detail" });
+            this.$router.push({ path: "/suppliers/detail" });
+        },
+        /** 修改 */
+        handleCheck(row){
+            this.$router.push({ path: "/suppliers/detail", query: { id: row.supplierId } });
         },
     }
 };

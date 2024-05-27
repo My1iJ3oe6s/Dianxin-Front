@@ -49,7 +49,7 @@
             </el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" width="120" class-name="small-padding fixed-width" fixed="right">
           <template slot-scope="scope">
             <el-button size="mini" type="text" @click="handleCheck(scope.row, 1)">详情</el-button>
             <el-button size="mini" type="text" @click="handleCheck(scope.row, 0)">修改</el-button>

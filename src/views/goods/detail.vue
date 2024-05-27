@@ -111,7 +111,7 @@ import { getInfo, add, edit } from "@/api/goods/index";
 import { productType, productStatusData, dictData, numberingSettingsData } from '@/utils/printData';
 
 export default {
-    name: "ProductDetail",
+    name: "GoodsDetail",
     data() {
         return {
             productType,

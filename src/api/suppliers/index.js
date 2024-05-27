@@ -12,22 +12,28 @@ export function getList(query) {
 // 新增产品信息
 export function add(data) {
     return request({
-      url: '/api/selfGoods/save',
+      url: '/api/selfSuppliers/save',
       method: 'post',
       data: data
     })
   }
   export function edit(data) {
     return request({
-      url: '/api/selfGoods/edit',
+      url: '/api/selfSuppliers/edit',
       method: 'post',
       data: data
     })
   }
   export function handleDelete (id) {
     return request({
-      url: `/api/selfGoods/delete/${id}`,
+      url: `/api/selfSuppliers/delete/${id}`,
       method: 'get',
     })
   }
   
+export function getInfo(id) {
+  return request({
+    url: `/api/selfSuppliers/getById/${id}`,
+    method: 'get',
+  })
+}

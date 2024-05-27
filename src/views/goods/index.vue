@@ -40,13 +40,15 @@
                 <el-table-column label="身份证验证" align="center" prop="checkIdentity">
                     <template slot-scope="scope">{{ returnNameData(dictData, scope.row.checkIdentity) }}</template>
                 </el-table-column>
-                <el-table-column label="操作" align="center" class-name="small-padding">
+                <el-table-column label="操作" align="center" class-name="small-padding" fixed="right">
                     <template slot-scope="scope">
                         <el-button size="mini" type="text" @click="handleCheck(scope.row, 1)">详情</el-button>
                         <el-button size="mini" type="text" @click="handleCheck(scope.row, 0)">修改</el-button>
                         <el-button size="mini" type="text" @click="handleProduct(scope.row)">产品配置</el-button>
-                        <el-button size="mini" type="text" v-clipboard:copy="'http://60.204.215.154/mobile/index.html?id=' + scope.row.goodsId"
+                        <el-button size="mini" type="text"
+                            v-clipboard:copy="'http://60.204.215.154/mobile/index.html?id=' + scope.row.goodsId"
                             v-clipboard:success="clipboardSuccess">推广</el-button>
+                        <el-button size="mini" type="text" @click="handleBanner(scope.row)">生成海报</el-button>
                         <el-popconfirm title="确定删除？" @confirm="handleDelect(scope.row)">
                             <el-button size="mini" type="text" slot="reference">删除</el-button>
                         </el-popconfirm>
@@ -78,19 +80,34 @@
                 <el-button @click="cancel">取 消</el-button>
             </div>
         </el-dialog>
+        <el-dialog title="海报" :visible.sync="open1" width="500" append-to-body>
+            <div class="banner" id="banner">
+                <img :src="imageUrl" v-if="imageUrl" class="imageUrl"/>
+                <img class="mainImage" :src="row.mainImage || BannerImg" alt="" @load="onImageLoad">
+                <div class="qrcode_box">
+                    <div class="qrcode_text">长按扫码立即办理</div>
+                    <div ref="qrcode" class="qrcode"></div>
+                </div>
+            </div>
+            <div class="tips">右键保存图片推广</div>
+        </el-dialog>
     </div>
 </template>
   
 <script>
-import { getList, add, edit, handleDelete ,bindProduct} from "@/api/goods/index";
+import { getList, add, edit, handleDelete, bindProduct } from "@/api/goods/index";
 import { returnName } from "@/utils/index.js";
 import { productType, productStatusData, dictData } from '@/utils/printData';
 import * as productApi from "@/api/product/index";
+import QRCode from 'qrcodejs2';
+import html2canvas from 'html2canvas';
+import BannerImg from '@/assets/banner.png';
 
 export default {
     name: "Goods",
     data() {
         return {
+            BannerImg,
             // 遮罩层
             loading: true,
             // 导出遮罩层
@@ -127,8 +144,14 @@ export default {
             rules: {
                 productCode: [{ required: true, message: "产品编码不能为空", trigger: "blur" }],
             },
+            productList: [],
+            row: {
+                mainImage: ''
+            },
+            open1: false,
+            qrcode: null,
+            imageUrl: null
 
-            productList: []
         };
     },
     activated() {
@@ -136,6 +159,9 @@ export default {
         this.getList();
     },
     methods: {
+        onImageLoad() {
+            console.log('加载完成')
+        },
         getProduct() {
             productApi.getList({
                 pageNo: 0,
@@ -156,6 +182,22 @@ export default {
                 message: '地址复制成功!请浏览器打开',
                 type: 'success'
             });
+        },
+        /**生成海报 */
+        handleBanner(row) {
+            this.row = row;
+            this.open1 = true;
+            this.$nextTick(() => {
+                new QRCode(this.$refs.qrcode, {
+                    width: 120,
+                    height: 120,
+                    text: 'http://60.204.215.154/mobile/index.html?id=' + row.goodsId,
+                })
+                const element = document.getElementById('banner'); // 需要生成图片的DOM元素的ID
+                html2canvas(element).then((canvas) => {
+                    this.imageUrl = canvas.toDataURL('image/png');
+                });
+            })
         },
         handleStatusChange(row) { },
         returnNameData(list, target, value, name) {
@@ -228,4 +270,49 @@ export default {
     }
 };
 </script>
+<style>
+.cell {
+
+    .el-button+span,
+    span+span {
+        margin-left: 10px;
+    }
+}
+
+.banner {
+    background-color: #fff;
+    width: 350px;
+    margin: 0 auto;
+    position: relative;
+
+    .imageUrl{
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 999;
+    }
+
+    .mainImage {
+        width: 350px;
+    }
+
+    .qrcode_box {
+        margin-top: 20px;
+        color: #000;
+        text-align: center;
+        padding: 0 20px 40px;
+
+        .qrcode_text {
+            float: right;
+            line-height: 120px;
+        }
+    }
+}
+
+.tips {
+    color: red;
+    width: 350px;
+    margin: 0 auto;
+}
+</style>
   
