@@ -1,6 +1,6 @@
 <template>
     <div class="order_detail_wrapper">
-        <el-form label-width="140px" :model="form" ref="form" :rules="rules">
+        <el-form label-width="200px" :model="form" ref="form" :rules="rules">
             <el-card style="margin: 20px 20px; font-size: 14px">
                 <div slot="header">
                     <span>基本信息</span>
@@ -94,7 +94,7 @@
                             </el-radio-group>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="24">
                         <el-form-item label="备注" prop="des">
                             <el-input type="textarea" v-model="form.des" placeholder="请输入备注"
                                 :readonly="isReadonly"></el-input>
@@ -102,11 +102,12 @@
                     </el-col>
                 </el-row>
             </el-card>
-            <div class="tc">
-                <el-button :loading="loading" type="primary" @click="submitForm" v-if="!isReadonly">确 定</el-button>
-                <el-button @click="cancel">取 消</el-button>
-            </div>
-
+            <el-card class="form_buttons_bottom">
+                <div class="tc">
+                    <el-button :loading="loading" type="primary" @click="submitForm" v-if="!isReadonly">确 定</el-button>
+                    <el-button @click="cancel">取 消</el-button>
+                </div>
+            </el-card>
         </el-form>
     </div>
 </template>

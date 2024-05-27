@@ -2,7 +2,7 @@
     <div class="app-container">
         <div class="filter-container">
             <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch"
-                label-width="68px">
+                label-width="150px">
                 <el-form-item label="账号" prop="userAccount">
                     <el-input v-model="queryParams.userAccount" placeholder="请输入账号" clearable style="width: 240px"
                         @keyup.enter.native="handleQuery" />

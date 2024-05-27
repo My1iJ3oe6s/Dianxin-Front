@@ -55,7 +55,7 @@ export function getImg (id) {
 // 绑定产品
 export function bindProduct(data) {
   return request({
-    url: '/api/selfGoods/bindProduct',
+    url: '/api/selfGoods/bindingProduct',
     method: 'post',
     data: data
   })

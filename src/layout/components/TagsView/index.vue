@@ -252,6 +252,7 @@ export default {
       font-size: 12px;
       margin-left: 5px;
       margin-top: 4px;
+      border-radius: 3px;
       &:first-of-type {
         margin-left: 15px;
       }

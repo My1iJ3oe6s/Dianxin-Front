@@ -1,7 +1,7 @@
 <template>
     <div class="app-container">
         <div class="filter-container">
-            <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px"
+            <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="140px"
                 size="medium" class="ry_form">
                 <el-form-item label="商品名称" prop="goodsName">
                     <el-input v-model="queryParams.queryParameters.goodsName" placeholder="请输入商品名称" clearable size="small"
@@ -45,7 +45,7 @@
                         <el-button size="mini" type="text" @click="handleCheck(scope.row, 1)">详情</el-button>
                         <el-button size="mini" type="text" @click="handleCheck(scope.row, 0)">修改</el-button>
                         <el-button size="mini" type="text" @click="handleProduct(scope.row)">产品配置</el-button>
-                        <el-button size="mini" type="text" v-clipboard:copy="11"
+                        <el-button size="mini" type="text" v-clipboard:copy="'http://60.204.215.154/mobile/index.html?id=' + scope.row.goodsId"
                             v-clipboard:success="clipboardSuccess">推广</el-button>
                         <el-popconfirm title="确定删除？" @confirm="handleDelect(scope.row)">
                             <el-button size="mini" type="text" slot="reference">删除</el-button>
@@ -64,7 +64,7 @@
                 :limit.sync="queryParams.pageSize" @pagination="getList" />
         </div>
         <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-            <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+            <el-form ref="form" :model="form" :rules="rules" label-width="140px">
                 <el-form-item label="产品编码" prop="productCode">
                     <el-select clearable v-model="form.productCode" style="width: 100%">
                         <el-option v-for="(item, index) of productList" :key="index" :label="item.productName"
@@ -82,7 +82,7 @@
 </template>
   
 <script>
-import { getList, add, edit, handleDelete } from "@/api/goods/index";
+import { getList, add, edit, handleDelete ,bindProduct} from "@/api/goods/index";
 import { returnName } from "@/utils/index.js";
 import { productType, productStatusData, dictData } from '@/utils/printData';
 import * as productApi from "@/api/product/index";
@@ -165,7 +165,7 @@ export default {
             this.$refs["form"].validate((valid) => {
                 if (valid) {
                     console.log(this.form)
-
+                    bindProduct(this.form)
                 }
             });
         },

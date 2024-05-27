@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
+      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="140px" size="medium"
         class="ry_form">
         <el-form-item label="产品名称" prop="prodName">
           <el-input v-model="queryParams.queryParameters.prodName" placeholder="请输入产品名称" clearable size="small"

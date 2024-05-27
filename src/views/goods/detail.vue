@@ -1,6 +1,6 @@
 <template>
     <div class="order_detail_wrapper">
-        <el-form label-width="118px" :model="form" ref="form" :rules="rules">
+        <el-form label-width="180px" :model="form" ref="form" :rules="rules">
             <el-card style="margin: 20px 20px; font-size: 14px">
                 <div slot="header">
                     <span>基本信息</span>
@@ -16,7 +16,7 @@
                             <el-input v-model="form.goodsCode" placeholder="请输入商品编码" :readonly="isReadonly"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="12" v-if="isEdit">
                         <el-form-item label="产品" prop="productCode">
                             <el-select clearable v-model="form.productCode" style="width: 100%">
                                 <el-option v-for="(item, index) of productList" :key="index" :label="item.productName"
@@ -25,6 +25,18 @@
                             </el-select>
                         </el-form-item>
                     </el-col>
+                    <div v-else>
+                        <el-col :span="12">
+                            <el-form-item label="产品名称" prop="productName">
+                                <el-input v-model="form.productName" placeholder="请输入产品名称"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="产品编码" prop="productCode">
+                                <el-input v-model="form.productCode" placeholder="请输入产品编码"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </div>
                     <el-col :span="12">
                         <el-form-item label="生产类型" prop="productionType">
                             <el-select clearable v-model="form.productionType" style="width: 100%">
@@ -54,11 +66,12 @@
                     <el-col :span="12" v-if="form.numberingSettings == 2 || form.numberingSettings == 3">
                         <el-form-item label="号池" prop="poolId">
                             <el-select v-model="form.poolId" placeholder="请选择" clearable style="width: 100%">
-                                <el-option v-for="dict in poolList" :key="dict.poolName" :label="dict.poolName" :value="dict.poolName" />
+                                <el-option v-for="dict in poolList" :key="dict.poolName" :label="dict.poolName"
+                                    :value="dict.poolName" />
                             </el-select>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="24">
                         <el-form-item label="备注" prop="description">
                             <el-input type="textarea" v-model="form.description" placeholder="请输入备注"
                                 :readonly="isReadonly"></el-input>
@@ -78,10 +91,12 @@
                     <ImageUpload v-model="form.detailImages" :file-list="form.detailImages" :showTip="true" />
                 </el-form-item>
             </el-card>
-            <div class="tc">
-                <el-button :loading="loading" type="primary" @click="submitForm" v-if="!isReadonly">确 定</el-button>
-                <el-button @click="cancel">取 消</el-button>
-            </div>
+            <el-card class="form_buttons_bottom">
+                <div class="tc">
+                    <el-button :loading="loading" type="primary" @click="submitForm" v-if="!isReadonly">确 定</el-button>
+                    <el-button @click="cancel">取 消</el-button>
+                </div>
+            </el-card>
 
         </el-form>
     </div>
@@ -91,9 +106,9 @@
 import {
     getList
 } from "@/api/numberPool/index";
-import  * as productApi from "@/api/product/index";
+import * as productApi from "@/api/product/index";
 import { getInfo, add, edit } from "@/api/goods/index";
-import { productType, productStatusData, dictData ,numberingSettingsData} from '@/utils/printData';
+import { productType, productStatusData, dictData, numberingSettingsData } from '@/utils/printData';
 
 export default {
     name: "ProductDetail",
@@ -106,7 +121,7 @@ export default {
             loading: false,
             form: {
                 numberingSettings: '0',
-                checkIdentity:'0'
+                checkIdentity: '0'
             },
             rules: {
                 goodsName: [{ required: true, message: "产品名称必填", trigger: "blur" }],
@@ -115,8 +130,8 @@ export default {
             },
             isReadonly: false,
             isEdit: false,
-            poolList:[],
-            productList:[]
+            poolList: [],
+            productList: []
         };
     },
     created() {

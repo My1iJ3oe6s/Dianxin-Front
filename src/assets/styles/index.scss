@@ -137,6 +137,8 @@ aside {
     background-color: #fff;
     border-radius: 10px;
     padding: 22px;
+    min-height: calc(100vh - 250px);
+    position: relative;
   }
 }
 
@@ -147,6 +149,14 @@ aside {
 
 .pagination-container {
   margin-top: 30px;
+  position: absolute !important;
+  bottom: 22px;
+  right: 0;
+  width: 100%;
+
+  .el-pagination {
+    right: 22px !important;
+  }
 }
 
 .text-center {
@@ -204,4 +214,16 @@ aside {
 
 .multiselect--active {
   z-index: 1000 !important;
+}
+
+.el-form-item__label {
+  text-align: left !important;
+  padding-left: 54px !important;
+}
+
+.form_buttons_bottom{
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  width: calc(100% - 200px);
 }
