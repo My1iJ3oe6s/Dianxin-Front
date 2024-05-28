@@ -1335,7 +1335,4 @@ export default {
         }
     }
 }
-.app-container .table-container{
-    padding-bottom: 64px;
-}
 </style>

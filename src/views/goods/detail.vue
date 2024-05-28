@@ -161,8 +161,10 @@ export default {
         queryDetail(id) {
             this.loading = true;
             getInfo(id).then((res) => {
+                // res.data.mainImage = this.resetImage([res.data.mainImage]);
                 res.data.checkIdentity = res.data.checkIdentity.toString();
                 res.data.numberingSettings = res.data.numberingSettings.toString();
+                console.log(res.data)
                 this.form = res.data
                 this.loading = false;
             });
@@ -171,6 +173,7 @@ export default {
             this.loading = true;
             this.$refs["form"].validate((valid, a) => {
                 if (valid) {
+                    // this.form.detailImages = JSON.stringify([this.form.detailImages])
                     if (this.form.goodsId) {
                         edit(this.form).then((response) => {
                             this.loading = false;

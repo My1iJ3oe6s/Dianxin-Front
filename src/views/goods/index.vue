@@ -1,7 +1,7 @@
 <template>
     <div class="app-container">
         <div class="filter-container">
-            <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="140px"
+            <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="80px"
                 size="medium" class="ry_form">
                 <el-form-item label="商品名称" prop="goodsName">
                     <el-input v-model="queryParams.queryParameters.goodsName" placeholder="请输入商品名称" clearable size="small"
@@ -28,7 +28,7 @@
                 <!-- <el-table-column type="selection" width="55" align="center" /> -->
                 <el-table-column label="主图" align="center" prop="mainImage" width="100">
                     <template slot-scope="scope">
-                        <img :src="scope.row.mainImage" alt="">
+                        <el-image class="mainImage" :src="scope.row.mainImage" alt="" :preview-src-list="[scope.row.mainImage]"/>
                     </template>
                 </el-table-column>
                 <el-table-column label="商品编码" align="center" prop="goodsCode" />
@@ -126,7 +126,7 @@ export default {
             list: [],
             // 查询参数
             queryParams: {
-                pageNum: 0,
+                pageNum: 1,
                 pageSize: 10,
                 queryParameters: {
                     // goodsName: '',
@@ -218,7 +218,7 @@ export default {
         getList() {
             this.loading = true;
             const { pageNum, pageSize } = this.queryParams;
-            const pageReq = { pageNo: pageNum - 1, pageSize: pageSize };
+            const pageReq = { pageNo: pageNum, pageSize: pageSize };
             const query = { ...this.queryParams, pageNum: undefined, pageSize: undefined, ...pageReq };
             getList(query).then(response => {
                 const { records, total } = response.data
@@ -313,6 +313,9 @@ export default {
     color: red;
     width: 350px;
     margin: 0 auto;
+}
+.mainImage{
+    width: 100%;
 }
 </style>
   
