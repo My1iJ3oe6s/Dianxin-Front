@@ -28,7 +28,8 @@
                 <!-- <el-table-column type="selection" width="55" align="center" /> -->
                 <el-table-column label="主图" align="center" prop="mainImage" width="100">
                     <template slot-scope="scope">
-                        <el-image class="mainImage" :src="scope.row.mainImage" alt="" :preview-src-list="[scope.row.mainImage]"/>
+                        <el-image class="mainImage1" :src="scope.row.mainImage" alt=""
+                            :preview-src-list="[scope.row.mainImage]" />
                     </template>
                 </el-table-column>
                 <el-table-column label="商品编码" align="center" prop="goodsCode" />
@@ -80,13 +81,13 @@
                 <el-button @click="cancel">取 消</el-button>
             </div>
         </el-dialog>
-        <el-dialog title="海报" :visible.sync="open1" width="500" append-to-body>
+        <el-dialog title="海报" :visible.sync="open1" width="500" append-to-body v-if="open1">
             <div class="banner" id="banner">
-                <img :src="imageUrl" v-if="imageUrl" class="imageUrl"/>
+                <img :src="imageUrl" v-if="imageUrl" class="imageUrl" />
                 <img class="mainImage" :src="row.mainImage || BannerImg" alt="" @load="onImageLoad">
                 <div class="qrcode_box">
                     <div class="qrcode_text">长按扫码立即办理</div>
-                    <div ref="qrcode" class="qrcode"></div>
+                    <div ref="qrcode" class="qrcode" id="qrcodeBox"></div>
                 </div>
             </div>
             <div class="tips">右键保存图片推广</div>
@@ -285,7 +286,7 @@ export default {
     margin: 0 auto;
     position: relative;
 
-    .imageUrl{
+    .imageUrl {
         position: absolute;
         top: 0;
         left: 0;
@@ -314,8 +315,10 @@ export default {
     width: 350px;
     margin: 0 auto;
 }
-.mainImage{
+
+.mainImage1 {
     width: 100%;
+    height: 80px;
 }
 </style>
   
