@@ -153,7 +153,7 @@ export default {
             open1: false,
             qrcode: null,
             imageUrl: null,
-            base64Image:''
+            base64Image: ''
 
         };
     },
@@ -189,6 +189,7 @@ export default {
         /**生成海报 */
         handleBanner(row) {
             this.row = row;
+            this.imageUrl = '';
             this.open1 = true;
             this.$nextTick(() => {
                 new QRCode(this.$refs.qrcode, {
@@ -196,10 +197,12 @@ export default {
                     height: 120,
                     text: 'http://60.204.215.154/mobile/index.html?id=' + row.goodsId,
                 })
-                const element = document.getElementById('banner'); // 需要生成图片的DOM元素的ID
-                html2canvas(element,{useCORS:true}).then((canvas) => {
-                    this.imageUrl = canvas.toDataURL('image/png');
-                });
+                this.$nextTick(() => {
+                    const element = document.getElementById('banner'); // 需要生成图片的DOM元素的ID
+                    html2canvas(element, { useCORS: true }).then((canvas) => {
+                        this.imageUrl = canvas.toDataURL('image/png');
+                    });
+                },)
             })
         },
         handleStatusChange(row) { },
