@@ -170,9 +170,10 @@ export default {
         queryDetail(id) {
             this.loading = true;
             getInfo(id).then((res) => {
-                res.data.checkIdentity = res.data.checkIdentity.toString();
-                res.data.isNumbered = res.data.isNumbered.toString();
-                res.data.productionType = res.data.productionType * 1;
+                res.data.checkIdentity = res.data.checkIdentity?.toString() || null;
+                res.data.isNumbered = res.data.isNumbered?.toString() || null;
+                res.data.productionStatus = res.data.productionStatus?.toString() || null;
+                res.data.productionType = res.data.productionType?res.data.productionType * 1 : null;
                 this.form = res.data
                 this.loading = false;
             });

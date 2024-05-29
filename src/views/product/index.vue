@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="140px" size="medium"
+      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="80px" size="medium"
         class="ry_form">
-        <el-form-item label="产品名称" prop="prodName">
-          <el-input v-model="queryParams.queryParameters.prodName" placeholder="请输入产品名称" clearable size="small"
+        <el-form-item label="产品名称" prop="productName">
+          <el-input v-model="queryParams.queryParameters.productName" placeholder="请输入产品名称" clearable size="small"
             @keyup.enter.native="handleQuery" />
         </el-form-item>
-        <el-form-item label="产品编码" prop="productId">
-          <el-input v-model="queryParams.queryParameters.productId" placeholder="请输入产品编码" clearable size="small"
+        <el-form-item label="产品编码" prop="productCode">
+          <el-input v-model="queryParams.queryParameters.productCode" placeholder="请输入产品编码" clearable size="small"
             @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item class="flex_one tr">
@@ -26,7 +26,7 @@
 
       <el-table v-loading="loading" border :data="list" @selection-change="handleSelectionChange">
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
-        <el-table-column label="产品编码" align="center" prop="productId" />
+        <el-table-column label="产品编码" align="center" prop="productCode" />
         <el-table-column label="产品名称" align="center" prop="productName" />
         <el-table-column label="产品类型" align="center" prop="productionType">
           <template slot-scope="scope">{{ returnNameData(prodTypeData, scope.row.productionType) }}</template>
@@ -44,8 +44,8 @@
         <el-table-column label="号池ID" align="center" prop="poolId" />
         <el-table-column label="状态" align="center" prop="des">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.productionStatus" active-value="1" inactive-value="0"
-              @change="handleStatusChange(scope.row)" disabled :active-color="activeColor" inactive-color="#ccc">
+            <el-switch v-model="scope.row.productionStatus" :active-value="1" :inactive-value="0"
+              @change="handleStatusChange(scope.row)" :active-color="activeColor" inactive-color="#ccc">
             </el-switch>
           </template>
         </el-table-column>
@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { getList, add } from "@/api/product/index";
+import { getList, add, edit } from "@/api/product/index";
 import { returnName } from "@/utils/index.js";
 import { prodTypeData } from '@/utils/printData';
 const storageSetting = JSON.parse(localStorage.getItem('layout-setting')) || ''
@@ -72,7 +72,7 @@ export default {
   name: "PmsProduct",
   data() {
     return {
-      activeColor:storageSetting.theme || '#FF8C00',
+      activeColor: storageSetting.theme || '#FF8C00',
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -94,8 +94,8 @@ export default {
         pageNum: 1,
         pageSize: 10,
         queryParameters: {
-          prodName: '',
-          productId: ''
+          productName: '',
+          productCode: ''
         }
       },
       prodTypeData
@@ -105,7 +105,33 @@ export default {
     this.getList();
   },
   methods: {
-    handleStatusChange(row) { },
+    handleStatusChange(row) {
+      const { productionStatus } = row;
+      const text = productionStatus == '1' ? '开启' : '关闭';
+      this.$confirm(`确认${text}该产品?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true;
+        row.productionStatus = productionStatus == 1 ? '1' : '0';
+        edit(row).then(() => {
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          });
+          this.loading = false;
+        }).catch(() => {
+          this.loading = false;
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        });
+        this.getList();
+      });
+    },
     returnNameData(list, target, value, name) {
       return returnName(list, target, value, name);
     },

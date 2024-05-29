@@ -84,6 +84,7 @@
         <el-dialog title="海报" :visible.sync="open1" width="500" append-to-body v-if="open1">
             <div class="banner" id="banner">
                 <img :src="imageUrl" v-if="imageUrl" class="imageUrl" />
+                <img v-if="base64Image" :src="base64Image" alt="Base64 图片" />
                 <img class="mainImage" :src="row.mainImage || BannerImg" alt="" @load="onImageLoad">
                 <div class="qrcode_box">
                     <div class="qrcode_text">长按扫码立即办理</div>
@@ -151,7 +152,8 @@ export default {
             },
             open1: false,
             qrcode: null,
-            imageUrl: null
+            imageUrl: null,
+            base64Image:''
 
         };
     },
@@ -195,7 +197,7 @@ export default {
                     text: 'http://60.204.215.154/mobile/index.html?id=' + row.goodsId,
                 })
                 const element = document.getElementById('banner'); // 需要生成图片的DOM元素的ID
-                html2canvas(element).then((canvas) => {
+                html2canvas(element,{useCORS:true}).then((canvas) => {
                     this.imageUrl = canvas.toDataURL('image/png');
                 });
             })
