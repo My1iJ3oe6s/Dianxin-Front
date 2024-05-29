@@ -252,6 +252,8 @@ export default {
   methods: {
     getProductList() {
       getProductAll({
+        pageNo: 1,
+        pageSize: 50,
       }).then((res) => {
         this.productList = res
       })

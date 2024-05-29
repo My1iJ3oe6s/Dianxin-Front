@@ -17,7 +17,7 @@ export function getSuppliersList(query) {
 }
 export function getProductAll(query) {
   return request({
-    url: '/api/selfProduct/queryProductAllList',
+    url: '/api/selfProduct/page',
     method: 'post',
     data: query,
   })

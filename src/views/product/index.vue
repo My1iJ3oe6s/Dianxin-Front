@@ -39,8 +39,12 @@
         <el-table-column label="外部供应商商品编码" align="center" prop="externalProductCode" />
         <el-table-column label="外部供应商商品名称" align="center" prop="externalProductName" />
         <el-table-column label="备注" align="center" prop="des" />
-        <el-table-column label="是否校验身份证" align="center" prop="checkIdentity" />
-        <el-table-column label="是否选号" align="center" prop="isNumbered" />
+        <el-table-column label="是否校验身份证" align="center" prop="checkIdentity" >
+          <template slot-scope="scope">{{ returnNameData(isprintData, scope.row.checkIdentity) }}</template>
+        </el-table-column>
+        <el-table-column label="是否选号" align="center" prop="isNumbered" >
+          <template slot-scope="scope">{{ returnNameData(isprintData, scope.row.isNumbered) }}</template>
+        </el-table-column>
         <el-table-column label="号池ID" align="center" prop="poolId" />
         <el-table-column label="状态" align="center" prop="des">
           <template slot-scope="scope">
@@ -98,7 +102,11 @@ export default {
           productCode: ''
         }
       },
-      prodTypeData
+      prodTypeData,
+      isprintData: [
+        { name: "是", value: '1' },
+        { name: "否", value: '0' },
+      ],
     };
   },
   activated() {
@@ -114,13 +122,14 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true;
-        row.productionStatus = productionStatus == 1 ? '1' : '0';
+        row.productionStatus = productionStatus == 1 ? 1 : 0;
         edit(row).then(() => {
           this.$message({
             type: 'success',
             message: '操作成功!'
           });
           this.loading = false;
+          this.getList();
         }).catch(() => {
           this.loading = false;
         })
