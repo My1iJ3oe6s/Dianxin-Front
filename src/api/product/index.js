@@ -48,3 +48,11 @@ export function edit(data) {
     data: data
   })
 }
+
+export function cancelBind(data) {
+  return request({
+    url: '/api/selfGoods/cancelBinding',
+    method: 'post',
+    data: data
+  })
+}

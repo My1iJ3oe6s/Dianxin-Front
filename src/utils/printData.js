@@ -778,11 +778,17 @@ export const STOCK_IN_TEMPLATE = {
 }
 
 export const prodTypeData = [{
-  name: "合约套餐",
+  name: "号卡",
   value: 1
 }, {
-  name: "终端",
+  name: "单宽",
   value: 2
+}, {
+  name: "融合",
+  value: 3
+}, {
+  name: "合约包",
+  value: 4
 }]
 
 export const productType = [{

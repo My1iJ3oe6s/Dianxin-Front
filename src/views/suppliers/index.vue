@@ -4,12 +4,12 @@
             <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="120px"
                 size="medium" class="ry_form">
                 <el-form-item label="外部供应商名称" prop="supplierName">
-                    <el-input v-model="queryParams.queryParameters.supplierName" placeholder="请输入外部供应商名称" clearable size="small"
-                        @keyup.enter.native="handleQuery" />
+                    <el-input v-model="queryParams.queryParameters.supplierName" placeholder="请输入外部供应商名称" clearable
+                        size="small" @keyup.enter.native="handleQuery" />
                 </el-form-item>
                 <el-form-item label="外部供应商编码" prop="supplierCode">
-                    <el-input v-model="queryParams.queryParameters.supplierCode" placeholder="请输入外部供应商编码" clearable size="small"
-                        @keyup.enter.native="handleQuery" />
+                    <el-input v-model="queryParams.queryParameters.supplierCode" placeholder="请输入外部供应商编码" clearable
+                        size="small" @keyup.enter.native="handleQuery" />
                 </el-form-item>
                 <el-form-item class="flex_one tr">
                     <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -37,17 +37,40 @@
                 <el-table-column label="操作" align="center" class-name="small-padding">
                     <template slot-scope="scope">
                         <el-button size="mini" type="text" @click="handleCheck(scope.row, 0)">修改</el-button>
+                        <el-button size="mini" type="text" @click="handleConnectProducts(scope.row)">关联产品</el-button>
                     </template>
                 </el-table-column>
             </el-table>
             <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum"
                 :limit.sync="queryParams.pageSize" @pagination="getList" />
         </div>
+        <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
+            <el-row :gutter="10" class="mb8">
+                <el-col :span="1.5">
+                    <el-button type="primary" plain size="mini" @click="handleCancelBindMutil">批量解除</el-button>
+                </el-col>
+            </el-row>
+            <el-table :data="productList" border @selection-change="handleSelectionChange">
+                <el-table-column type="selection" width="55" align="center" />
+                <el-table-column label="产品ID" align="center" prop="productId" />
+                <el-table-column label="产品名称" align="center" prop="productName" />
+                <el-table-column label="产品编码" align="center" prop="productCode" />
+                <el-table-column label="操作" align="center" width="120" class-name="small-padding fixed-width" fixed="right">
+                    <template slot-scope="scope">
+                        <el-button type="text" size="mini" @click="handleCancelBind({
+                            suppliercode: scope.row.suppliercode,
+                            productIds: [scope.row.productId]
+                        })">解除绑定</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-dialog>
     </div>
 </template>
   
 <script>
-import { getList, add, edit, handleDelete } from "@/api/suppliers/index";
+import { getList, add, edit, cancelBind } from "@/api/suppliers/index";
+import * as productApi from '@/api/product/index';
 import { returnName } from "@/utils/index.js";
 
 export default {
@@ -77,6 +100,13 @@ export default {
                 queryParameters: {
                 }
             },
+            title: '',
+            open: false,
+            open1: false,
+            conenctData: {},
+            productList: [],
+            productList: [],
+            suppliercode: ''
         };
     },
     activated() {
@@ -129,8 +159,54 @@ export default {
             this.$router.push({ path: "/suppliers/detail" });
         },
         /** 修改 */
-        handleCheck(row){
+        handleCheck(row) {
             this.$router.push({ path: "/suppliers/detail", query: { id: row.supplierId } });
+        },
+        getConnectProduct(row, fn) {
+            productApi.getList({
+                pageNo: 1,
+                pageSize: 10,
+                queryParameters: {
+                    supplierCode: row.suppliercode
+                }
+            }).then((res) => {
+                const { records, total } = res.data
+                this.productList = records;
+                fn && fn()
+            })
+
+        },
+        handleConnectProducts(row) {
+            this.getConnectProduct(row, () => {
+                this.title = '关联产品查看'
+                this.open = true;
+            })
+        },
+        // 多选框选中数据
+        handleSelectionChange(selection) {
+            this.ids = selection.map(item => item.productId)
+            this.single = selection.length !== 1
+            this.multiple = !selection.length
+        },
+        /** 解除绑定 */
+        handleCancelBindMutil(row) {
+            if (this.ids.length) {
+                this.handleCancelBind({
+                    suppliercode: this.suppliercode,
+                    productIds: this.ids
+                })
+            } else {
+                this.$message({
+                    type: 'warning',
+                    message: '请选择要解除绑定的产品'
+                })
+            }
+        },
+        handleCancelBind(data) {
+            cancelBind(data)
+                .then((res) => {
+                    this.getConnectProduct(data)
+                })
         },
     }
 };

@@ -5,57 +5,48 @@
         <el-button style="float: right" size="small" @click="$router.back()">返回</el-button>
         <el-descriptions title="订单信息" :column="2" border label-class-name="my-label" contentClassName="my-content">\
           <el-descriptions-item label="订单编号">{{
-            orderDetail.id
-          }}</el-descriptions-item>
-          <el-descriptions-item label="外部订单号">{{
-            orderDetail.externalOrderNo
+            orderDetail.orderId
           }}</el-descriptions-item>
           <el-descriptions-item label="客户名称">{{
-            orderDetail.receiverName
+            orderDetail.receiver
           }}</el-descriptions-item>
           <el-descriptions-item label="用户手机号">{{
-            orderDetail.receiverPhone
+            orderDetail.receiverPhoneNumber
           }}</el-descriptions-item>
           <el-descriptions-item label="订单状态">{{
-            orderDetail.orderStatusText
+            orderDetail.status
           }}</el-descriptions-item>
           <el-descriptions-item label="失败原因">{{
-            orderDetail.failureRemark
+            orderDetail.failureReason
           }}</el-descriptions-item>
           <el-descriptions-item label="下单时间">{{
-            parseTime(orderDetail.createdTime, "")
+            parseTime(orderDetail.createdAt, "")
           }}</el-descriptions-item>
         </el-descriptions>
       </el-card>
       <el-card class="mt10">
         <el-descriptions title="收货信息" :column="2" border label-class-name="my-label" contentClassName="my-content">
           <el-descriptions-item label="收货人姓名">{{
-            orderDetail.receiverName
+            orderDetail.receiver
           }}</el-descriptions-item>
           <el-descriptions-item label="收货人手机号">{{
-            orderDetail.receiverPhone
+            orderDetail.receiverPhoneNumber
           }}</el-descriptions-item>
           <el-descriptions-item label="收货区域">
-            {{ orderDetail.provinceName }} {{ orderDetail.cityName }} {{ orderDetail.countyName }}
+            {{ orderDetail.receiverProvinceName }} {{ orderDetail.receiverCityName }}
           </el-descriptions-item>
           <el-descriptions-item label="详细地址">
-            {{ orderDetail.address }}
+            {{ orderDetail.receiverAddress }}
           </el-descriptions-item>
         </el-descriptions>
       </el-card>
       <el-card class="mt10">
-        <el-descriptions title="产品信息" :column="2" border label-class-name="my-label" contentClassName="my-content">
+        <el-descriptions title="商品信息" :column="2" border label-class-name="my-label" contentClassName="my-content">
         </el-descriptions>
-        <el-table :data="productList" style="width: 100%">
-          <el-table-column label="产品id" align="center" prop="id" />
-          <el-table-column label="产品编码" align="center" prop="prodSkuNbr" />
-          <el-table-column label="产品名称" align="center" prop="prodName" />
-          <el-table-column label="外部产品编码" align="center" prop="externalProdSkuNbr" />
-          <el-table-column label="外部产品id" align="center" prop="externalProdID" />
-          <el-table-column label="外部产品名称" align="center" prop="externalProdName" />
-          <el-table-column label="产品类型" align="center" prop="prodType">
-            <template slot-scope="scope">{{ returnNameData(prodTypeData, scope.row.prodType) }}</template>
-          </el-table-column>
+        <el-table :data="goods" style="width: 100%">
+          <el-table-column label="商品id" align="center" prop="goodsId" />
+          <el-table-column label="商品名称" align="center" prop="goodsName" />
+          <el-table-column label="商品编码" align="center" prop="goodsCode" />
           <!-- <el-table-column label="状态" align="center" prop="productStatus">
             <template slot-scope="scope">
               {{ scope.row.productStatus == 1 ? '启用' : '禁用' }}
@@ -77,7 +68,7 @@ export default {
   name: "OrderDetail",
   data() {
     return {
-      productList: [],
+      goods: [],
       orderDetail: {},
       loading: false,
       prodTypeData
@@ -112,8 +103,9 @@ export default {
     queryDetail(id) {
       this.loading = true;
       getOrder(id).then((res) => {
-        this.orderDetail = res.orderInfo;
-        this.productList = res.productList || [];
+        const { data } = res
+        this.orderDetail = data;
+        this.goods = data.goods || [];
         this.loading = false;
       });
     },

@@ -24,28 +24,22 @@
         </el-col>
       </el-row>
 
-      <el-table v-loading="loading" border :data="list" @selection-change="handleSelectionChange">
+      <el-table v-loading="loading" border :data="list">
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
         <el-table-column label="产品编码" align="center" prop="productCode" />
         <el-table-column label="产品名称" align="center" prop="productName" />
         <el-table-column label="产品类型" align="center" prop="productionType">
           <template slot-scope="scope">{{ returnNameData(prodTypeData, scope.row.productionType) }}</template>
         </el-table-column>
-        <el-table-column label="产品编码" align="center" prop="productCode" />
-        <el-table-column label="外部供应商ID" align="center" prop="supplierId" />
-        <el-table-column label="外部供应商名称" align="center" prop="supplierName" />
-        <el-table-column label="外部供应商编码" align="center" prop="supplierCode" />
-        <el-table-column label="外部供应商商品ID" align="center" prop="externalProductId" />
-        <el-table-column label="外部供应商商品编码" align="center" prop="externalProductCode" />
-        <el-table-column label="外部供应商商品名称" align="center" prop="externalProductName" />
-        <el-table-column label="备注" align="center" prop="des" />
-        <el-table-column label="是否校验身份证" align="center" prop="checkIdentity" >
+        <el-table-column label="供应商编码" align="center" prop="supplierCode" />
+        <el-table-column label="供应商名称" align="center" prop="supplierName" />
+        <el-table-column label="是否校验身份证" align="center" prop="checkIdentity">
           <template slot-scope="scope">{{ returnNameData(isprintData, scope.row.checkIdentity) }}</template>
         </el-table-column>
-        <el-table-column label="是否选号" align="center" prop="isNumbered" >
+        <el-table-column label="是否选号" align="center" prop="isNumbered">
           <template slot-scope="scope">{{ returnNameData(isprintData, scope.row.isNumbered) }}</template>
         </el-table-column>
-        <el-table-column label="号池ID" align="center" prop="poolId" />
+        <el-table-column label="号池名称" align="center" prop="poolId" />
         <el-table-column label="状态" align="center" prop="des">
           <template slot-scope="scope">
             <el-switch v-model="scope.row.productionStatus" :active-value="1" :inactive-value="0"
@@ -53,10 +47,12 @@
             </el-switch>
           </template>
         </el-table-column>
+        <el-table-column label="备注" align="center" prop="des" />
         <el-table-column label="操作" align="center" width="120" class-name="small-padding fixed-width" fixed="right">
           <template slot-scope="scope">
             <el-button size="mini" type="text" @click="handleCheck(scope.row, 1)">详情</el-button>
             <el-button size="mini" type="text" @click="handleCheck(scope.row, 0)">修改</el-button>
+            <el-button size="mini" type="text" @click="handleConnectGoods(scope.row)">关联商品</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -64,11 +60,33 @@
       <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
         @pagination="getList" />
     </div>
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
+      <el-row :gutter="10" class="mb8">
+        <el-col :span="1.5">
+          <el-button type="primary" plain size="mini" @click="handleCancelBindMutil">批量解除</el-button>
+        </el-col>
+      </el-row>
+      <el-table :data="goodsList" border @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column label="商品ID" align="center" prop="goodsId" />
+        <el-table-column label="商品名称" align="center" prop="goodsName" />
+        <el-table-column label="商品编码" align="center" prop="goodsCode" />
+        <el-table-column label="操作" align="center" width="120" class-name="small-padding fixed-width" fixed="right">
+          <template slot-scope="scope">
+            <el-button type="text" size="mini" @click="handleCancelBind({
+              productCode: scope.row.productCode,
+              goodsIds: [scope.row.goodsId]
+            })">解除绑定</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getList, add, edit } from "@/api/product/index";
+import { getList, add, edit, cancelBind } from "@/api/product/index";
+import * as goodsApi from '@/api/goods/index'
 import { returnName } from "@/utils/index.js";
 import { prodTypeData } from '@/utils/printData';
 const storageSetting = JSON.parse(localStorage.getItem('layout-setting')) || ''
@@ -107,6 +125,12 @@ export default {
         { name: "是", value: '1' },
         { name: "否", value: '0' },
       ],
+      goodsList: [],
+      title: '',
+      open: false,
+      open1: false,
+      conenctData: {},
+      productCode:'',
     };
   },
   activated() {
@@ -144,17 +168,6 @@ export default {
     returnNameData(list, target, value, name) {
       return returnName(list, target, value, name);
     },
-    submitForm() {
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          add(this.form)
-            .then((response) => {
-              this.open = false;
-              this.getList();
-            })
-        }
-      });
-    },
     cancel() {
       this.open = false;
     },
@@ -183,9 +196,29 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
+      this.ids = selection.map(item => item.goodsId)
       this.single = selection.length !== 1
       this.multiple = !selection.length
+    },
+    /** 解除绑定 */
+    handleCancelBindMutil(){
+      if (this.ids.length) {
+        this.handleCancelBind({
+          productCode: this.productCode,
+          goodsIds: this.ids
+        })
+      } else {
+        this.$message({
+          type: 'warning',
+          message: '请选择要解除绑定的商品'
+        })
+      }
+    },
+    handleCancelBind(data) {
+      cancelBind(data)
+        .then((res) => {
+          this.getConnectGoods(data)
+        })
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -200,6 +233,28 @@ export default {
       // })
       const id = row.productId;
       this.$router.push({ path: "/product/detail", query: { id, target } });
+    },
+    /** 关联商品操作 */
+    getConnectGoods(row, fn) {
+      goodsApi.getList({
+        pageNo: 1,
+        pageSize: 10,
+        queryParameters: {
+          productCode: row.productCode
+        }
+      }).then((res) => {
+        const { records, total } = res.data
+        this.goodsList = records;
+        fn && fn()
+      })
+
+    },
+    handleConnectGoods(row) {
+      this.getConnectGoods(row, () => {
+        this.title = '关联商品查看';
+        this.productCode = row.productCode;
+        this.open = true;
+      })
     },
     /** 删除按钮操作 */
     handleDelete(row) {

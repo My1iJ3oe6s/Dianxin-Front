@@ -37,3 +37,11 @@ export function getInfo(id) {
     method: 'get',
   })
 }
+
+export function cancelBind(query) {
+  return request({
+    url: '/api/selfProduct/cancelBinding',
+    method: 'post',
+    data: query,
+  })
+}

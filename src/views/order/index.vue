@@ -41,34 +41,38 @@
       <el-table v-loading="loading" :data="orderList" border @selection-change="handleSelectionChange"
         cell-class-name="my-cell">
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
-        <el-table-column label="订单id" prop="id" width="80" />
-        <el-table-column label="外部订单编号" prop="externalOrderNo" />
-        <el-table-column label="姓名" prop="receiverName" width="100" />
-        <el-table-column label="电话" prop="receiverPhone" width="110" />
-        <el-table-column label="身份证号" prop="idCard" width="180" />
-        <el-table-column label="收件信息" prop="receiverName" width="300">
+        <el-table-column label="订单id" prop="orderId" width="80" />
+        <el-table-column label="电商订单号" prop="marketingOrderId" />
+        <el-table-column label="外部供应商" prop="externalSupplierName" />
+        <el-table-column label="外部供应商订单号" prop="externalSupplierOrderId" />
+        <el-table-column label="姓名" prop="receiver" width="100" />
+        <el-table-column label="电话" prop="receiverPhoneNumber" width="110" />
+        <el-table-column label="身份证号" prop="receiverIdCard" width="180" />
+        <el-table-column label="收件信息" prop="receiver" width="300">
           <template v-slot="scope">
-            <div>收货姓名：{{ scope.row.receiverName }}</div>
-            <div>手机号：{{ scope.row.receiverPhone }}</div>
-            <div>地址：{{ scope.row.provinceName }}{{ scope.row.cityName }}{{ scope.row.countyName }}{{ scope.row.address }}
+            <div>收货姓名：{{ scope.row.receiver }}</div>
+            <div>手机号：{{ scope.row.receiverPhoneNumber }}</div>
+            <div>地址：{{ scope.row.receiverProvinceName }}{{ scope.row.receiverCityName }}{{ scope.row.receiverAddress }}
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="来源" prop="source" width="100" />
-        <el-table-column label="状态" prop="orderStatusText"></el-table-column>
-        <el-table-column label="办理失败原因" prop="failureRemark" width="180"></el-table-column>
-        <el-table-column label="创建时间" prop="createdTime">
+        <el-table-column label="来源" prop="orderSource" width="100" />
+        <el-table-column label="状态" prop="status"></el-table-column>
+        <el-table-column label="订单详细状态" prop="orderStatusDetail"></el-table-column>
+        <el-table-column label="办理失败原因" prop="failureReason" width="180"></el-table-column>
+        <el-table-column label="创建时间" prop="createdAt">
           <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.createdTime) }}</span>
+            <span>{{ parseTime(scope.row.createdAt) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" class-name="small-padding fixed-width" fixed="right">
           <template slot-scope="scope">
             <el-button size="mini" type="text" @click="goDetail(scope.row)">详情</el-button>
-            <el-popconfirm title="确定撤销吗？" @confirm="handleRevoke(scope.row)"
+            <el-button size="mini" type="text" @click="edit(scope.row)">修改</el-button>
+            <!-- <el-popconfirm title="确定撤销吗？" @confirm="handleRevoke(scope.row)"
               v-if="scope.row.orderStatus === 40706 || scope.row.orderStatus === 40707 || scope.row.orderStatus === 40708 || scope.row.orderStatus === 20100">
               <el-button slot="reference" size="mini" type="text">撤销</el-button>
-            </el-popconfirm>
+            </el-popconfirm> -->
           </template>
         </el-table-column>
       </el-table>
@@ -77,36 +81,45 @@
     </div>
     <!-- 添加/修改对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body :close-on-click-modal="false">
-      <el-form ref="form" :model="form" :rules="rules" label-width="130px">
-        <!-- <el-form-item label="外部订单编号" prop="externalOrderNo">
-          <el-input v-model="form.externalOrderNo" />
-        </el-form-item> -->
-        <el-form-item label="产品" prop="productIds">
-          <el-select clearable v-model="form.productIds" style="width: 100%" multiple>
-            <el-option v-for="(item, index) of productList" :key="index" :label="item.prodName" :value="item.id">{{
-              item.prodName }}</el-option>
+      <el-form ref="form" :model="form" :rules="rules" label-width="70px">
+        <el-form-item label="商品" prop="goodsId">
+          <el-select clearable v-model="form.goodsId" style="width: 100%" multiple>
+            <el-option v-for="(item, index) of goodsList" :key="index" :label="item.goodsName" :value="item.goodsId">{{
+              item.goodsName }}</el-option>
           </el-select>
         </el-form-item>
-        <!-- <el-form-item label="来源" prop="source">
-          <el-input v-model="form.source" />
-        </el-form-item> -->
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="form.name" />
+        <el-form-item label="姓名" prop="receiver">
+          <el-input v-model="form.receiver" />
         </el-form-item>
-        <el-form-item label="身份证号" prop="idCard">
-          <el-input v-model="form.idCard" />
+        <el-form-item label="身份证号" prop="receiverIdCard">
+          <el-input v-model="form.receiverIdCard" />
         </el-form-item>
-        <el-form-item label="收货姓名" prop="receiverName">
-          <el-input v-model="form.receiverName" />
+        <el-form-item label="电话" prop="receiverPhoneNumber">
+          <el-input v-model="form.receiverPhoneNumber" />
         </el-form-item>
-        <el-form-item label="电话" prop="receiverPhone">
-          <el-input v-model="form.receiverPhone" />
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="省" prop="receiverProvinceCode">
+              <el-select v-model="form.receiverProvinceCode" @change="handleProvCheck">
+                <el-option v-for="(item, index) of provList" :key="index" :label="item.areaName" :value="item.id">{{
+                  item.areaName }}</el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="市" prop="receiverCityCode">
+              <el-select v-model="form.receiverCityCode">
+                <el-option v-for="(item, index) of cityList" :key="index" :label="item.areaName" :value="item.id">{{
+                  item.areaName }}</el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="详细地址" prop="receiverAddress">
+          <el-input v-model="form.receiverAddress" type="textarea" />
         </el-form-item>
-        <el-form-item label="收货地址" prop="area">
-          <address-selector v-model="form.area" ref="addressSelector" @change="handleAddressChange"></address-selector>
-        </el-form-item>
-        <el-form-item label="详细地址" prop="address">
-          <el-input v-model="form.address" type="textarea" />
+        <el-form-item label="来源" prop="orderSource">
+          <el-input v-model="form.orderSource" type="textarea" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -143,9 +156,12 @@ import {
   listOrder,
   exportOrder,
   addOrder,
-  cancelOrder
+  cancelOrder,
+  getOrder,
+  getAreaList,
+  getAreaChildren
 } from "@/api/order/index";
-import { getProductAll } from "@/api/product/index";
+import * as goodsApi from "@/api/goods/index";
 import AddressSelector from "@/views/components/AddressSelector/index.vue";
 import productTemplate from './order_template.xlsx'
 
@@ -210,17 +226,10 @@ export default {
       },
       // 表单校验
       rules: {
-        productIds: [{ required: true, message: "产品不能为空", trigger: "blur" }],
+        goodsId: [{ required: true, message: "产品不能为空", trigger: "blur" }],
         name: [
           { required: true, message: "收货人姓名不能为空", trigger: "blur" },
         ],
-        //   idCard: [{
-        //     required: true,
-        //     message: "身份证号不能为空",
-        //     trigger: "blur",
-        //   }, 
-        //   // { validator: this.validID, trigger: "blur" },
-        // ],
         receiverName: [
           { required: true, message: "收货人姓名不能为空", trigger: "blur" },
         ],
@@ -240,9 +249,11 @@ export default {
         ],
       },
       showMoreCondition: false,
-      productList: [],
+      goodsList: [],
       productTemplate,
       fileList: [],
+      provList: [],
+      cityList: [],
     };
   },
   created() {
@@ -250,12 +261,18 @@ export default {
     this.getList();
   },
   methods: {
+    handleProvCheck(e) {
+      getAreaChildren(e).then(res => this.cityList = res)
+    },
     getProductList() {
-      getProductAll({
+      goodsApi.getList({
         pageNo: 1,
         pageSize: 50,
       }).then((res) => {
-        this.productList = res
+        this.goodsList = res.data.records
+      })
+      getAreaList(1).then((res) => {
+        this.provList = res
       })
     },
     handleAddressChange(data) {
@@ -329,6 +346,19 @@ export default {
       this.title = "新增订单";
       this.open = true;
     },
+    edit(row) {
+      const id = row.orderId;
+      getOrder(id).then((res) => {
+        const { data } = res;
+        data.goodsId = data.goods.map(v => v.goodsId * 1);
+        this.handleProvCheck(data.receiverProvinceCode);
+        this.$nextTick(() => {
+          this.form = data;
+          this.title = "修改订单";
+          this.open = true;
+        })
+      });
+    },
     /** 撤销 */
     handleRevoke(row) {
       cancelOrder({ id: row.id }).then(() => {
@@ -350,20 +380,10 @@ export default {
       this.loading = true;
       const { pageNum, pageSize } = this.queryParams;
       const query = { ...this.queryParams, pageNum: undefined, pageSize: undefined };
-      // if (query.provinces) {
-      //   const [receiverProvinceId, receiverCityId, receiverDistrictId] = query.provinces;
-      //   query.receiverProvinceId = receiverProvinceId;
-      //   query.receiverCityId = receiverCityId;
-      //   query.receiverDistrictId = receiverDistrictId;
-      // } else {
-      //   query.receiverProvinceId = null;
-      //   query.receiverCityId = null;
-      //   query.receiverDistrictId = null;
-      // }
       const pageReq = { pageNo: pageNum - 1, pageSize: pageSize };
       listOrder({ ...query, ...pageReq }).then((response) => {
-        const { list, total } = response;
-        this.orderList = list;
+        const { records, total } = response.data;
+        this.orderList = records;
         this.total = total;
         this.loading = false;
       });
@@ -422,13 +442,8 @@ export default {
       console.log(this.$refs.addressSelector)
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          if (Array.isArray(this.form.area)) {
-            this.form.provinceCode = this.form.area[0];
-            this.form.cityCode = this.form.area[1];
-            this.form.countyCode = this.form.area[2];
-          }
-          if (Array.isArray(this.form.productIds)) {
-            this.form.productIds = this.form.productIds.join(',')
+          if (Array.isArray(this.form.goodsId)) {
+            this.form.goods = this.goodsList.filter((v) => this.form.goodsId.includes(v.goodsId))
           }
           addOrder(this.form).then((response) => {
             this.$modal.msgSuccess("新增成功");
@@ -454,7 +469,7 @@ export default {
         .catch(() => { });
     },
     goDetail(row) {
-      const id = row.id;
+      const id = row.orderId;
       this.$router.push({ path: "/order/detail", query: { id } });
     },
   },

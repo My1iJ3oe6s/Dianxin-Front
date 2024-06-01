@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询订单表列表
 export function listOrder(query,) {
   return request({
-    url: '/api/order/queryOrderList',
+    url: '/api/selfOrders/page',
     method: 'post',
     data: query,
   })
@@ -12,16 +12,15 @@ export function listOrder(query,) {
 // 查询订单表详细
 export function getOrder(id) {
   return request({
-    url: '/api/order/queryOrderDetail',
+    url: `/api/selfOrders/getById/${id}`,
     method: 'get',
-    params: { id }
   })
 }
 
 // 新增订单表
 export function addOrder(data) {
   return request({
-    url: '/api/order/save',
+    url: '/api/selfOrders/save',
     method: 'post',
     data: data
   })
@@ -46,3 +45,16 @@ export function exportOrder(query) {
   })
 }
 
+export function getAreaList(level) {
+  return request({
+    url: `/api/area/level/${level}`,
+    method: 'get',
+  })
+}
+
+export function getAreaChildren(parentId) {
+  return request({
+    url: `/api/area/childArea/${parentId}`,
+    method: 'get',
+  })
+}
