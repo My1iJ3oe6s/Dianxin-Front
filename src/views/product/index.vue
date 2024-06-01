@@ -66,7 +66,7 @@
           <el-button type="primary" plain size="mini" @click="handleCancelBindMutil">批量解除</el-button>
         </el-col>
       </el-row>
-      <el-table :data="goodsList" border @selection-change="handleSelectionChange">
+      <el-table :data="goodsList" border @selection-change="handleSelectionChange" v-loading="loading1">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="商品ID" align="center" prop="goodsId" />
         <el-table-column label="商品名称" align="center" prop="goodsName" />
@@ -97,6 +97,7 @@ export default {
       activeColor: storageSetting.theme || '#FF8C00',
       // 遮罩层
       loading: true,
+      loading1: false,
       // 导出遮罩层
       exportLoading: false,
       // 选中数组
@@ -130,7 +131,7 @@ export default {
       open: false,
       open1: false,
       conenctData: {},
-      productCode:'',
+      productCode: '',
     };
   },
   activated() {
@@ -201,7 +202,7 @@ export default {
       this.multiple = !selection.length
     },
     /** 解除绑定 */
-    handleCancelBindMutil(){
+    handleCancelBindMutil() {
       if (this.ids.length) {
         this.handleCancelBind({
           productCode: this.productCode,
@@ -215,8 +216,10 @@ export default {
       }
     },
     handleCancelBind(data) {
+      this.loading1 = true
       cancelBind(data)
         .then((res) => {
+          this.loading1 = false;
           this.getConnectGoods(data)
         })
     },
