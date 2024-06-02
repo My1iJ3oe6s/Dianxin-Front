@@ -33,214 +33,20 @@ const permission = {
     GenerateRoutes({ commit }) {
       return new Promise(resolve => {
         // 向后端请求路由数据
-        // getRouters().then(res => {
-        const data = [
-          {
-            "name": "Order",
-            "path": "/order",
-            "hidden": false,
-            "redirect": "noRedirect",
-            "component": "Layout",
-            "alwaysShow": true,
-            "meta": {
-              "title": "订单管理",
-              "icon": "shopping",
-              "noCache": false,
-              "link": null
-            },
-            "children": [
-              {
-                "name": "list",
-                "path": "index",
-                "hidden": false,
-                "component": "order/index",
-                "meta": {
-                  "title": "订单列表",
-                  "icon": "#",
-                  "noCache": true,
-                  "link": null
-                }
-              }
-            ]
-          },
-          {
-            "name": "Product",
-            "path": "/product",
-            "hidden": false,
-            "redirect": "noRedirect",
-            "component": "Layout",
-            "alwaysShow": true,
-            "meta": {
-              "title": "产品管理",
-              "icon": "tab",
-              "noCache": false,
-              "link": null
-            },
-            "children": [
-              {
-                "name": "ProductList",
-                "path": "index",
-                "hidden": false,
-                "component": "product/index",
-                "meta": {
-                  "title": "产品列表",
-                  "icon": "#",
-                  "noCache": true,
-                  "link": null
-                }
-              },
-            ]
-          },
-          {
-            "name": "Goods",
-            "path": "/goods",
-            "hidden": false,
-            "redirect": "noRedirect",
-            "component": "Layout",
-            "alwaysShow": true,
-            "meta": {
-              "title": "商品管理",
-              "icon": "table",
-              "noCache": false,
-              "link": null
-            },
-            "children": [
-              {
-                "name": "GoodsList",
-                "path": "index",
-                "hidden": false,
-                "component": "goods/index",
-                "meta": {
-                  "title": "商品列表",
-                  "icon": "#",
-                  "noCache": true,
-                  "link": null
-                }
-              },
-            ]
-          },
-          {
-            "name": "User",
-            "path": "/user",
-            "hidden": false,
-            "redirect": "noRedirect",
-            "component": "Layout",
-            "alwaysShow": true,
-            "meta": {
-              "title": "用户管理",
-              "icon": "user",
-              "noCache": false,
-              "link": null
-            },
-            "children": [
-              {
-                "name": "UserList",
-                "path": "index",
-                "hidden": false,
-                "component": "user/user/index",
-                "meta": {
-                  "title": "用户列表",
-                  "icon": "#",
-                  "noCache": true,
-                  "link": null
-                }
-              },
-              {
-                "name": "RoleList",
-                "path": "role",
-                "hidden": false,
-                "component": "user/role/index",
-                "meta": {
-                  "title": "角色管理",
-                  "icon": "#",
-                  "noCache": true,
-                  "link": null
-                }
-              },
-              {
-                "name": "PermissionList",
-                "path": "permission",
-                "hidden": false,
-                "component": "user/permission/index",
-                "meta": {
-                  "title": "权限管理",
-                  "icon": "#",
-                  "noCache": true,
-                  "link": null
-                }
-              },
-            ]
-          },
-          {
-            "name": "NumberPool",
-            "path": "/numberPool",
-            "hidden": false,
-            "redirect": "noRedirect",
-            "component": "Layout",
-            "alwaysShow": true,
-            "meta": {
-              "title": "号池管理",
-              "icon": "tool",
-              "noCache": false,
-              "link": null
-            },
-            "children": [
-              {
-                "name": "numberPoolList",
-                "path": "index",
-                "hidden": false,
-                "component": "numberPool/index",
-                "meta": {
-                  "title": "号池列表",
-                  "icon": "#",
-                  "noCache": true,
-                  "link": null
-                }
-              }
-            ]
-          },
-          {
-            "name": "Suppliers",
-            "path": "/suppliers",
-            "hidden": false,
-            "redirect": "noRedirect",
-            "component": "Layout",
-            "alwaysShow": true,
-            "meta": {
-              "title": "供应商管理",
-              "icon": "job",
-              "noCache": false,
-              "link": null
-            },
-            "children": [
-              {
-                "name": "selfSuppliers",
-                "path": "index",
-                "hidden": false,
-                "component": "suppliers/index",
-                "meta": {
-                  "title": "外部供应商列表",
-                  "icon": "#",
-                  "noCache": true,
-                  "link": null
-                }
-              }
-            ]
-          },
-        ]
-        const sdata = JSON.parse(JSON.stringify(data))
-        const rdata = JSON.parse(JSON.stringify(data))
-        const sidebarRoutes = filterAsyncRouter(sdata)
-        const rewriteRoutes = filterAsyncRouter(rdata, false, true)
-        const asyncRoutes = filterDynamicRoutes(dynamicRoutes);
-        rewriteRoutes.push({ path: '*', redirect: '/404', hidden: true })
-        router.addRoutes(asyncRoutes);
-        commit('SET_ROUTES', rewriteRoutes)
-        commit('SET_SIDEBAR_ROUTERS', constantRoutes.concat(sidebarRoutes))
-        commit('SET_DEFAULT_ROUTES', sidebarRoutes)
-        commit('SET_TOPBAR_ROUTES', sidebarRoutes)
-        resolve(rewriteRoutes)
-        // })
+        getRouters().then(res => {
+          const sdata = JSON.parse(JSON.stringify(res.data))
+          const rdata = JSON.parse(JSON.stringify(res.data))
+          const sidebarRoutes = filterAsyncRouter(sdata)
+          const rewriteRoutes = filterAsyncRouter(rdata, false, true)
+          const asyncRoutes = filterDynamicRoutes(dynamicRoutes);
+          rewriteRoutes.push({ path: '*', redirect: '/404', hidden: true })
+          router.addRoutes(asyncRoutes);
+          commit('SET_ROUTES', rewriteRoutes)
+          commit('SET_SIDEBAR_ROUTERS', constantRoutes.concat(sidebarRoutes))
+          commit('SET_DEFAULT_ROUTES', sidebarRoutes)
+          commit('SET_TOPBAR_ROUTES', sidebarRoutes)
+          resolve(rewriteRoutes)
+        })
       })
     }
   }
@@ -292,6 +98,10 @@ function filterChildren(childrenMap, lastRouter = false) {
     }
     if (lastRouter) {
       el.path = lastRouter.path + '/' + el.path
+      if (el.children && el.children.length) {
+        children = children.concat(filterChildren(el.children, el))
+        return
+      }
     }
     children = children.concat(el)
   })
@@ -316,14 +126,12 @@ export function filterDynamicRoutes(routes) {
 }
 
 export const loadView = (view) => {
-  return (resolve) => require([`@/views/${view}`], resolve)
-  // if (process.env.NODE_ENV === 'production') {
-  //   // 使用 import 实现生产环境的路由懒加载
-  //   return () => import(`@/views/${view}`)
-  //   // return (resolve) => require([`@/views/${view}`], resolve)
-  // } else {
-  //   return (resolve) => require([`@/views/${view}`], resolve)
-  // }
+  if (process.env.NODE_ENV === 'development') {
+    return (resolve) => require([`@/views/${view}`], resolve)
+  } else {
+    // 使用 import 实现生产环境的路由懒加载
+    return () => import(`@/views/${view}`)
+  }
 }
 
 export default permission

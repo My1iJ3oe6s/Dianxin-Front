@@ -5,27 +5,22 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { getToken } from '@/utils/auth'
 import { isRelogin } from '@/utils/request'
-import Cookies from "js-cookie";
 
 NProgress.configure({ showSpinner: false })
 
-const whiteList = ['/login', '/auth-redirect', '/bind', '/register']
+const whiteList = ['/login', '/register']
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  if (window._hmt) {
-    if (to.path) {
-      window._hmt.push(['_trackPageview', '/#' + to.fullPath]);
-    }
-  }
   if (getToken()) {
     to.meta.title && store.dispatch('settings/setTitle', to.meta.title)
     /* has token*/
     if (to.path === '/login') {
       next({ path: '/' })
       NProgress.done()
+    } else if (whiteList.indexOf(to.path) !== -1) {
+      next()
     } else {
-      //当页面刷新，vuex里面没值，请求重新获取,数据会重新初始化
       if (store.getters.roles.length === 0) {
         isRelogin.show = true
         // 判断当前用户是否已拉取完user_info信息
@@ -37,11 +32,11 @@ router.beforeEach((to, from, next) => {
             next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
           })
         }).catch(err => {
-          store.dispatch('LogOut').then(() => {
-            Message.error(err)
-            next({ path: '/' })
+            store.dispatch('LogOut').then(() => {
+              Message.error(err)
+              next({ path: '/' })
+            })
           })
-        })
       } else {
         next()
       }
@@ -52,9 +47,7 @@ router.beforeEach((to, from, next) => {
       // 在免登录白名单，直接进入
       next()
     } else {
-      // Cookies.set("Admin-Token", new Date().getTime(), { expires: 24 * 60 * 60 * 1000 });
-      // window.location.reload();
-      next(`/login?redirect=${to.fullPath}`) // 否则全部重定向到登录页
+      next(`/login?redirect=${encodeURIComponent(to.fullPath)}`) // 否则全部重定向到登录页
       NProgress.done()
     }
   }
