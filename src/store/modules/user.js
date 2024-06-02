@@ -32,11 +32,14 @@ const user = {
   actions: {
     // 登录
     Login({ commit }, userInfo) {
-      const userAccount = userInfo.userAccount.trim()
-      const userPassword = userInfo.userPassword
+      const username = userInfo.username.trim()
+      const password = userInfo.password
+      const code = userInfo.code
+      const uuid = userInfo.uuid
       return new Promise((resolve, reject) => {
-        login(userAccount, userPassword).then(res => {
-          Cookies.set("Admin-Token", new Date().getTime(), { expires: 24 * 60 * 60 * 1000 });
+        login(username, password, code, uuid).then(res => {
+          setToken(res.token)
+          commit('SET_TOKEN', res.token)
           resolve()
         }).catch(error => {
           reject(error)
