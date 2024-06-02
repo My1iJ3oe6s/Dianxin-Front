@@ -1,7 +1,12 @@
 <template>
   <div class="login">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
-      <h3 class="title">翼启鲲鹏后台登录</h3>
+      <h3 class="title">号卡分销后台登录</h3>
+      <el-form-item prop="companyId">
+        <el-input v-model="loginForm.companyId" type="text" auto-complete="off" placeholder="公司">
+          <svg-icon slot="prefix" icon-class="monitor" class="el-input__icon input-icon" />
+        </el-input>
+      </el-form-item>
       <el-form-item prop="userAccount">
         <el-input v-model="loginForm.userAccount" type="text" auto-complete="off" placeholder="账号">
           <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
