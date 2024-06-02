@@ -1,15 +1,18 @@
 import request from '@/utils/request'
 
 // 登录方法
-export function login(userAccount, userPassword) {
+export function login(username, password, code, uuid) {
   const data = {
-    userAccount,
-    userPassword
+    username,
+    password,
+    code,
+    uuid
   }
   return request({
-    url: '/api/user/login',
+    url: '/login',
     headers: {
-      isToken: false
+      isToken: false,
+      repeatSubmit: false
     },
     method: 'post',
     data: data
@@ -19,7 +22,7 @@ export function login(userAccount, userPassword) {
 // 注册方法
 export function register(data) {
   return request({
-    url: '/api/user/register',
+    url: '/register',
     headers: {
       isToken: false
     },
@@ -31,7 +34,7 @@ export function register(data) {
 // 获取用户详细信息
 export function getInfo() {
   return request({
-    url: '/api/user/current',
+    url: '/getInfo',
     method: 'get'
   })
 }
@@ -39,7 +42,7 @@ export function getInfo() {
 // 退出方法
 export function logout() {
   return request({
-    url: '/api/user/logout',
+    url: '/logout',
     method: 'post'
   })
 }
