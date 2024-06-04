@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询订单表列表
 export function listOrder(query,) {
   return request({
-    url: '/api/selfOrders/page',
+    url: '/selfOrders/page',
     method: 'post',
     data: query,
   })
@@ -12,7 +12,7 @@ export function listOrder(query,) {
 // 查询订单表详细
 export function getOrder(id) {
   return request({
-    url: `/api/selfOrders/getById/${id}`,
+    url: `/selfOrders/getById/${id}`,
     method: 'get',
   })
 }
@@ -20,7 +20,7 @@ export function getOrder(id) {
 // 新增订单表
 export function addOrder(data) {
   return request({
-    url: '/api/selfOrders/save',
+    url: '/selfOrders/save',
     method: 'post',
     data: data
   })
@@ -30,7 +30,7 @@ export function addOrder(data) {
 // 撤销订单表
 export function cancelOrder(query) {
   return request({
-    url: '/api/order/cancelOrder',
+    url: '/order/cancelOrder',
     method: 'get',
     params: query
   })
@@ -47,14 +47,14 @@ export function exportOrder(query) {
 
 export function getAreaList(level) {
   return request({
-    url: `/api/area/level/${level}`,
+    url: `/area/level/${level}`,
     method: 'get',
   })
 }
 
 export function getAreaChildren(parentId) {
   return request({
-    url: `/api/area/childArea/${parentId}`,
+    url: `/area/childArea/${parentId}`,
     method: 'get',
   })
 }

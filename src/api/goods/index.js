@@ -3,14 +3,14 @@ import request from '@/utils/request'
 // 查询产品信息列表
 export function getList(query) {
   return request({
-    url: '/api/selfGoods/page',
+    url: '/selfGoods/page',
     method: 'post',
     data: query,
   })
 }
 export function getProductAll(query) {
   return request({
-    url: '/api/selfGoods/queryProductAllList',
+    url: '/selfGoods/queryProductAllList',
     method: 'post',
     data: query,
   })
@@ -19,7 +19,7 @@ export function getProductAll(query) {
 // 查询产品信息详细
 export function getInfo(id) {
   return request({
-    url: `/api/selfGoods/getById/${id}`,
+    url: `/selfGoods/getById/${id}`,
     method: 'get',
   })
 }
@@ -27,35 +27,35 @@ export function getInfo(id) {
 // 新增产品信息
 export function add(data) {
   return request({
-    url: '/api/selfGoods/saveGoodsAndProduct',
+    url: '/selfGoods/saveGoodsAndProduct',
     method: 'post',
     data: data
   })
 }
 export function edit(data) {
   return request({
-    url: '/api/selfGoods/edit',
+    url: '/selfGoods/edit',
     method: 'post',
     data: data
   })
 }
 export function handleDelete (id) {
   return request({
-    url: `/api/selfGoods/delete/${id}`,
+    url: `/selfGoods/delete/${id}`,
     method: 'get',
   })
 }
 
 export function getImg (id) {
   return request({
-    url: `/api/file/getById/${id}`,
+    url: `/file/getById/${id}`,
     method: 'get',
   })
 }
 // 绑定产品
 export function bindProduct(data) {
   return request({
-    url: '/api/selfGoods/bindingProduct',
+    url: '/selfGoods/bindingProduct',
     method: 'post',
     data: data
   })
