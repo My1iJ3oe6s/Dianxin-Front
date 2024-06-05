@@ -164,11 +164,12 @@ export default {
             this.$router.push({ path: "/suppliers/detail", query: { id: row.supplierId } });
         },
         getConnectProduct(row, fn) {
+            console.log(row)
             productApi.getList({
                 pageNo: 1,
                 pageSize: 10,
                 queryParameters: {
-                    supplierCode: row.suppliercode
+                    supplierCode: row.supplierCode
                 }
             }).then((res) => {
                 const { records, total } = res.data
