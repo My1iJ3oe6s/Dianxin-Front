@@ -7,12 +7,12 @@
           <el-input v-model.trim="queryParams.queryParameters.externalOrderNo" placeholder="请输入外部订单编号" clearable
             size="small" @keyup.enter.native="handleQuery" />
         </el-form-item>
-        <el-form-item label="来源" prop="apChannel">
-          <el-input v-model.trim="queryParams.queryParameters.apChannel" placeholder="请输入来源" clearable size="small"
+        <el-form-item label="来源" prop="orderSource">
+          <el-input v-model.trim="queryParams.queryParameters.orderSource" placeholder="请输入来源" clearable size="small"
             @keyup.enter.native="handleQuery" />
         </el-form-item>
-        <el-form-item label="身份证号" prop="idCard">
-          <el-input v-model.trim="queryParams.queryParameters.idCard" placeholder="请输入身份证号" clearable size="small"
+        <el-form-item label="身份证号" prop="receiverIdCard">
+          <el-input v-model.trim="queryParams.queryParameters.receiverIdCard" placeholder="请输入身份证号" clearable size="small"
             @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="手机号" prop="receiverPhoneNumber">
@@ -208,7 +208,7 @@ export default {
         pageSize: 10,
         queryParameters: {
           externalOrderNo: '',
-          apChannel: '',
+          orderSource: '',
           receiverIdCard: '',
           receiverPhoneNumber: '',
           dateRange: []
@@ -439,8 +439,8 @@ export default {
         pageSize: 10,
         queryParameters: {
           externalOrderNo: '',
-          apChannel: '',
-          idCard: ''
+          orderSource: '',
+          receiverIdCard: ''
         }
       }
       this.resetForm("queryForm");
