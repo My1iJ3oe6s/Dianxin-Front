@@ -127,18 +127,30 @@ export const dynamicRoutes = [
     ]
   },
   {
-    path: '/suppliers',
+    path: '/system/user-auth',
     component: Layout,
     hidden: true,
-    permissions: ['suppliers:detail'],
-    noCache:true,
+    permissions: ['system:user:edit'],
     children: [
       {
-        path: 'detail',
-        component: () => import('@/views/suppliers/detail'),
-        name: 'SuppliersDetail',
-        meta: { title: '商品详情' },
-        noCache:true,
+        path: 'role/:userId(\\d+)',
+        component: () => import('@/views/system/user/authRole'),
+        name: 'AuthRole',
+        meta: { title: '分配角色', activeMenu: '/system/user' }
+      }
+    ]
+  },
+  {
+    path: '/system/role-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['system:role:edit'],
+    children: [
+      {
+        path: 'user/:roleId(\\d+)',
+        component: () => import('@/views/system/role/authUser'),
+        name: 'AuthUser',
+        meta: { title: '分配用户', activeMenu: '/system/role' }
       }
     ]
   },
@@ -156,6 +168,34 @@ export const dynamicRoutes = [
       }
     ]
   },
+  {
+    path: '/monitor/job-log',
+    component: Layout,
+    hidden: true,
+    permissions: ['monitor:job:list'],
+    children: [
+      {
+        path: 'index/:jobId(\\d+)',
+        component: () => import('@/views/monitor/job/log'),
+        name: 'JobLog',
+        meta: { title: '调度日志', activeMenu: '/monitor/job' }
+      }
+    ]
+  },
+  {
+    path: '/tool/gen-edit',
+    component: Layout,
+    hidden: true,
+    permissions: ['tool:gen:edit'],
+    children: [
+      {
+        path: 'index/:tableId(\\d+)',
+        component: () => import('@/views/tool/gen/editTable'),
+        name: 'GenEdit',
+        meta: { title: '修改生成配置', activeMenu: '/tool/gen' }
+      }
+    ]
+  }
 ]
 
 // 防止连续点击多次路由报错
