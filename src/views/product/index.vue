@@ -176,7 +176,7 @@ export default {
     getList() {
       this.loading = true;
       const { pageNum, pageSize } = this.queryParams;
-      const pageReq = { pageNo: pageNum - 1, pageSize: pageSize };
+      const pageReq = { pageNo: pageNum , pageSize: pageSize };
       const query = { ...this.queryParams, pageNum: undefined, pageSize: undefined, ...pageReq };
       getList(query).then(response => {
         const { records, total } = response.data

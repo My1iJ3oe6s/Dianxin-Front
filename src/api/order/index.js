@@ -58,3 +58,9 @@ export function getAreaChildren(parentId) {
     method: 'get',
   })
 }
+export function getSource() {
+  return request({
+    url: '/selfOrders/queryOrderSource',
+    method: 'get'
+  })
+}

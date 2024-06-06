@@ -98,18 +98,26 @@
           <el-input v-model="form.receiverPhoneNumber" />
         </el-form-item>
         <el-row>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="省" prop="receiverProvinceCode">
-              <el-select v-model="form.receiverProvinceCode" @change="handleProvCheck">
+              <el-select v-model="form.receiverProvinceCode" @change="handleProvCheck($event, 'cityList')">
                 <el-option v-for="(item, index) of provList" :key="index" :label="item.areaName" :value="item.id">{{
                   item.areaName }}</el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="市" prop="receiverCityCode">
-              <el-select v-model="form.receiverCityCode">
+              <el-select v-model="form.receiverCityCode" @change="handleProvCheck($event, 'countyList')">
                 <el-option v-for="(item, index) of cityList" :key="index" :label="item.areaName" :value="item.id">{{
+                  item.areaName }}</el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="区" prop="receiverCountyCode">
+              <el-select v-model="form.receiverCountyCode" @change="handleCountyChange">
+                <el-option v-for="(item, index) of countyList" :key="index" :label="item.areaName" :value="item.id">{{
                   item.areaName }}</el-option>
               </el-select>
             </el-form-item>
@@ -254,6 +262,7 @@ export default {
       fileList: [],
       provList: [],
       cityList: [],
+      countyList: [],
     };
   },
   created() {
@@ -261,8 +270,26 @@ export default {
     this.getList();
   },
   methods: {
-    handleProvCheck(e) {
-      getAreaChildren(e).then(res => this.cityList = res)
+    handleCountyChange(e) {
+      this.form.receiverCountyName = this.countyList.filter(v => v.id === e)?.[0]?.areaName;
+      this.$forceUpdate();
+    },
+    handleProvCheck(e, target) {
+      switch (target) {
+        case 'cityList':
+          this.form.receiverProvinceName = this.provList.filter(v => v.id === e)?.[0]?.areaName;
+          this.form.receiverCityCode = '';
+          this.form.receiverCountyCode = '';
+          this.cityList = [];
+          this.countyList = [];
+          break;
+        case 'countyList':
+          this.form.receiverCityName = this.cityList.filter(v => v.id === e)?.[0]?.areaName;
+          this.form.receiverCountyCode = '';
+          this.countyList = [];
+          break;
+      }
+      getAreaChildren(e).then(res => this[target] = res)
     },
     getProductList() {
       goodsApi.getList({
@@ -351,7 +378,8 @@ export default {
       getOrder(id).then((res) => {
         const { data } = res;
         data.goodsId = data.goods.map(v => v.goodsId * 1);
-        this.handleProvCheck(data.receiverProvinceCode);
+        this.handleProvCheck(data.receiverProvinceCode, 'cityList');
+        this.handleProvCheck(data.receiverCityCode, 'countyList');
         this.$nextTick(() => {
           this.form = data;
           this.title = "修改订单";
@@ -380,7 +408,7 @@ export default {
       this.loading = true;
       const { pageNum, pageSize } = this.queryParams;
       const query = { ...this.queryParams, pageNum: undefined, pageSize: undefined };
-      const pageReq = { pageNo: pageNum - 1, pageSize: pageSize };
+      const pageReq = { pageNo: pageNum, pageSize: pageSize };
       listOrder({ ...query, ...pageReq }).then((response) => {
         const { records, total } = response.data;
         this.orderList = records;

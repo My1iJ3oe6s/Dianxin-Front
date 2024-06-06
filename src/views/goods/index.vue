@@ -167,7 +167,7 @@ export default {
         },
         getProduct() {
             productApi.getList({
-                pageNo: 0,
+                pageNo: 1,
                 pageSize: 50
             }).then(response => {
                 this.productList = response.data.records

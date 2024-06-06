@@ -160,7 +160,7 @@ export default {
         },
         getSuppliersList() {
             getSuppliersList({
-                pageNo: 0,
+                pageNo: 1,
                 pageSize: 50
             })
                 .then((res) => {
