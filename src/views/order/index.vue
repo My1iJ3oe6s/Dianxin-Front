@@ -15,8 +15,8 @@
           <el-input v-model.trim="queryParams.queryParameters.idCard" placeholder="请输入身份证号" clearable size="small"
             @keyup.enter.native="handleQuery" />
         </el-form-item>
-        <el-form-item label="手机号" prop="receiverPhone">
-          <el-input v-model.trim="queryParams.queryParameters.receiverPhone" placeholder="请输入手机号" clearable size="small"
+        <el-form-item label="手机号" prop="receiverPhoneNumber">
+          <el-input v-model.trim="queryParams.queryParameters.receiverPhoneNumber" placeholder="请输入手机号" clearable size="small"
             @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="创建时间">
@@ -209,8 +209,8 @@ export default {
         queryParameters: {
           externalOrderNo: '',
           apChannel: '',
-          idCard: '',
-          receiverPhone: '',
+          receiverIdCard: '',
+          receiverPhoneNumber: '',
           dateRange: []
         }
       },
@@ -241,7 +241,7 @@ export default {
         receiverName: [
           { required: true, message: "收货人姓名不能为空", trigger: "blur" },
         ],
-        receiverPhone: [
+        receiverPhoneNumber: [
           { required: true, message: "电话不能为空", trigger: "blur" },
           {
             pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
