@@ -127,6 +127,22 @@ export const dynamicRoutes = [
     ]
   },
   {
+    path: '/call',
+    component: Layout,
+    hidden: true,
+    permissions: ['call:detail'],
+    noCache:true,
+    children: [
+      {
+        path: 'detail',
+        component: () => import('@/views/call/detail'),
+        name: 'CallDetail',
+        meta: { title: '外呼详情' },
+        noCache:true,
+      }
+    ]
+  },
+  {
     path: '/goods',
     component: Layout,
     hidden: true,

@@ -37,9 +37,6 @@
         <el-col :span="1.5">
           <el-button type="primary" plain icon="el-icon-upload2" size="mini" @click="handleImport">批量导入</el-button>
         </el-col>
-        <el-col :span="1.5">
-          <el-button type="primary" plain icon="el-icon-phone-outline" size="mini" @click="handleCall">转入外呼</el-button>
-        </el-col>
       </el-row>
       <el-table v-loading="loading" :data="orderList" border @selection-change="handleSelectionChange"
         cell-class-name="my-cell">
@@ -170,7 +167,8 @@ import {
   cancelOrder,
   getOrder,
   getAreaList,
-  getAreaChildren
+  getAreaChildren,
+  getSource
 } from "@/api/order/index";
 import * as goodsApi from "@/api/goods/index";
 import AddressSelector from "@/views/components/AddressSelector/index.vue";
@@ -211,9 +209,9 @@ export default {
         pageSize: 10,
         queryParameters: {
           externalOrderNo: '',
-          // orderSource: 'NEI_BU',
-          // receiverIdCard: '',
-          // receiverPhoneNumber: '',
+          orderSource: 'NEI_BU',
+          receiverIdCard: '',
+          receiverPhoneNumber: '',
           dateRange: []
         }
       },
@@ -304,22 +302,12 @@ export default {
       getAreaList(1).then((res) => {
         this.provList = res
       })
+      getSource()
     },
     handleAddressChange(data) {
       this.form.provinceName = data[0];
       this.form.cityName = data[1];
       this.form.countyName = data[2];
-    },
-    /** 转入外呼 */
-    handleCall(){
-      if(!this.ids.length){
-          this.$message({
-            type: 'warning',
-            message: '请选择要转外呼的订单'
-          })
-      }else{
-        
-      }
     },
     /** 导入按钮操作 */
     handleImport() {
