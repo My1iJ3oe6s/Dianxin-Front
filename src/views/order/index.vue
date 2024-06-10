@@ -37,10 +37,13 @@
         <el-col :span="1.5">
           <el-button type="primary" plain icon="el-icon-upload2" size="mini" @click="handleImport">批量导入</el-button>
         </el-col>
+        <el-col :span="1.5">
+          <el-button type="primary" plain icon="el-icon-phone-outline" size="mini" @click="handleCall">转入外呼</el-button>
+        </el-col>
       </el-row>
       <el-table v-loading="loading" :data="orderList" border @selection-change="handleSelectionChange"
         cell-class-name="my-cell">
-        <!-- <el-table-column type="selection" width="55" align="center" /> -->
+        <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="订单id" prop="orderId" width="80" />
         <el-table-column label="电商订单号" prop="marketingOrderId" />
         <el-table-column label="外部供应商" prop="externalSupplierName" />
@@ -208,9 +211,9 @@ export default {
         pageSize: 10,
         queryParameters: {
           externalOrderNo: '',
-          orderSource: '',
-          receiverIdCard: '',
-          receiverPhoneNumber: '',
+          // orderSource: 'NEI_BU',
+          // receiverIdCard: '',
+          // receiverPhoneNumber: '',
           dateRange: []
         }
       },
@@ -306,6 +309,17 @@ export default {
       this.form.provinceName = data[0];
       this.form.cityName = data[1];
       this.form.countyName = data[2];
+    },
+    /** 转入外呼 */
+    handleCall(){
+      if(!this.ids.length){
+          this.$message({
+            type: 'warning',
+            message: '请选择要转外呼的订单'
+          })
+      }else{
+        
+      }
     },
     /** 导入按钮操作 */
     handleImport() {

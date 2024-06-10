@@ -3,11 +3,11 @@
         <div class="filter-container">
             <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="80px"
                 size="medium" class="ry_form">
-                <el-form-item label="商品名称" prop="goodsName">
+                <el-form-item label="商品名称" prop="queryParameters.goodsName">
                     <el-input v-model="queryParams.queryParameters.goodsName" placeholder="请输入商品名称" clearable size="small"
                         @keyup.enter.native="handleQuery" />
                 </el-form-item>
-                <el-form-item label="商品编码" prop="goodsCode">
+                <el-form-item label="商品编码" prop="queryParameters.goodsCode">
                     <el-input v-model="queryParams.queryParameters.goodsCode" placeholder="请输入商品编码" clearable size="small"
                         @keyup.enter.native="handleQuery" />
                 </el-form-item>

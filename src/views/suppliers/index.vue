@@ -3,11 +3,11 @@
         <div class="filter-container">
             <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="120px"
                 size="medium" class="ry_form">
-                <el-form-item label="外部供应商名称" prop="supplierName">
+                <el-form-item label="外部供应商名称" prop="queryParameters.supplierName">
                     <el-input v-model="queryParams.queryParameters.supplierName" placeholder="请输入外部供应商名称" clearable
                         size="small" @keyup.enter.native="handleQuery" />
                 </el-form-item>
-                <el-form-item label="外部供应商编码" prop="supplierCode">
+                <el-form-item label="外部供应商编码" prop="queryParameters.supplierCode">
                     <el-input v-model="queryParams.queryParameters.supplierCode" placeholder="请输入外部供应商编码" clearable
                         size="small" @keyup.enter.native="handleQuery" />
                 </el-form-item>
@@ -102,6 +102,8 @@ export default {
                 pageNum: 1,
                 pageSize: 10,
                 queryParameters: {
+                    supplierName: '',
+                    supplierCode: ''
                 }
             },
             title: '',
@@ -228,6 +230,7 @@ export default {
 </script>
 <style>
 .cell {
+
     .el-button+span,
     span+span {
         margin-left: 10px;
