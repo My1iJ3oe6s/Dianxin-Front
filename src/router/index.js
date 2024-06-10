@@ -111,6 +111,22 @@ export const dynamicRoutes = [
     ]
   },
   {
+    path: '/suppliers',
+    component: Layout,
+    hidden: true,
+    permissions: ['suppliers:detail'],
+    noCache:true,
+    children: [
+      {
+        path: 'detail',
+        component: () => import('@/views/suppliers/detail'),
+        name: 'SuppliersDetail',
+        meta: { title: '供应商详情' },
+        noCache:true,
+      }
+    ]
+  },
+  {
     path: '/goods',
     component: Layout,
     hidden: true,

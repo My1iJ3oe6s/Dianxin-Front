@@ -38,6 +38,9 @@
                     <template slot-scope="scope">
                         <el-button size="mini" type="text" @click="handleCheck(scope.row, 0)">修改</el-button>
                         <el-button size="mini" type="text" @click="handleConnectProducts(scope.row)">关联产品</el-button>
+                        <el-popconfirm title="确定删除？" @confirm="handleDelect(scope.row)">
+                            <el-button size="mini" type="text" slot="reference">删除</el-button>
+                        </el-popconfirm>
                     </template>
                 </el-table-column>
             </el-table>
@@ -69,7 +72,7 @@
 </template>
   
 <script>
-import { getList, add, edit, cancelBind } from "@/api/suppliers/index";
+import { getList, add, edit, cancelBind, handleDelete } from "@/api/suppliers/index";
 import * as productApi from '@/api/product/index';
 import { returnName } from "@/utils/index.js";
 
@@ -136,7 +139,7 @@ export default {
         getList() {
             this.loading = true;
             const { pageNum, pageSize } = this.queryParams;
-            const pageReq = { pageNo: pageNum , pageSize: pageSize };
+            const pageReq = { pageNo: pageNum, pageSize: pageSize };
             const query = { ...this.queryParams, pageNum: undefined, pageSize: undefined, ...pageReq };
             getList(query).then(response => {
                 const { records, total } = response.data
@@ -158,6 +161,14 @@ export default {
         /** 新增按钮操作 */
         handleAdd() {
             this.$router.push({ path: "/suppliers/detail" });
+        },
+        /** 删除 */
+        handleDelect(row) {
+            handleDelete(row.supplierId)
+                .then((res) => {
+                    this.getList();
+                    this.$modal.msgSuccess("删除成功");
+                })
         },
         /** 修改 */
         handleCheck(row) {
@@ -215,4 +226,12 @@ export default {
     }
 };
 </script>
+<style>
+.cell {
+    .el-button+span,
+    span+span {
+        margin-left: 10px;
+    }
+}
+</style>
   

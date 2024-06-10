@@ -8,7 +8,7 @@
                 <el-row>
                     <el-col :span="12">
                         <el-form-item label="外部供应商名称" prop="supplierName">
-                            <el-input v-model="form.supplierName" placeholder="请输入外部供应商ID"></el-input>
+                            <el-input v-model="form.supplierName" placeholder="请输入外部供应商名称"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
