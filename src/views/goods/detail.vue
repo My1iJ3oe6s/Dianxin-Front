@@ -64,8 +64,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12" v-if="form.numberingSettings == 2 || form.numberingSettings == 3">
-                        <el-form-item label="号池" prop="poolId">
-                            <el-select v-model="form.poolId" placeholder="请选择" clearable style="width: 100%">
+                        <el-form-item label="号池" prop="poolName">
+                            <el-select v-model="form.poolName" placeholder="请选择" clearable style="width: 100%">
                                 <el-option v-for="dict in poolList" :key="dict.poolName" :label="dict.poolName"
                                     :value="dict.poolName" />
                             </el-select>

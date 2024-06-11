@@ -80,9 +80,10 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12" v-if="form.isNumbered == 1">
-                        <el-form-item label="号池" prop="poolId">
-                            <el-select v-model="form.poolId" placeholder="请选择" clearable>
-                                <el-option v-for="dict in []" :key="dict.value" :label="dict.label" :value="dict.value" />
+                        <el-form-item label="号池" prop="poolName">
+                            <el-select v-model="form.poolName" placeholder="请选择" clearable>
+                                <el-option v-for="dict in poolList" :key="dict.poolName" :label="dict.poolName"
+                                    :value="dict.poolName" />
                             </el-select>
                         </el-form-item>
                     </el-col>
@@ -115,6 +116,7 @@
 <script>
 import { getInfo, add, edit, getSuppliersList } from "@/api/product/index";
 import { prodTypeData } from '@/utils/printData';
+import * as poolApi from "@/api/numberPool/index";
 
 export default {
     name: "ProductDetail",
@@ -142,7 +144,8 @@ export default {
             ],
             isReadonly: false,
             isEdit: false,
-            suppliersList: []
+            suppliersList: [],
+            poolList: []
         };
     },
     created() {
@@ -166,6 +169,9 @@ export default {
                 .then((res) => {
                     this.suppliersList = res.data.records;
                 })
+            poolApi.getList().then(response => {
+                this.poolList = response.data
+            });
         },
         queryDetail(id) {
             this.loading = true;
@@ -173,7 +179,7 @@ export default {
                 res.data.checkIdentity = res.data.checkIdentity?.toString() || null;
                 res.data.isNumbered = res.data.isNumbered?.toString() || null;
                 res.data.productionStatus = res.data.productionStatus?.toString() || null;
-                res.data.productionType = res.data.productionType?res.data.productionType * 1 : null;
+                res.data.productionType = res.data.productionType ? res.data.productionType * 1 : null;
                 this.form = res.data
                 this.loading = false;
             });
