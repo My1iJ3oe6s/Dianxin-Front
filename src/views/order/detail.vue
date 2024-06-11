@@ -14,7 +14,7 @@
             orderDetail.receiverPhoneNumber
           }}</el-descriptions-item>
           <el-descriptions-item label="订单状态">{{
-            returnNameData(statusData, orderDetail.status)            
+            returnNameData(statusData, orderDetail.status)
           }}</el-descriptions-item>
           <el-descriptions-item label="失败原因">{{
             orderDetail.failureReason
@@ -44,6 +44,12 @@
         <el-descriptions title="商品信息" :column="2" border label-class-name="my-label" contentClassName="my-content">
         </el-descriptions>
         <el-table :data="goods" style="width: 100%">
+          <el-table-column label="主图" align="center" prop="mainImage">
+            <template slot-scope="scope">
+              <el-image style="width: 50px; height: 50px" :src="scope.row.mainImage" :preview-src-list="[scope.row.mainImage]">
+              </el-image>
+            </template>
+          </el-table-column>
           <el-table-column label="商品id" align="center" prop="goodsId" />
           <el-table-column label="商品名称" align="center" prop="goodsName" />
           <el-table-column label="商品编码" align="center" prop="goodsCode" />
