@@ -817,3 +817,8 @@ export const genderData = [
   { name: "男", value: '1' },
   { name: "女", value: '0' },
 ]
+export const statusData = [
+  { name: "订单创建", value: '0' },
+  { name: "同步供应商", value: '1' },
+  { name: "订单完结", value: '2' },
+]

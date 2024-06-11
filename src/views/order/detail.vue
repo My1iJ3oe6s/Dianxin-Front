@@ -14,7 +14,7 @@
             orderDetail.receiverPhoneNumber
           }}</el-descriptions-item>
           <el-descriptions-item label="订单状态">{{
-            orderDetail.status
+            returnNameData(statusData, orderDetail.status)            
           }}</el-descriptions-item>
           <el-descriptions-item label="失败原因">{{
             orderDetail.failureReason
@@ -62,6 +62,7 @@
 <script>
 import { getOrder } from "@/api/order/index";
 import { prodTypeData } from '@/utils/printData';
+import { statusData } from "@/utils/printData";
 import { returnName } from "@/utils/index.js";
 
 export default {
@@ -71,7 +72,8 @@ export default {
       goods: [],
       orderDetail: {},
       loading: false,
-      prodTypeData
+      prodTypeData,
+      statusData
     };
   },
   created() {

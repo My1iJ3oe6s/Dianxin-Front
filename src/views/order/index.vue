@@ -8,16 +8,18 @@
             size="small" @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="来源" prop="orderSource">
-          <el-input v-model.trim="queryParams.queryParameters.orderSource" placeholder="请输入来源" clearable size="small"
-            @keyup.enter.native="handleQuery" />
+          <el-select clearable v-model="queryParams.queryParameters.orderSource" style="width: 100%">
+            <el-option v-for="(item, index) in sourceList" :key="index" :label="item.value" :value="item.code">{{
+              item.value }}</el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="身份证号" prop="receiverIdCard">
           <el-input v-model.trim="queryParams.queryParameters.receiverIdCard" placeholder="请输入身份证号" clearable size="small"
             @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="手机号" prop="receiverPhoneNumber">
-          <el-input v-model.trim="queryParams.queryParameters.receiverPhoneNumber" placeholder="请输入手机号" clearable size="small"
-            @keyup.enter.native="handleQuery" />
+          <el-input v-model.trim="queryParams.queryParameters.receiverPhoneNumber" placeholder="请输入手机号" clearable
+            size="small" @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="创建时间">
           <el-date-picker v-model="queryParams.queryParameters.dateRange" style="width: 240px" value-format="yyyy-MM-dd"
@@ -42,9 +44,6 @@
         cell-class-name="my-cell">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="订单id" prop="orderId" width="80" />
-        <el-table-column label="电商订单号" prop="marketingOrderId" />
-        <el-table-column label="外部供应商" prop="externalSupplierName" />
-        <el-table-column label="外部供应商订单号" prop="externalSupplierOrderId" />
         <el-table-column label="姓名" prop="receiver" width="100" />
         <el-table-column label="电话" prop="receiverPhoneNumber" width="110" />
         <el-table-column label="身份证号" prop="receiverIdCard" width="180" />
@@ -57,7 +56,12 @@
           </template>
         </el-table-column>
         <el-table-column label="来源" prop="orderSource" width="100" />
-        <el-table-column label="状态" prop="status"></el-table-column>
+        <el-table-column label="状态" prop="status">
+          <template slot-scope="scope">{{ returnNameData(statusData, scope.row.status) }}</template>
+        </el-table-column>
+        <el-table-column label="电商订单号" prop="marketingOrderId" />
+        <el-table-column label="外部供应商" prop="externalSupplierName" />
+        <el-table-column label="外部供应商订单号" prop="externalSupplierOrderId" />
         <el-table-column label="订单详细状态" prop="orderStatusDetail"></el-table-column>
         <el-table-column label="办理失败原因" prop="failureReason" width="180"></el-table-column>
         <el-table-column label="创建时间" prop="createdAt">
@@ -173,6 +177,8 @@ import {
 import * as goodsApi from "@/api/goods/index";
 import AddressSelector from "@/views/components/AddressSelector/index.vue";
 import productTemplate from './order_template.xlsx'
+import { statusData } from "@/utils/printData";
+import { returnName } from "@/utils/index.js";
 
 export default {
   name: "order",
@@ -264,6 +270,8 @@ export default {
       provList: [],
       cityList: [],
       countyList: [],
+      sourceList: [],
+      statusData
     };
   },
   created() {
@@ -271,6 +279,9 @@ export default {
     this.getList();
   },
   methods: {
+    returnNameData(list, target, value, name) {
+      return returnName(list, target, value, name);
+    },
     handleCountyChange(e) {
       this.form.receiverCountyName = this.countyList.filter(v => v.id === e)?.[0]?.areaName;
       this.$forceUpdate();
@@ -302,7 +313,9 @@ export default {
       getAreaList(1).then((res) => {
         this.provList = res
       })
-      getSource()
+      getSource().then((res) => {
+        this.sourceList = res.data;
+      })
     },
     handleAddressChange(data) {
       this.form.provinceName = data[0];
