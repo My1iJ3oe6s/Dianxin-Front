@@ -36,16 +36,6 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="外部供应商ID" prop="supplierId">
-                            <el-input v-model="form.supplierId" placeholder="请输入外部供应商ID" :readonly="true"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="外部供应商编码" prop="supplierCode">
-                            <el-input v-model="form.supplierCode" placeholder="请输入外部供应商编码" :readonly="true"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
                         <el-form-item label="外部供应商商品ID" prop="externalProductId">
                             <el-input v-model="form.externalProductId" placeholder="请输入外部供应商商品ID"
                                 :readonly="isReadonly"></el-input>
@@ -63,14 +53,14 @@
                                 :readonly="isReadonly"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <!-- <el-col :span="12">
                         <el-form-item label="身份证是否校验" prop="checkIdentity">
                             <el-radio-group v-model="form.checkIdentity">
                                 <el-radio v-for="dict in isChangePhoneData" :key="dict.value" :label="dict.value">{{
                                     dict.name }}</el-radio>
                             </el-radio-group>
                         </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :span="12">
                         <el-form-item label="是否选号" prop="isNumbered">
                             <el-radio-group v-model="form.isNumbered">
@@ -79,14 +69,14 @@
                             </el-radio-group>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12" v-if="form.isNumbered == 1">
+                    <!-- <el-col :span="12" v-if="form.isNumbered == 1">
                         <el-form-item label="号池" prop="poolName">
                             <el-select v-model="form.poolName" placeholder="请选择" clearable>
                                 <el-option v-for="dict in poolList" :key="dict.poolName" :label="dict.poolName"
                                     :value="dict.poolName" />
                             </el-select>
                         </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :span="12">
                         <el-form-item label="状态" prop="productionStatus">
                             <el-radio-group v-model="form.productionStatus">
@@ -101,6 +91,18 @@
                                 :readonly="isReadonly"></el-input>
                         </el-form-item>
                     </el-col>
+                    <div style="position:absolute;z-index: -99">
+                        <el-col :span="12">
+                            <el-form-item label="外部供应商ID" prop="supplierId">
+                                <el-input v-model="form.supplierId" placeholder="请输入外部供应商ID" :readonly="true"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="外部供应商编码" prop="supplierCode">
+                                <el-input v-model="form.supplierCode" placeholder="请输入外部供应商编码" :readonly="true"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </div>
                 </el-row>
             </el-card>
             <el-card class="form_buttons_bottom">

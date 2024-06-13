@@ -37,18 +37,17 @@
                 <el-table-column label="生产类型" align="center" prop="productionType">
                     <template slot-scope="scope">{{ returnNameData(productType, scope.row.productionType) }}</template>
                 </el-table-column>
+                <el-table-column label="电商商品编码" align="center" prop="marketingOrderCode" />
                 <el-table-column label="描述" align="center" prop="description" />
-                <el-table-column label="身份证验证" align="center" prop="checkIdentity">
+                <!-- <el-table-column label="身份证验证" align="center" prop="checkIdentity">
                     <template slot-scope="scope">{{ returnNameData(dictData, scope.row.checkIdentity) }}</template>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column label="操作" align="center" class-name="small-padding" fixed="right">
                     <template slot-scope="scope">
                         <el-button size="mini" type="text" @click="handleCheck(scope.row, 1)">详情</el-button>
                         <el-button size="mini" type="text" @click="handleCheck(scope.row, 0)">修改</el-button>
                         <el-button size="mini" type="text" @click="handleProduct(scope.row)">产品配置</el-button>
-                        <el-button size="mini" type="text"
-                            v-clipboard:copy="'http://60.204.215.154/mobile/index.html?id=' + scope.row.goodsId"
-                            v-clipboard:success="clipboardSuccess">推广</el-button>
+                        <el-button size="mini" type="text" @click="handleLink(scope.row)">下单链接</el-button>
                         <el-button size="mini" type="text" @click="handleBanner(scope.row)">生成海报</el-button>
                         <el-popconfirm title="确定删除？" @confirm="handleDelect(scope.row)">
                             <el-button size="mini" type="text" slot="reference">删除</el-button>
@@ -92,6 +91,16 @@
                 </div>
             </div>
             <div class="tips">右键保存图片推广</div>
+        </el-dialog>
+        <el-dialog title="下单链接" :visible.sync="open2" width="500" append-to-body v-if="open2">
+            <div>默认生成的链接</div>
+            <div class="bg_box">
+                <div>下单链接地址：http://60.204.215.154/mobile/index.html?id= {{ row.goodsId }}</div>
+                <el-button type="primary" v-clipboard:copy="'http://60.204.215.154/mobile/index.html?id=' + row.goodsId"
+                    v-clipboard:success="clipboardSuccess">复制链接</el-button>
+                <el-button type="primary" @click="openLink(row)">打开链接</el-button>
+                <div ref="qrcode1" class="qrcode1" id="qrcodeBox1"></div>
+            </div>
         </el-dialog>
     </div>
 </template>
@@ -151,7 +160,9 @@ export default {
                 mainImage: ''
             },
             open1: false,
+            open2: false,
             qrcode: null,
+            qrcode1: null,
             imageUrl: null,
             base64Image: ''
 
@@ -185,6 +196,21 @@ export default {
                 message: '地址复制成功!请浏览器打开',
                 type: 'success'
             });
+        },
+        /** 下单链接 */
+        handleLink(row) {
+            this.row = row;
+            this.open2 = true;
+            this.$nextTick(() => {
+                new QRCode(this.$refs.qrcode1, {
+                    width: 120,
+                    height: 120,
+                    text: 'http://60.204.215.154/mobile/index.html?id=' + row.goodsId,
+                })
+            })
+        },
+        openLink(row){
+            window.open('http://60.204.215.154/mobile/index.html?id=' + row.goodsId)
         },
         /**生成海报 */
         handleBanner(row) {
@@ -325,6 +351,22 @@ export default {
 .mainImage1 {
     width: 100%;
     height: 80px;
+}
+
+.bg_box {
+    background-color: #ededed;
+    padding: 20px;
+    margin-top: 10px;
+    text-align: center;
+
+    button {
+        margin-top: 20px;
+    }
+
+    .qrcode1 {
+        width: 120px;
+        margin: 20px auto;
+    }
 }
 </style>
   

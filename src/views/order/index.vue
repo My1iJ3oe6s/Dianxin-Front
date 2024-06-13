@@ -25,6 +25,10 @@
           <el-date-picker v-model="queryParams.queryParameters.dateRange" style="width: 240px" value-format="yyyy-MM-dd"
             type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
         </el-form-item>
+        <el-form-item label="预选手机号" prop="preBookingNumber ">
+          <el-input v-model.trim="queryParams.queryParameters.preBookingNumber " placeholder="请输入手机号" clearable
+            size="small" @keyup.enter.native="handleQuery" />
+        </el-form-item>
         <el-form-item class="flex_one tr">
           <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
           <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -45,7 +49,7 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="订单id" prop="orderId" width="80" />
         <el-table-column label="姓名" prop="receiver" width="100" />
-        <el-table-column label="电话" prop="receiverPhoneNumber" width="110" />
+        <el-table-column label="预选手机号" prop="preBookingNumber" width="110" />
         <el-table-column label="身份证号" prop="receiverIdCard" width="180" />
         <el-table-column label="收件信息" prop="receiver" width="300">
           <template v-slot="scope">

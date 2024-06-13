@@ -46,14 +46,14 @@
                             </el-select>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <!-- <el-col :span="12">
                         <el-form-item label="是否身份证验证" prop="checkIdentity">
                             <el-radio-group v-model="form.checkIdentity">
                                 <el-radio v-for="dict in dictData" :key="dict.value" :label="dict.value">{{
                                     dict.name }}</el-radio>
                             </el-radio-group>
                         </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :span="12">
                         <el-form-item label="是否选号" prop="numberingSettings">
                             <el-select clearable v-model="form.numberingSettings" style="width: 100%">
@@ -63,14 +63,19 @@
                             </el-select>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12" v-if="form.numberingSettings == 2 || form.numberingSettings == 3">
+                    <el-col :span="12">
+                        <el-form-item label="电商商品编码" prop="marketingOrderCode">
+                            <el-input v-model="form.marketingOrderCode" placeholder="请输入电商商品编码"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <!-- <el-col :span="12" v-if="form.numberingSettings == 2 || form.numberingSettings == 3">
                         <el-form-item label="号池" prop="poolName">
                             <el-select v-model="form.poolName" placeholder="请选择" clearable style="width: 100%">
                                 <el-option v-for="dict in poolList" :key="dict.poolName" :label="dict.poolName"
                                     :value="dict.poolName" />
                             </el-select>
                         </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :span="24">
                         <el-form-item label="备注" prop="description">
                             <el-input type="textarea" v-model="form.description" placeholder="请输入备注"

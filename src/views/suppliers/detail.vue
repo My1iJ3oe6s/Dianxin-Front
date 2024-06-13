@@ -36,6 +36,22 @@
                             <el-input v-model="form.address" placeholder="请输入地址"></el-input>
                         </el-form-item>
                     </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="文档" prop="docUrl">
+                            <!-- <el-upload ref="upload" :limit="1" :headers="upload.headers"
+                            :action="upload.url + '?updateSupport=' + upload.updateSupport" :disabled="upload.isUploading"
+                            :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :auto-upload="false"
+                            drag>
+                            <i class="el-icon-upload"></i>
+                            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                        </el-upload> -->
+                            <el-upload ref="upload" :action="upload.url + '?updateSupport=' + upload.updateSupport"
+                                :limit="1" :file-list="form.docUrlData" v-model="form.docUrl"
+                                :on-success="handleFileSuccess">
+                                <el-button size="small" type="primary">点击上传</el-button>
+                            </el-upload>
+                        </el-form-item>
+                    </el-col>
                 </el-row>
             </el-card>
             <el-card class="form_buttons_bottom">
@@ -51,6 +67,7 @@
 <script>
 import { getInfo, add, edit, getSuppliersList } from "@/api/suppliers/index";
 import { prodTypeData } from '@/utils/printData';
+import { getToken } from "@/utils/auth";
 
 export default {
     name: "SuppliersDetail",
@@ -66,18 +83,39 @@ export default {
                 supplierCode: [{ required: true, message: "外部供应商编码必填", trigger: "blur" }],
             },
             isEdit: false,
+            upload: {
+                // 是否显示弹出层（用户导入）
+                open: false,
+                // 弹出层标题（用户导入）
+                title: "",
+                // 是否禁用上传
+                isUploading: false,
+                // 是否更新已经存在的用户数据
+                updateSupport: 0,
+                // 设置上传的请求头部
+                headers: { Authorization: "Bearer " + getToken() },
+                // 上传的地址
+                url: process.env.VUE_APP_BASE_API + "file/upload",
+            },
         };
     },
     created() {
         const { id, target } = this.$route.query;
         this.isReadonly = target == 1 ? true : false;
-        this.form = {};
+        this.form = {
+            docUrlData: []
+        };
         if (id) {
             this.isEdit = true;
             this.queryDetail(id)
         }
     },
     methods: {
+        handleFileSuccess(res) {
+            const { url, name } = res.data;
+            this.form.docUrlData = [{ name: name, url: url }];
+            this.form.docUrl = url;
+        },
         cancel() {
             this.$router.back();
         },

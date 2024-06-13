@@ -33,6 +33,13 @@
                 <el-table-column label="联系电话" align="center" prop="phone" />
                 <el-table-column label="邮箱" align="center" prop="email" />
                 <el-table-column label="地址" align="center" prop="address" />
+                <el-table-column label="文档" align="center" prop="docUrl">
+                    <template slot-scope="scope">
+                        <el-link type="primary" @click="() =>{
+                            scope.row.docUrl && window.open(scope.row.docUrl)
+                        }">下载</el-link>
+                    </template>
+                </el-table-column>
                 <el-table-column label="开通时间" align="center" prop="activationTime" />
                 <el-table-column label="操作" align="center" class-name="small-padding">
                     <template slot-scope="scope">
