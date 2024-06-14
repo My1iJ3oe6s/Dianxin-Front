@@ -821,4 +821,5 @@ export const statusData = [
   { name: "订单创建", value: '0' },
   { name: "同步供应商", value: '1' },
   { name: "订单完结", value: '2' },
+  { name: "下单失败", value: '3' },
 ]

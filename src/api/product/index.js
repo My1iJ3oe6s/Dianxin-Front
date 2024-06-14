@@ -56,3 +56,9 @@ export function cancelBind(data) {
     data: data
   })
 }
+export function getConfigField(supplierCode){
+  return request({
+    url: `/selfProduct/getConfigField/${supplierCode}`,
+    method: 'get',
+  })
+}

@@ -26,7 +26,7 @@
             type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
         </el-form-item>
         <el-form-item label="预选手机号" prop="preBookingNumber ">
-          <el-input v-model.trim="queryParams.queryParameters.preBookingNumber " placeholder="请输入手机号" clearable
+          <el-input v-model.trim="queryParams.queryParameters.preBookingNumber" placeholder="请输入手机号" clearable
             size="small" @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item class="flex_one tr">
@@ -77,6 +77,7 @@
           <template slot-scope="scope">
             <el-button size="mini" type="text" @click="goDetail(scope.row)">详情</el-button>
             <el-button size="mini" type="text" @click="edit(scope.row)">修改</el-button>
+            <el-button size="mini" type="text" @click="changeGoods(scope.row)">更新商品</el-button>
             <!-- <el-popconfirm title="确定撤销吗？" @confirm="handleRevoke(scope.row)"
               v-if="scope.row.orderStatus === 40706 || scope.row.orderStatus === 40707 || scope.row.orderStatus === 40708 || scope.row.orderStatus === 20100">
               <el-button slot="reference" size="mini" type="text">撤销</el-button>
@@ -163,6 +164,18 @@
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 更新商品 -->
+    <el-dialog title="更新商品" :visible.sync="open1" width="400px" append-to-body>
+      <el-select clearable v-model="form.goodsId" style="width: 100%" multiple>
+        <el-option v-for="(item, index) of goodsList" :key="index" :label="item.goodsName" :value="item.goodsId">{{
+          item.goodsName }}</el-option>
+      </el-select>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm1">确 定</el-button>
+        <el-button @click="open1 = false">取 消</el-button>
+      </div>
+    </el-dialog>
+
 
   </div>
 </template>
@@ -209,10 +222,9 @@ export default {
       orderList: [],
       // 弹出层标题
       title: "",
-      title: "",
       // 是否显示弹出层
       open: false,
-      open: false,
+      open1: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -283,6 +295,11 @@ export default {
     this.getList();
   },
   methods: {
+    // 更新商品
+    changeGoods(row) {
+      this.form = row;
+      this.open1 = true;
+    },
     returnNameData(list, target, value, name) {
       return returnName(list, target, value, name);
     },
@@ -484,12 +501,20 @@ export default {
     handleWatch() {
       this.$modal.msgError("无操作权限");
     },
+    submitForm1(){
+      this.handleAddOrder();
+    },
     /** 提交按钮 */
     submitForm() {
       console.log(this.$refs.addressSelector)
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          if (Array.isArray(this.form.goodsId)) {
+          this.handleAddOrder();
+        }
+      });
+    },
+    handleAddOrder() {
+      if (Array.isArray(this.form.goodsId)) {
             this.form.goods = this.goodsList.filter((v) => this.form.goodsId.includes(v.goodsId))
           }
           addOrder(this.form).then((response) => {
@@ -497,8 +522,6 @@ export default {
             this.open = false;
             this.getList();
           });
-        }
-      });
     },
     /** 导出按钮操作 */
     handleExport() {

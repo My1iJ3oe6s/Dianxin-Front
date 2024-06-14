@@ -1,6 +1,6 @@
 <template>
     <div class="order_detail_wrapper">
-        <el-form label-width="200px" :model="form" ref="form" :rules="rules">
+        <el-form label-width="120px" :model="form" ref="form" :rules="rules">
             <el-card style="margin: 20px 20px; font-size: 14px; min-height: calc(100vh - 200px);">
                 <div slot="header">
                     <span>基本信息</span>
@@ -37,14 +37,15 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="24">
+                        <el-form-item label="公共配置" prop="devConfig">
+                            <el-input class="multi-line-placeholder" type="textarea" v-model="form.devConfig" placeholder="请输入公共配置"></el-input>
+                        </el-form-item>
+                        <div class="example">
+                            示例：<br />key:value<br />key:value
+                        </div>
+                    </el-col>
+                    <el-col :span="24">
                         <el-form-item label="文档" prop="docUrl">
-                            <!-- <el-upload ref="upload" :limit="1" :headers="upload.headers"
-                            :action="upload.url + '?updateSupport=' + upload.updateSupport" :disabled="upload.isUploading"
-                            :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :auto-upload="false"
-                            drag>
-                            <i class="el-icon-upload"></i>
-                            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                        </el-upload> -->
                             <el-upload ref="upload" :action="upload.url + '?updateSupport=' + upload.updateSupport"
                                 :limit="1" :file-list="form.docUrlData" v-model="form.docUrl"
                                 :on-success="handleFileSuccess">
@@ -155,34 +156,34 @@ export default {
 };
 </script>
   
-<style lang="stylus">
-.add-product-wrapper
-  padding 12px
-  .content
-    margin 0 auto
-    width 75%
-    min-width 800px
-  .sku-wrapper
-    background-color #f7f8fa
-    padding 12px
-    .sku_sorts
-      .sku_sort
-        background-color white
-        margin-bottom 12px
-        .label
-          padding 8px
-        .values
-          padding 8px 0 0 8px
-          border-top 1px solid $border-color
-          display flex
-          flex-wrap wrap
-          .value
-            padding 0 32px 8px 0
-            width 200px!important
-            display flex
-            align-items center
-  .img-upload-mini .el-upload--picture-card
-    width: 48px;
-    height: 48px;
-    line-height: 57px;
+<style lang="scss">
+.multi-line-placeholder::-webkit-input-placeholder {
+  white-space: pre-wrap; /* 保留空白符和换行符 */
+  color: #ccc; /* 可以设置placeholder的文本颜色 */
+}
+
+/* 为Firefox设置样式，Firefox不支持多行placeholder */
+.multi-line-placeholder:-moz-placeholder {
+  white-space: pre-wrap; /* 保留空白符和换行符 */
+  color: #ccc;
+}
+
+.multi-line-placeholder::-moz-placeholder {
+  white-space: pre-wrap;
+  color: #ccc;
+}
+
+/* 为Internet Explorer设置样式 */
+.multi-line-placeholder:-ms-input-placeholder {
+  white-space: pre-wrap;
+  color: #ccc;
+}
+.example{
+    color: #ccc;
+    padding-left: 120px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+          
+      
 </style>

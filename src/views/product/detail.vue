@@ -35,6 +35,12 @@
                             </el-select>
                         </el-form-item>
                     </el-col>
+                    <el-col :span="12" v-for="(item, i) in configField" :key="i">
+                        <el-form-item :label="item.filedValue" :prop="item.fileCode">
+                            <el-input v-model="form[item.fileCode]" :placeholder="'请输入' + item.filedValue"
+                                :readonly="isReadonly"></el-input>
+                        </el-form-item>
+                    </el-col>
                     <el-col :span="12">
                         <el-form-item label="外部供应商商品ID" prop="externalProductId">
                             <el-input v-model="form.externalProductId" placeholder="请输入外部供应商商品ID"
@@ -116,7 +122,7 @@
 </template>
   
 <script>
-import { getInfo, add, edit, getSuppliersList } from "@/api/product/index";
+import { getInfo, add, edit, getSuppliersList, getConfigField } from "@/api/product/index";
 import { prodTypeData } from '@/utils/printData';
 import * as poolApi from "@/api/numberPool/index";
 
@@ -147,7 +153,8 @@ export default {
             isReadonly: false,
             isEdit: false,
             suppliersList: [],
-            poolList: []
+            poolList: [],
+            configField: []
         };
     },
     created() {
@@ -182,7 +189,8 @@ export default {
                 res.data.isNumbered = res.data.isNumbered?.toString() || null;
                 res.data.productionStatus = res.data.productionStatus?.toString() || null;
                 res.data.productionType = res.data.productionType ? res.data.productionType * 1 : null;
-                this.form = res.data
+                this.getConfigFieldData(res.data.supplierCode);
+                this.form = res.data;
                 this.loading = false;
             });
         },
@@ -190,6 +198,15 @@ export default {
             const target = this.suppliersList.filter(v => v.supplierName == e)?.[0];
             this.form.supplierId = target?.supplierId;
             this.form.supplierCode = target?.supplierCode;
+            this.getConfigFieldData(target?.supplierCode);
+        },
+        getConfigFieldData(supplierCode){
+            if(!supplierCode)return;
+            // 获取其他展示项
+            getConfigField(supplierCode).then(res => {
+                const { data } = res;
+                this.configField = data
+            })
         },
         submitForm() {
             this.loading = true;
