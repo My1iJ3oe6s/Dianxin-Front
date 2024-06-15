@@ -192,7 +192,7 @@ export default {
                 res.data.productionType = res.data.productionType ? res.data.productionType * 1 : null;
                 this.getConfigFieldData(res.data.supplierCode);
                 if(!res.data.configParam){
-                    rea.data.configParam = {}
+                    res.data.configParam = {}
                 }
                 this.form = res.data;
                 this.loading = false;
