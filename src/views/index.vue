@@ -1,6 +1,9 @@
 <template>
-  <div class="dashboard-editor-container">
-    <img :src="welComeImg" />
+  <div>
+    <el-image
+      style="width: 100%;height: calc(100vh - 84px);margin-bottom: -48px;"
+      :src="welComeImg"
+      :fit="cover"></el-image>
   </div>
 </template>
 
