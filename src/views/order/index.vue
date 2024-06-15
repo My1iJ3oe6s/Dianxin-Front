@@ -73,7 +73,7 @@
             <span>{{ parseTime(scope.row.createdAt) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" class-name="small-padding fixed-width" fixed="right">
+        <el-table-column label="操作" class-name="small-padding fixed-width" fixed="right" width="140">
           <template slot-scope="scope">
             <el-button size="mini" type="text" @click="goDetail(scope.row)">详情</el-button>
             <el-button size="mini" type="text" @click="edit(scope.row)">修改</el-button>
