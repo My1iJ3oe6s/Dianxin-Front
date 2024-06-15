@@ -99,6 +99,9 @@
                     <el-col :span="6">
                         <el-input v-model="form.minAge" placeholder="最小年龄" />
                     </el-col>
+                    <el-col :span="2" style="text-align: center;">
+                    ——
+                    </el-col>
                     <el-col :span="6">
                         <el-input v-model="form.maxAge" placeholder="最大年龄" />
                     </el-col>
@@ -203,8 +206,6 @@ export default {
             this.loading = true;
             this.$refs["form"].validate((valid, a) => {
                 if (valid) {
-                    this.form.detailImages = this.form.detailImages && JSON.stringify(this.form.detailImages)
-                    console.log(this.form)
                     if (this.form.goodsId) {
                         edit(this.form).then((response) => {
                             this.loading = false;
