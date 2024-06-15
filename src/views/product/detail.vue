@@ -36,8 +36,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12" v-for="(item, i) in configField" :key="i">
-                        <el-form-item :label="item.filedValue" :prop="item.fileCode">
-                            <el-input v-model="form[item.fileCode]" :placeholder="'请输入' + item.filedValue"
+                        <el-form-item :label="item.filedValue" :prop="item.filedCode">
+                            <el-input v-model="form.configParam[item.filedCode]" :placeholder="'请输入' + item.filedValue"
                                 :readonly="isReadonly"></el-input>
                         </el-form-item>
                     </el-col>
@@ -135,7 +135,8 @@ export default {
             form: {
                 productionStatus: '1',
                 isNumbered: '0',
-                checkIdentity: '0'
+                checkIdentity: '0',
+                configParam:{}
             },
             rules: {
                 productName: [{ required: true, message: "产品名称必填", trigger: "blur" }],
@@ -190,6 +191,9 @@ export default {
                 res.data.productionStatus = res.data.productionStatus?.toString() || null;
                 res.data.productionType = res.data.productionType ? res.data.productionType * 1 : null;
                 this.getConfigFieldData(res.data.supplierCode);
+                if(!res.data.configParam){
+                    rea.data.configParam = {}
+                }
                 this.form = res.data;
                 this.loading = false;
             });
@@ -211,6 +215,7 @@ export default {
         submitForm() {
             this.loading = true;
             this.$refs["form"].validate((valid, a) => {
+                console.log(this.form)
                 if (valid) {
                     if (this.form.productId) {
                         edit(this.form).then((response) => {
