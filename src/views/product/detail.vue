@@ -41,7 +41,7 @@
                                 :readonly="isReadonly"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <!-- <el-col :span="12">
                         <el-form-item label="外部供应商商品ID" prop="externalProductId">
                             <el-input v-model="form.externalProductId" placeholder="请输入外部供应商商品ID"
                                 :readonly="isReadonly"></el-input>
@@ -58,7 +58,7 @@
                             <el-input v-model="form.externalProductCode" placeholder="请输入外部供应商商品编码"
                                 :readonly="isReadonly"></el-input>
                         </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <!-- <el-col :span="12">
                         <el-form-item label="身份证是否校验" prop="checkIdentity">
                             <el-radio-group v-model="form.checkIdentity">
