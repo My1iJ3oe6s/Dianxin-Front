@@ -5,8 +5,8 @@
                 size="medium" class="ry_form">
                 <el-form-item label="号池" prop="poolName">
                     <el-select v-model="queryParams.queryParameters.poolName" placeholder="请选择号池" clearable size="small">
-                        <el-option v-for="item in list" :key="item.poolName" :label="item.poolName"
-                            :value="item.poolName" />
+                        <el-option v-for="item in list" :key="item" :label="item"
+                            :value="item" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="手机号" prop="number">
@@ -88,7 +88,7 @@ export default {
             getList().then(response => {
                 this.list = response.data;
                 if(this.list.length){
-                    this.queryParams.queryParameters.poolName = this.list[0].poolName;
+                    this.queryParams.queryParameters.poolName = this.list[0];
                     this.getPhone();
                 }
             });
