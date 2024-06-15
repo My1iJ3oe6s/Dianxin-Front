@@ -90,7 +90,7 @@
     </div>
     <!-- 添加/修改对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body :close-on-click-modal="false">
-      <el-form ref="form" :model="form" :rules="rules" label-width="70px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="90px">
         <el-form-item label="商品" prop="goodsId">
           <el-select clearable v-model="form.goodsId" style="width: 100%" multiple>
             <el-option v-for="(item, index) of goodsList" :key="index" :label="item.goodsName" :value="item.goodsId">{{
@@ -105,6 +105,9 @@
         </el-form-item>
         <el-form-item label="电话" prop="receiverPhoneNumber">
           <el-input v-model="form.receiverPhoneNumber" />
+        </el-form-item>
+        <el-form-item label="预选手机号" prop="preBookingNumber">
+          <el-input v-model="form.preBookingNumber" />
         </el-form-item>
         <el-row>
           <el-col :span="8">

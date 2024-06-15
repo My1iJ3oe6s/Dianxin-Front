@@ -39,7 +39,7 @@
         <el-table-column label="是否选号" align="center" prop="isNumbered">
           <template slot-scope="scope">{{ returnNameData(isprintData, scope.row.isNumbered) }}</template>
         </el-table-column>
-        <el-table-column label="号池名称" align="center" prop="poolId" />
+        <!-- <el-table-column label="号池名称" align="center" prop="poolId" /> -->
         <el-table-column label="状态" align="center" prop="des">
           <template slot-scope="scope">
             <el-switch v-model="scope.row.productionStatus" :active-value="1" :inactive-value="0"

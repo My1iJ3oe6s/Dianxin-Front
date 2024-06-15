@@ -13,6 +13,9 @@
           <el-descriptions-item label="用户手机号">{{
             orderDetail.receiverPhoneNumber
           }}</el-descriptions-item>
+          <el-descriptions-item label="预选手机号">{{
+            orderDetail.preBookingNumber
+          }}</el-descriptions-item>
           <el-descriptions-item label="订单状态">{{
             returnNameData(statusData, orderDetail.status)
           }}</el-descriptions-item>
