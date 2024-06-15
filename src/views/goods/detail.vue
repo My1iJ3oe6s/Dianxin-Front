@@ -88,8 +88,8 @@
                 <div slot="header">
                     <span>限制条件</span>
                 </div>
-                <el-form-item label="只发货地址" prop="unsendAddress">
-                    <el-select clearable v-model="form.unsendAddress" style="width: 100%" multiple>
+                <el-form-item label="只发货地址" prop="sendAddress">
+                    <el-select clearable v-model="form.sendAddress" style="width: 100%" multiple>
                         <el-option v-for="(item, index) of provList" :key="index" :label="item.areaName" :value="item.id">{{
                             item.areaName }}</el-option>
                     </el-select>
@@ -203,8 +203,8 @@ export default {
             this.loading = true;
             this.$refs["form"].validate((valid, a) => {
                 if (valid) {
+                    this.form.detailImages = this.form.detailImages && JSON.stringify(this.form.detailImages)
                     console.log(this.form)
-                    this.form.detailImages = JSON.stringify([this.form.detailImages])
                     if (this.form.goodsId) {
                         edit(this.form).then((response) => {
                             this.loading = false;
