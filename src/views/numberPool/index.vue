@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum"
-                    :limit.sync="queryParams.pageSize" :pageSizes="[100]" @pagination="getPhone" />
+                    :limit.sync="queryParams.pageSize" :pageSizes="[50]" @pagination="getPhone" />
             </div>
             <div v-else>
                 <div class="no_data">暂无数据</div>
@@ -70,7 +70,7 @@ export default {
             form: {},
             queryParams: {
                 pageNo: 1,
-                pageSize: 10,
+                pageSize: 50,
                 queryParameters: {
                     poolName: '',
                     number:''
@@ -134,18 +134,13 @@ export default {
         text-align: center;
         border-right: 1px solid #ccc;
         border-bottom: 1px solid #ccc;
-        width: 10%;
+        width: 20%;
 
         &:nth-of-type(1),
         &:nth-of-type(2),
         &:nth-of-type(3),
         &:nth-of-type(4),
-        &:nth-of-type(5),
-        &:nth-of-type(6),
-        &:nth-of-type(7),
-        &:nth-of-type(8),
-        &:nth-of-type(9),
-        &:nth-of-type(10) {
+        &:nth-of-type(5) {
             border-top: 1px solid #ccc;
         }
     }
