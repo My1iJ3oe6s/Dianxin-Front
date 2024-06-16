@@ -34,6 +34,7 @@
                 </el-table-column>
                 <el-table-column label="商品编码" align="center" prop="goodsCode" />
                 <el-table-column label="商品名称" align="center" prop="goodsName" />
+                <el-table-column label="产品编码" align="center" prop="productCode" />
                 <el-table-column label="生产类型" align="center" prop="productionType">
                     <template slot-scope="scope">{{ returnNameData(productType, scope.row.productionType) }}</template>
                 </el-table-column>

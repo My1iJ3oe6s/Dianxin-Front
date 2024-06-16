@@ -138,9 +138,9 @@
         <el-form-item label="详细地址" prop="receiverAddress">
           <el-input v-model="form.receiverAddress" type="textarea" />
         </el-form-item>
-        <el-form-item label="来源" prop="orderSource">
+        <!-- <el-form-item label="来源" prop="orderSource">
           <el-input v-model="form.orderSource" type="textarea" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
