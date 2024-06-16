@@ -62,3 +62,9 @@ export function getConfigField(supplierCode){
     method: 'get',
   })
 }
+export function handleDelete (id) {
+  return request({
+    url: `/selfProduct/delete/${id}`,
+    method: 'get',
+  })
+}

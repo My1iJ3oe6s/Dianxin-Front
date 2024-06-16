@@ -35,9 +35,7 @@
                 <el-table-column label="地址" align="center" prop="address" />
                 <el-table-column label="文档" align="center" prop="docUrl">
                     <template slot-scope="scope">
-                        <el-link type="primary" @click="() =>{
-                            scope.row.docUrl && window.open(scope.row.docUrl)
-                        }">下载</el-link>
+                        <el-link type="primary" @click="handleDownLoad(scope.row.docUrl)">下载</el-link>
                     </template>
                 </el-table-column>
                 <el-table-column label="开通时间" align="center" prop="activationTime" />
@@ -178,6 +176,10 @@ export default {
                     this.getList();
                     this.$modal.msgSuccess("删除成功");
                 })
+        },
+        /** 下载文件 */
+        handleDownLoad(url){
+            window.open(url);
         },
         /** 修改 */
         handleCheck(row) {

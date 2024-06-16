@@ -53,6 +53,9 @@
             <el-button size="mini" type="text" @click="handleCheck(scope.row, 1)">详情</el-button>
             <el-button size="mini" type="text" @click="handleCheck(scope.row, 0)">修改</el-button>
             <el-button size="mini" type="text" @click="handleConnectGoods(scope.row)">关联商品</el-button>
+            <el-popconfirm title="确定删除？" @confirm="handleDelect(scope.row)">
+              <el-button size="mini" type="text" slot="reference">删除</el-button>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -85,7 +88,7 @@
 </template>
 
 <script>
-import { getList, add, edit, cancelBind } from "@/api/product/index";
+import { getList, add, edit, cancelBind, handleDelete } from "@/api/product/index";
 import * as goodsApi from '@/api/goods/index'
 import { returnName } from "@/utils/index.js";
 import { prodTypeData } from '@/utils/printData';
@@ -138,6 +141,13 @@ export default {
     this.getList();
   },
   methods: {
+    handleDelect(row) {
+      handleDelete(row.productId)
+        .then((res) => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+    },
     handleStatusChange(row) {
       const { productionStatus } = row;
       const text = productionStatus == '1' ? '开启' : '关闭';
@@ -176,7 +186,7 @@ export default {
     getList() {
       this.loading = true;
       const { pageNum, pageSize } = this.queryParams;
-      const pageReq = { pageNo: pageNum , pageSize: pageSize };
+      const pageReq = { pageNo: pageNum, pageSize: pageSize };
       const query = { ...this.queryParams, pageNum: undefined, pageSize: undefined, ...pageReq };
       getList(query).then(response => {
         const { records, total } = response.data
@@ -272,3 +282,12 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+.cell {
+
+  .el-button+span,
+  span+span {
+    margin-left: 10px;
+  }
+}
+</style>

@@ -123,7 +123,9 @@ export default {
         queryDetail(id) {
             this.loading = true;
             getInfo(id).then((res) => {
-                this.form = res.data
+                const { data } = res;
+                data.docUrlData = data.docUrl && [{name:data.docUrl,url:data.docUrl}]
+                this.form = data
                 this.loading = false;
             });
         },
