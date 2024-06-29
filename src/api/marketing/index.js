@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询列表
 export function getList(query) {
   return request({
-    url: '/callRecords/page',
+    url: '/marketingPlatformConfig/page',
     method: 'post',
     data: query,
   })
@@ -12,28 +12,28 @@ export function getList(query) {
 // 新增信息
 export function add(data) {
     return request({
-      url: '/callRecords/save',
+      url: '/marketingPlatformConfig/save',
       method: 'post',
       data: data
     })
   }
   export function edit(data) {
     return request({
-      url: '/callRecords/edit',
+      url: '/marketingPlatformConfig/edit',
       method: 'post',
       data: data
     })
   }
   export function handleDelete (id) {
     return request({
-      url: `/callRecords/delete/${id}`,
+      url: `/marketingPlatformConfig/delete/${id}`,
       method: 'get',
     })
   }
   
 export function getInfo(id) {
   return request({
-    url: `/callRecords/getById/${id}`,
+    url: `/marketingPlatformConfig/getById/${id}`,
     method: 'get',
   })
 }

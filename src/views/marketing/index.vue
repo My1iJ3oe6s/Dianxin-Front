@@ -1,6 +1,6 @@
 <template>
     <div class="app-container">
-        <!-- <div class="filter-container">
+        <div class="filter-container">
             <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="120px"
                 size="medium" class="ry_form">
                 <el-form-item label="ID" prop="queryParameters.callRecordId">
@@ -20,21 +20,19 @@
                     <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
                 </el-form-item>
             </el-form>
-        </div> -->
+        </div>
         <div class="table-container">
-            <!-- <el-row :gutter="10" class="mb8">
+            <el-row :gutter="10" class="mb8">
                 <el-col :span="1.5">
                     <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd">新增</el-button>
                 </el-col>
-            </el-row> -->
+            </el-row>
 
             <el-table v-loading="loading" border :data="list">
                 <!-- <el-table-column type="selection" width="55" align="center" /> -->
-                <el-table-column label="id" align="center" prop="id" />
-                <el-table-column label="名称" align="center" prop="name" />
-                <el-table-column label="创建时间" align="center" prop="createdAt" />
-                <el-table-column label="创建人" align="center" prop="createdBy" />
-                <el-table-column label="更新时间" align="center" prop="updatedAt" />
+                <el-table-column label="apikey" align="center" prop="apikey" />
+                <el-table-column label="平台" align="center" prop="platform" />
+                <el-table-column label="商店名称" align="center" prop="shopName" />
                 <!-- <el-table-column label="操作" align="center" class-name="small-padding">
                     <template slot-scope="scope">
                         <el-button size="mini" type="text" @click="handleCheck(scope.row, 0)">修改</el-button>
@@ -51,8 +49,7 @@
 </template>
   
 <script>
-import { getList, add, edit, cancelBind, handleDelete } from "@/api/call/index";
-import * as productApi from '@/api/call/index';
+import { getList, add, edit, cancelBind, handleDelete } from "@/api/marketing/index";
 import { returnName } from "@/utils/index.js";
 
 export default {
@@ -95,7 +92,7 @@ export default {
         };
     },
     activated() {
-        // this.getList();
+        this.getList();
     },
     methods: {
         handleStatusChange(row) { },
