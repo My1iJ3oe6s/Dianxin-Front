@@ -159,6 +159,22 @@ export const dynamicRoutes = [
     ]
   },
   {
+    path: '/marketing',
+    component: Layout,
+    hidden: true,
+    permissions: ['marketing:detail'],
+    noCache:true,
+    children: [
+      {
+        path: 'detail',
+        component: () => import('@/views/marketing/detail'),
+        name: 'MarketingDetail',
+        meta: { title: '营销详情' },
+        noCache:true,
+      }
+    ]
+  },
+  {
     path: '/system/user-auth',
     component: Layout,
     hidden: true,

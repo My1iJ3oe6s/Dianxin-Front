@@ -823,3 +823,10 @@ export const statusData = [
   { name: "订单完结", value: '2' },
   { name: "下单失败", value: '3' },
 ]
+export const platRange = [{
+  name: '快手',
+  value: 'KUAISHOU',
+}, {
+  name: '抖音',
+  value: 'DOUYIN',
+}]
