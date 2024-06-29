@@ -1,5 +1,6 @@
 import { login, logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getList } from '@/api/company';
 import Cookies from "js-cookie";
 
 const user = {
@@ -8,7 +9,8 @@ const user = {
     name: '',
     avatar: '',
     roles: [],
-    permissions: []
+    permissions: [],
+    companyData: {}
   },
 
   mutations: {
@@ -26,6 +28,9 @@ const user = {
     },
     SET_PERMISSIONS: (state, permissions) => {
       state.permissions = permissions
+    },
+    SET_COMPANY_LIST: (state, companyData) => {
+      state.companyData = companyData
     }
   },
 
@@ -50,16 +55,19 @@ const user = {
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        // getInfo().then(res => {
-        const avatar = require("@/assets/images/profile.jpg");
-        commit('SET_ROLES', ["admin"])
-        commit('SET_PERMISSIONS', ["*:*:*"])
-        commit('SET_NAME', "用户")
-        commit('SET_AVATAR', avatar)
-        resolve()
-        // }).catch(error => {
-        //   reject(error)
-        // })
+        getList({ pageNo: 1, pageSize: 50 }).then(res => {
+          // getInfo().then(res => {
+          commit('SET_COMPANY_LIST', res.data.records[0])
+          const avatar = require("@/assets/images/profile.jpg");
+          commit('SET_ROLES', ["admin"])
+          commit('SET_PERMISSIONS', ["*:*:*"])
+          commit('SET_NAME', "用户")
+          commit('SET_AVATAR', avatar)
+          resolve()
+          // }).catch(error => {
+          //   reject(error)
+          // })
+        })
       })
     },
 

@@ -97,6 +97,12 @@
                             item.areaName }}</el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="不发货地址" prop="unSendAddress">
+                    <el-select clearable v-model="form.unSendAddress" style="width: 100%" multiple>
+                        <el-option v-for="(item, index) of provList" :key="index" :label="item.areaName" :value="item.id">{{
+                            item.areaName }}</el-option>
+                    </el-select>
+                </el-form-item>
 
                 <el-form-item label="年龄限制（周岁）" prop="age">
                     <el-col :span="6">

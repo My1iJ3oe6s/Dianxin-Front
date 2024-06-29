@@ -1,14 +1,14 @@
 <template>
     <el-dialog title="切换公司" visible>
         <el-table :data="list" @selection-change="handleSelectionChange" ref="multipleTable">
-            <el-table-column property="productCode" width="55">
+            <el-table-column property="companyCode" width="55">
                 <template slot-scope="scope">
-                    <el-radio v-model="radio" :label="scope.row.productCode"> </el-radio>
+                    <el-radio v-model="radio" :label="scope.row.companyCode"> </el-radio>
                 </template>
             </el-table-column>
-            <el-table-column property="productId" label="id"></el-table-column>
-            <el-table-column property="productCode" label="产品编码"></el-table-column>
-            <el-table-column property="productName" label="产品名称" width="300"></el-table-column>
+            <el-table-column property="companyId" label="id"></el-table-column>
+            <el-table-column property="companyCode" label="公司编码"></el-table-column>
+            <el-table-column property="companyName" label="公司名称" width="300"></el-table-column>
             <el-table-column property="isNumbered" label="是否选号">
                 <template slot-scope="scope">
                     {{ scope.row.isNumbered == 1 ? '是' : '否' }}
@@ -50,12 +50,12 @@ export default {
         submitForm() {
             if (!this.radio) {
                 this.$message({
-                    message: '请先选择产品！',
+                    message: '请先选择公司！',
                     type: 'error'
                 });
                 return
             }
-            const value = this.list.filter(v => v.productCode == this.radio)?.[0];
+            const value = this.list.filter(v => v.companyCode == this.radio)?.[0];
             this.$emit('submit',value);
         },
         cancel() {

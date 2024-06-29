@@ -7,7 +7,7 @@
         <el-col :span="4" :xs="24">
           <!-- 超管切换公司 -->
           <div class="head-container" v-if="userInfo.userId == 1">
-            <div class="company">xxx公司 <i class="el-icon-d-arrow-right" /></div>
+            <div class="company" @click="modalOpen = true">{{companyData.companyName}} <i class="el-icon-d-arrow-right" /></div>
           </div>
           <div class="head-container">
             <el-input v-model="deptName" placeholder="请输入部门名称" clearable size="small" prefix-icon="el-icon-search"
@@ -230,20 +230,21 @@
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
-    <CompanyModal v-if="modalOpen" @cancel="modalCancel" @submit="modalSubmit"/>
+    <CompanyModal v-if="modalOpen" @cancel="modalCancel" @submit="modalSubmit" />
   </div>
 </template>
 
 <script>
-import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus, deptTreeSelect ,getUserProfile} from "@/api/system/user";
+import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus, deptTreeSelect, getUserProfile } from "@/api/system/user";
 import { getToken } from "@/utils/auth";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import CompanyModal from '../../components/Company';
+import store from "@/store";
 export default {
   name: "User",
   dicts: ['sys_normal_disable', 'sys_user_sex'],
-  components: { Treeselect ,CompanyModal },
+  components: { Treeselect, CompanyModal },
   data() {
     return {
       // 遮罩层
@@ -345,8 +346,9 @@ export default {
           }
         ]
       },
-      userInfo:{},
-      modalOpen:false,
+      userInfo: {},
+      modalOpen: false,
+      companyData: store.getters.companyData,
     };
   },
   watch: {
@@ -356,28 +358,38 @@ export default {
     }
   },
   created() {
-    this.getList();
-    this.getDeptTree();
-    this.getConfigKey("sys.user.initPassword").then(response => {
-      this.initPassword = response.msg;
-    });
-    this.getUserProfile()
+    this.getUserProfile();
   },
   methods: {
-    modalCancel(){
+    modalCancel() {
       this.modalOpen = false
     },
-    modalSubmit(){},
+    modalSubmit(data) {
+      this.$store.commit('SET_COMPANY_LIST', data);
+      this.companyData = data;
+      this.getUserProfile();
+      this.modalCancel();
+     },
     /** 获取当前登陆人信息 */
     getUserProfile() {
-      getUserProfile().then(res =>{
-        this.userInfo = res.data
+      getUserProfile().then(res => {
+        this.userInfo = res.data;
+        this.getList();
+        this.getDeptTree();
+        this.getConfigKey("sys.user.initPassword").then(response => {
+          this.initPassword = response.msg;
+        });
       })
     },
     /** 查询用户列表 */
     getList() {
       this.loading = true;
-      listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+      const param = this.userInfo.userId == 1? {
+        ...this.addDateRange(this.queryParams, this.dateRange),
+        companyId: this.companyData.companyId
+
+      } : this.addDateRange(this.queryParams, this.dateRange)
+      listUser(param).then(response => {
         this.userList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -386,7 +398,10 @@ export default {
     },
     /** 查询部门下拉树结构 */
     getDeptTree() {
-      deptTreeSelect().then(response => {
+      const data = this.userInfo.userId == 1? {
+        companyId: this.companyData.companyId
+      } : {}
+      deptTreeSelect(data).then(response => {
         this.deptOptions = response.data;
       });
     },
@@ -582,7 +597,7 @@ export default {
 };
 </script>
 <style>
-.company{
+.company {
   margin-bottom: 24px;
   cursor: pointer;
 }

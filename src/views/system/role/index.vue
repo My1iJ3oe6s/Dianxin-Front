@@ -45,7 +45,7 @@
                     <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
                         v-hasPermi="['system:role:export']">导出</el-button>
                 </el-col>
-                <div class="company" v-if="userInfo.userId == 1" @click="changeCompany">xxxx <i
+                <div class="company" v-if="userInfo.userId == 1" @click="changeCompany">{{ companyData.companyName }} <i
                         class="el-icon-d-arrow-right" /></div>
                 <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
             </el-row>
@@ -173,6 +173,7 @@ import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleS
 import { treeselect as menuTreeselect, roleMenuTreeselect } from "@/api/system/menu";
 import CompanyModal from '../../components/Company';
 import { getUserProfile } from "@/api/system/user";
+import store from "@/store";
 
 export default {
     name: "Role",
@@ -261,17 +262,18 @@ export default {
             },
             modalOpen: false,
             userInfo: {},
+            companyData: store.getters.companyData,
         };
     },
     created() {
-        this.getList();
         this.getUserProfile();
     },
     methods: {
         /** 获取当前登陆人信息 */
         getUserProfile() {
             getUserProfile().then(res => {
-                this.userInfo = res.data
+                this.userInfo = res.data;
+                this.getList();
             })
         },
         changeCompany() {
@@ -280,11 +282,20 @@ export default {
         modalCancel() {
             this.modalOpen = false;
         },
-        modalSubmit() { },
+        modalSubmit(data) {
+            this.$store.commit('SET_COMPANY_LIST', data);
+            this.companyData = data;
+            this.getUserProfile();
+            this.modalCancel();
+        },
         /** 查询角色列表 */
         getList() {
             this.loading = true;
-            listRole(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+            const data = this.userInfo.userId == 1?{
+                ...this.addDateRange(this.queryParams, this.dateRange),
+                companyId: this.companyData.companyId,
+            }:this.addDateRange(this.queryParams, this.dateRange)
+            listRole(data).then(response => {
                 this.roleList = response.rows;
                 this.total = response.total;
                 this.loading = false;

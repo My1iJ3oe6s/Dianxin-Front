@@ -27,7 +27,7 @@
         <el-col :span="1.5">
           <el-button type="info" plain icon="el-icon-sort" size="mini" @click="toggleExpandAll">展开/折叠</el-button>
         </el-col>
-        <div v-if="userInfo.userId == 1" class="company" @click="changeCompany">xxxx <i class="el-icon-d-arrow-right" />
+        <div v-if="userInfo.userId == 1" class="company" @click="changeCompany">{{companyData.companyName}} <i class="el-icon-d-arrow-right" />
         </div>
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
@@ -124,6 +124,7 @@ import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import CompanyModal from '../../components/Company';
 import { getUserProfile } from "@/api/system/user";
+import store from "@/store";
 
 export default {
   name: "Dept",
@@ -182,17 +183,18 @@ export default {
       },
       modalOpen: false,
       userInfo: {},
+      companyData: store.getters.companyData,
     };
   },
   created() {
-    this.getList();
     this.getUserProfile();
   },
   methods: {
     /** 获取当前登陆人信息 */
     getUserProfile() {
       getUserProfile().then(res => {
-        this.userInfo = res.data
+        this.userInfo = res.data;
+        this.getList();
       })
     },
     changeCompany() {
@@ -201,11 +203,21 @@ export default {
     modalCancel() {
       this.modalOpen = false;
     },
-    modalSubmit() { },
+    modalSubmit(data) {
+      this.$store.commit('SET_COMPANY_LIST', data);
+      this.companyData = data;
+      this.getUserProfile();
+      this.modalCancel();
+    },
     /** 查询部门列表 */
     getList() {
       this.loading = true;
-      listDept(this.queryParams).then(response => {
+      const param = this.userInfo.userId == 1? {
+        ...this.queryParams,
+        companyId: this.companyData.companyId
+
+      } : this.queryParams
+      listDept(param).then(response => {
         this.deptList = this.handleTree(response.data, "deptId");
         this.loading = false;
       });

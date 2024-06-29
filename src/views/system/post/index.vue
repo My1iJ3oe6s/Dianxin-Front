@@ -39,7 +39,8 @@
           <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
             v-hasPermi="['system:post:export']">导出</el-button>
         </el-col>
-        <div v-if="userInfo.userId == 1" class="company" @click="changeCompany">xxxx <i class="el-icon-d-arrow-right" /></div>
+        <div v-if="userInfo.userId == 1" class="company" @click="changeCompany">{{ companyData.companyName }} <i
+            class="el-icon-d-arrow-right" /></div>
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
@@ -108,6 +109,7 @@
 import { listPost, getPost, delPost, addPost, updatePost } from "@/api/system/post";
 import CompanyModal from '../../components/Company';
 import { getUserProfile } from "@/api/system/user";
+import store from "@/store";
 
 export default {
   name: "Post",
@@ -157,17 +159,18 @@ export default {
       },
       modalOpen: false,
       userInfo: {},
+      companyData: store.getters.companyData,
     };
   },
   created() {
-    this.getList();
     this.getUserProfile();
   },
   methods: {
     /** 获取当前登陆人信息 */
     getUserProfile() {
       getUserProfile().then(res => {
-        this.userInfo = res.data
+        this.userInfo = res.data;
+        this.getList();
       })
     },
     changeCompany() {
@@ -176,11 +179,21 @@ export default {
     modalCancel() {
       this.modalOpen = false;
     },
-    modalSubmit() { },
+    modalSubmit(data) {
+      this.$store.commit('SET_COMPANY_LIST', data);
+      this.companyData = data;
+      this.getUserProfile();
+      this.modalCancel();
+    },
     /** 查询岗位列表 */
     getList() {
       this.loading = true;
-      listPost(this.queryParams).then(response => {
+      const param = this.userInfo.userId == 1? {
+        ...this.queryParams,
+        companyId: this.companyData.companyId
+
+      } : this.queryParams
+      listPost(param).then(response => {
         this.postList = response.rows;
         this.total = response.total;
         this.loading = false;
