@@ -27,13 +27,16 @@
                     </el-col>
                     <div v-else>
                         <el-col :span="12">
-                            <el-form-item label="产品名称" prop="productName">
-                                <el-input v-model="form.productName" placeholder="请输入产品名称"></el-input>
+                            <div class="selectTips" @click="selectChange">{{ isSelect ? '手动输入' : '手动选择' }}</div>
+                            <el-form-item label="产品编码" prop="productCode" style="width: 80%">
+                                <el-input v-model="form.productCode" placeholder="点击选择" @focus="selectProduct"
+                                    v-if="isSelect"></el-input>
+                                <el-input v-model="form.productCode" placeholder="请输入产品编码" v-else></el-input>
                             </el-form-item>
                         </el-col>
                         <el-col :span="12">
-                            <el-form-item label="产品编码" prop="productCode">
-                                <el-input v-model="form.productCode" placeholder="请输入产品编码"></el-input>
+                            <el-form-item label="产品名称" prop="productName">
+                                <el-input v-model="form.productName" placeholder="请输入产品名称" :readonly="isSelect"></el-input>
                             </el-form-item>
                         </el-col>
                     </div>
@@ -100,7 +103,7 @@
                         <el-input v-model="form.minAge" placeholder="最小年龄" />
                     </el-col>
                     <el-col :span="2" style="text-align: center;">
-                    ——
+                        ——
                     </el-col>
                     <el-col :span="6">
                         <el-input v-model="form.maxAge" placeholder="最大年龄" />
@@ -127,6 +130,7 @@
             </el-card>
 
         </el-form>
+        <ProductModal v-if="modalData.open" @cancel="modalCancel" @submit="modalSubmit" />
     </div>
 </template>
   
@@ -138,9 +142,11 @@ import * as productApi from "@/api/product/index";
 import { getInfo, add, edit } from "@/api/goods/index";
 import { getAreaList } from '@/api/order/index';
 import { productType, productStatusData, dictData, numberingSettingsData } from '@/utils/printData';
+import ProductModal from './productModal.vue';
 
 export default {
     name: "GoodsDetail",
+    components: { ProductModal },
     data() {
         return {
             productType,
@@ -161,7 +167,11 @@ export default {
             isEdit: false,
             poolList: [],
             productList: [],
-            provList: []
+            provList: [],
+            isSelect: true,
+            modalData: {
+                open: false,
+            }
         };
     },
     created() {
@@ -177,6 +187,21 @@ export default {
         }
     },
     methods: {
+        selectChange(){
+            this.isSelect = !this.isSelect;
+        },
+        modalCancel() {
+            this.modalData.open = false;
+        },
+        modalSubmit(e) {
+            const { productCode, productName } = e;
+            this.form.productCode = productCode;
+            this.form.productName = productName;
+            this.modalCancel();
+        },
+        selectProduct() {
+            this.modalData.open = true;
+        },
         getPoolList() {
             productApi.getList({
                 pageNo: 1,
@@ -263,4 +288,9 @@ export default {
     width: 48px;
     height: 48px;
     line-height: 57px;
+
+.selectTips
+    float: right;
+    padding: 8px 10px;
+    color: #ff8c00;
 </style>

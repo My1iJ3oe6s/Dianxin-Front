@@ -103,6 +103,7 @@
                 <div ref="qrcode1" class="qrcode1" id="qrcodeBox1"></div>
             </div>
         </el-dialog>
+        <ProductModal v-if="modalData.open" @cancel="modalCancel" @submit="modalSubmit" />
     </div>
 </template>
   
@@ -114,9 +115,11 @@ import * as productApi from "@/api/product/index";
 import QRCode from 'qrcodejs2';
 import html2canvas from 'html2canvas';
 import BannerImg from '@/assets/banner.png';
+import ProductModal from './productModal.vue';
 
 export default {
     name: "Goods",
+    components: { ProductModal },
     data() {
         return {
             BannerImg,
@@ -165,7 +168,10 @@ export default {
             qrcode: null,
             qrcode1: null,
             imageUrl: null,
-            base64Image: ''
+            base64Image: '',
+            modalData: {
+                open: false,
+            }
 
         };
     },
@@ -174,6 +180,17 @@ export default {
         this.getList();
     },
     methods: {
+        modalCancel() {
+            this.modalData.open = false;
+        },
+        modalSubmit(e) {
+            const { productCode, productName } = e;
+            this.form.productCode = productCode;
+            // this.form.productName = productName;
+            bindProduct(this.form);
+            this.getList();
+            this.modalCancel();
+        },
         onImageLoad() {
             console.log('加载完成')
         },
@@ -190,7 +207,8 @@ export default {
                 goodsId: row.goodsId
             }
             this.title = '产品配置';
-            this.open = true;
+            // this.open = true;
+            this.modalData.open = true;
         },
         clipboardSuccess() {
             this.$message({
@@ -210,7 +228,7 @@ export default {
                 })
             })
         },
-        openLink(row){
+        openLink(row) {
             window.open('http://60.204.215.154/mobile/index.html?id=' + row.goodsId)
         },
         /**生成海报 */
