@@ -2,8 +2,13 @@
   <div class="app-container">
     <div class="table-container">
       <el-row :gutter="20">
+
         <!--部门数据-->
         <el-col :span="4" :xs="24">
+          <!-- 超管切换公司 -->
+          <div class="head-container" v-if="userInfo.userId == 1">
+            <div class="company">xxx公司 <i class="el-icon-d-arrow-right" /></div>
+          </div>
           <div class="head-container">
             <el-input v-model="deptName" placeholder="请输入部门名称" clearable size="small" prefix-icon="el-icon-search"
               style="margin-bottom: 20px" />
@@ -66,7 +71,8 @@
             <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
           </el-row>
 
-          <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="table-container">
+          <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange"
+            class="table-container">
             <el-table-column type="selection" width="50" align="center" />
             <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
             <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible"
@@ -108,8 +114,8 @@
             </el-table-column>
           </el-table>
 
-          <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
-            @pagination="getList" />
+          <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum"
+            :limit.sync="queryParams.pageSize" @pagination="getList" />
         </el-col>
       </el-row>
     </div>
@@ -165,8 +171,8 @@
           <el-col :span="12">
             <el-form-item label="状态">
               <el-radio-group v-model="form.status">
-                <el-radio v-for="dict in dict.type.sys_normal_disable" :key="dict.value"
-                  :label="dict.value">{{ dict.label }}</el-radio>
+                <el-radio v-for="dict in dict.type.sys_normal_disable" :key="dict.value" :label="dict.value">{{ dict.label
+                }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -224,19 +230,20 @@
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
+    <CompanyModal v-if="modalOpen" @cancel="modalCancel" @submit="modalSubmit"/>
   </div>
 </template>
 
 <script>
-import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus, deptTreeSelect } from "@/api/system/user";
+import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus, deptTreeSelect ,getUserProfile} from "@/api/system/user";
 import { getToken } from "@/utils/auth";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-
+import CompanyModal from '../../components/Company';
 export default {
   name: "User",
   dicts: ['sys_normal_disable', 'sys_user_sex'],
-  components: { Treeselect },
+  components: { Treeselect ,CompanyModal },
   data() {
     return {
       // 遮罩层
@@ -337,7 +344,9 @@ export default {
             trigger: "blur"
           }
         ]
-      }
+      },
+      userInfo:{},
+      modalOpen:false,
     };
   },
   watch: {
@@ -352,8 +361,19 @@ export default {
     this.getConfigKey("sys.user.initPassword").then(response => {
       this.initPassword = response.msg;
     });
+    this.getUserProfile()
   },
   methods: {
+    modalCancel(){
+      this.modalOpen = false
+    },
+    modalSubmit(){},
+    /** 获取当前登陆人信息 */
+    getUserProfile() {
+      getUserProfile().then(res =>{
+        this.userInfo = res.data
+      })
+    },
     /** 查询用户列表 */
     getList() {
       this.loading = true;
@@ -561,3 +581,9 @@ export default {
   }
 };
 </script>
+<style>
+.company{
+  margin-bottom: 24px;
+  cursor: pointer;
+}
+</style>

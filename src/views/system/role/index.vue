@@ -45,6 +45,8 @@
                     <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
                         v-hasPermi="['system:role:export']">导出</el-button>
                 </el-col>
+                <div class="company" v-if="userInfo.userId == 1" @click="changeCompany">xxxx <i
+                        class="el-icon-d-arrow-right" /></div>
                 <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
             </el-row>
             <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
@@ -162,16 +164,20 @@
                 <el-button @click="cancelDataScope">取 消</el-button>
             </div>
         </el-dialog>
+        <CompanyModal v-if="modalOpen" @cancel="modalCancel" @submit="modalSubmit" />
     </div>
 </template>
 
 <script>
 import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleStatus, deptTreeSelect } from "@/api/system/role";
 import { treeselect as menuTreeselect, roleMenuTreeselect } from "@/api/system/menu";
+import CompanyModal from '../../components/Company';
+import { getUserProfile } from "@/api/system/user";
 
 export default {
     name: "Role",
     dicts: ['sys_normal_disable'],
+    components: { CompanyModal },
     data() {
         return {
             // 遮罩层
@@ -252,13 +258,29 @@ export default {
                 roleSort: [
                     { required: true, message: "角色顺序不能为空", trigger: "blur" }
                 ]
-            }
+            },
+            modalOpen: false,
+            userInfo: {},
         };
     },
     created() {
         this.getList();
+        this.getUserProfile();
     },
     methods: {
+        /** 获取当前登陆人信息 */
+        getUserProfile() {
+            getUserProfile().then(res => {
+                this.userInfo = res.data
+            })
+        },
+        changeCompany() {
+            this.modalOpen = true;
+        },
+        modalCancel() {
+            this.modalOpen = false;
+        },
+        modalSubmit() { },
         /** 查询角色列表 */
         getList() {
             this.loading = true;
@@ -517,3 +539,11 @@ export default {
     }
 };
 </script>
+<style>
+.company {
+    float: right;
+    padding: 6px 40px;
+    cursor: pointer;
+
+}
+</style>

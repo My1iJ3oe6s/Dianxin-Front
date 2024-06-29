@@ -27,6 +27,8 @@
         <el-col :span="1.5">
           <el-button type="info" plain icon="el-icon-sort" size="mini" @click="toggleExpandAll">展开/折叠</el-button>
         </el-col>
+        <div v-if="userInfo.userId == 1" class="company" @click="changeCompany">xxxx <i class="el-icon-d-arrow-right" />
+        </div>
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
@@ -112,6 +114,7 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <CompanyModal v-if="modalOpen" @cancel="modalCancel" @submit="modalSubmit" />
   </div>
 </template>
 
@@ -119,11 +122,13 @@
 import { listDept, getDept, delDept, addDept, updateDept, listDeptExcludeChild } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import CompanyModal from '../../components/Company';
+import { getUserProfile } from "@/api/system/user";
 
 export default {
   name: "Dept",
   dicts: ['sys_normal_disable'],
-  components: { Treeselect },
+  components: { Treeselect, CompanyModal },
   data() {
     return {
       // 遮罩层
@@ -174,13 +179,29 @@ export default {
             trigger: "blur"
           }
         ]
-      }
+      },
+      modalOpen: false,
+      userInfo: {},
     };
   },
   created() {
     this.getList();
+    this.getUserProfile();
   },
   methods: {
+    /** 获取当前登陆人信息 */
+    getUserProfile() {
+      getUserProfile().then(res => {
+        this.userInfo = res.data
+      })
+    },
+    changeCompany() {
+      this.modalOpen = true;
+    },
+    modalCancel() {
+      this.modalOpen = false;
+    },
+    modalSubmit() { },
     /** 查询部门列表 */
     getList() {
       this.loading = true;
@@ -292,3 +313,11 @@ export default {
   }
 };
 </script>
+<style>
+.company {
+  float: right;
+  padding: 6px 40px;
+  cursor: pointer;
+
+}
+</style>

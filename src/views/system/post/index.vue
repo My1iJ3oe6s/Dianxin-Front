@@ -39,6 +39,7 @@
           <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
             v-hasPermi="['system:post:export']">导出</el-button>
         </el-col>
+        <div v-if="userInfo.userId == 1" class="company" @click="changeCompany">xxxx <i class="el-icon-d-arrow-right" /></div>
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
@@ -86,8 +87,8 @@
         </el-form-item>
         <el-form-item label="岗位状态" prop="status">
           <el-radio-group v-model="form.status">
-            <el-radio v-for="dict in dict.type.sys_normal_disable" :key="dict.value"
-              :label="dict.value">{{ dict.label }}</el-radio>
+            <el-radio v-for="dict in dict.type.sys_normal_disable" :key="dict.value" :label="dict.value">{{ dict.label
+            }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
@@ -99,15 +100,19 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <CompanyModal v-if="modalOpen" @cancel="modalCancel" @submit="modalSubmit" />
   </div>
 </template>
 
 <script>
 import { listPost, getPost, delPost, addPost, updatePost } from "@/api/system/post";
+import CompanyModal from '../../components/Company';
+import { getUserProfile } from "@/api/system/user";
 
 export default {
   name: "Post",
   dicts: ['sys_normal_disable'],
+  components: { CompanyModal },
   data() {
     return {
       // 遮罩层
@@ -149,13 +154,29 @@ export default {
         postSort: [
           { required: true, message: "岗位顺序不能为空", trigger: "blur" }
         ]
-      }
+      },
+      modalOpen: false,
+      userInfo: {},
     };
   },
   created() {
     this.getList();
+    this.getUserProfile();
   },
   methods: {
+    /** 获取当前登陆人信息 */
+    getUserProfile() {
+      getUserProfile().then(res => {
+        this.userInfo = res.data
+      })
+    },
+    changeCompany() {
+      this.modalOpen = true;
+    },
+    modalCancel() {
+      this.modalOpen = false;
+    },
+    modalSubmit() { },
     /** 查询岗位列表 */
     getList() {
       this.loading = true;
