@@ -29,14 +29,12 @@
                         <el-col :span="12">
                             <div class="selectTips" @click="selectChange">{{ isSelect ? '手动输入' : '手动选择' }}</div>
                             <el-form-item label="产品编码" prop="productCode" style="width: 80%">
-                                <el-input v-model="form.productCode" placeholder="点击选择" @focus="selectProduct"
-                                    v-if="isSelect"></el-input>
-                                <el-input v-model="form.productCode" placeholder="请输入产品编码" v-else></el-input>
+                                <el-input v-model="form.productCode" :placeholder="isSelect?'点击选择':'请输入产品编码'" @focus="selectProduct" @input="handleInput($event,'productCode')"></el-input>
                             </el-form-item>
                         </el-col>
                         <el-col :span="12">
                             <el-form-item label="产品名称" prop="productName">
-                                <el-input v-model="form.productName" placeholder="请输入产品名称" :readonly="isSelect"></el-input>
+                                <el-input v-model="form.productName" placeholder="请输入产品名称" :readonly="isSelect" @input="handleInput($event,'productName')"></el-input>
                             </el-form-item>
                         </el-col>
                     </div>
@@ -193,7 +191,7 @@ export default {
         }
     },
     methods: {
-        selectChange(){
+        selectChange() {
             this.isSelect = !this.isSelect;
         },
         modalCancel() {
@@ -206,7 +204,15 @@ export default {
             this.modalCancel();
         },
         selectProduct() {
-            this.modalData.open = true;
+            if (this.isSelect) {
+                this.modalData.open = true;
+            }
+        },
+        handleInput(e,name){
+            console.log(e)
+            console.log(name)
+            this.form[name] = e
+            this.$forceUpdate();
         },
         getPoolList() {
             productApi.getList({
@@ -299,4 +305,5 @@ export default {
     float: right;
     padding: 8px 10px;
     color: #ff8c00;
+    cursor pointer;
 </style>
