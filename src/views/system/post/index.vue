@@ -188,7 +188,7 @@ export default {
     /** 查询岗位列表 */
     getList() {
       this.loading = true;
-      const param = this.userInfo.userId == 1? {
+      const param = this.userInfo.userId == 1 ? {
         ...this.queryParams,
         companyId: this.companyData.companyId
 
@@ -259,6 +259,7 @@ export default {
               this.getList();
             });
           } else {
+            this.form.companyId = this.companyData.companyId
             addPost(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
@@ -287,3 +288,17 @@ export default {
   }
 };
 </script>
+<style scoped>
+.company {
+  float: right;
+  cursor: pointer;
+  background: #ff8c00;
+  text-align: center;
+  color: #fff;
+  padding: 6px 0;
+  border-radius: 4px;
+  min-width: 150px;
+  max-width: 500px;
+  margin-left: 20px;
+}
+</style>

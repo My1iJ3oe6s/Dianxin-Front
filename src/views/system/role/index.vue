@@ -291,10 +291,10 @@ export default {
         /** 查询角色列表 */
         getList() {
             this.loading = true;
-            const data = this.userInfo.userId == 1?{
+            const data = this.userInfo.userId == 1 ? {
                 ...this.addDateRange(this.queryParams, this.dateRange),
                 companyId: this.companyData.companyId,
-            }:this.addDateRange(this.queryParams, this.dateRange)
+            } : this.addDateRange(this.queryParams, this.dateRange)
             listRole(data).then(response => {
                 this.roleList = response.rows;
                 this.total = response.total;
@@ -511,6 +511,7 @@ export default {
                         });
                     } else {
                         this.form.menuIds = this.getMenuAllCheckedKeys();
+                        this.form.companyId = this.companyData.companyId
                         addRole(this.form).then(response => {
                             this.$modal.msgSuccess("新增成功");
                             this.open = false;
@@ -550,11 +551,17 @@ export default {
     }
 };
 </script>
-<style>
+<style scoped>
 .company {
     float: right;
-    padding: 6px 40px;
     cursor: pointer;
-
+    background: #ff8c00;
+    text-align: center;
+    color: #fff;
+    padding: 6px 0;
+    border-radius: 4px;
+    min-width: 150px;
+    max-width: 500px;
+    margin-left: 20px;
 }
 </style>

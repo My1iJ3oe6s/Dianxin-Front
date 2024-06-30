@@ -27,7 +27,8 @@
         <el-col :span="1.5">
           <el-button type="info" plain icon="el-icon-sort" size="mini" @click="toggleExpandAll">展开/折叠</el-button>
         </el-col>
-        <div v-if="userInfo.userId == 1" class="company" @click="changeCompany">{{companyData.companyName}} <i class="el-icon-d-arrow-right" />
+        <div v-if="userInfo.userId == 1" class="company" @click="changeCompany">{{ companyData.companyName }} <i
+            class="el-icon-d-arrow-right" />
         </div>
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
@@ -212,7 +213,7 @@ export default {
     /** 查询部门列表 */
     getList() {
       this.loading = true;
-      const param = this.userInfo.userId == 1? {
+      const param = this.userInfo.userId == 1 ? {
         ...this.queryParams,
         companyId: this.companyData.companyId
 
@@ -304,6 +305,7 @@ export default {
               this.getList();
             });
           } else {
+            this.form.companyId = this.companyData.companyId
             addDept(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
@@ -325,11 +327,17 @@ export default {
   }
 };
 </script>
-<style>
+<style scoped>
 .company {
   float: right;
-  padding: 6px 40px;
   cursor: pointer;
-
+  background: #ff8c00;
+  text-align: center;
+  color: #fff;
+  padding: 6px 0;
+  border-radius: 4px;
+  min-width: 150px;
+  max-width: 500px;
+  margin-left: 20px;
 }
 </style>

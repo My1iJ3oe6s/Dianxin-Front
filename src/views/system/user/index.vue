@@ -7,7 +7,8 @@
         <el-col :span="4" :xs="24">
           <!-- 超管切换公司 -->
           <div class="head-container" v-if="userInfo.userId == 1">
-            <div class="company" @click="modalOpen = true">{{companyData.companyName || '公司'}} <i class="el-icon-d-arrow-right" /></div>
+            <div class="company" @click="modalOpen = true">{{ companyData.companyName || '公司' }} <i
+                class="el-icon-d-arrow-right" /></div>
           </div>
           <div class="head-container">
             <el-input v-model="deptName" placeholder="请输入部门名称" clearable size="small" prefix-icon="el-icon-search"
@@ -369,7 +370,7 @@ export default {
       this.companyData = data;
       this.getUserProfile();
       this.modalCancel();
-     },
+    },
     /** 获取当前登陆人信息 */
     getUserProfile() {
       getUserProfile().then(res => {
@@ -384,7 +385,7 @@ export default {
     /** 查询用户列表 */
     getList() {
       this.loading = true;
-      const param = this.userInfo.userId == 1? {
+      const param = this.userInfo.userId == 1 ? {
         ...this.addDateRange(this.queryParams, this.dateRange),
         companyId: this.companyData.companyId
 
@@ -398,7 +399,7 @@ export default {
     },
     /** 查询部门下拉树结构 */
     getDeptTree() {
-      const data = this.userInfo.userId == 1? {
+      const data = this.userInfo.userId == 1 ? {
         companyId: this.companyData.companyId
       } : {}
       deptTreeSelect(data).then(response => {
@@ -542,6 +543,7 @@ export default {
               this.getList();
             });
           } else {
+            this.form.companyId = this.companyData.companyId
             addUser(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
@@ -596,9 +598,15 @@ export default {
   }
 };
 </script>
-<style>
+<style scoped>
 .company {
   margin-bottom: 24px;
   cursor: pointer;
+  background: #ff8c00;
+  text-align: center;
+  color: #fff;
+  padding: 6px 0;
+  border-radius: 4px;
+  width: 100%;
 }
 </style>
