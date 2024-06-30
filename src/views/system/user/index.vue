@@ -7,7 +7,7 @@
         <el-col :span="4" :xs="24">
           <!-- 超管切换公司 -->
           <div class="head-container" v-if="userInfo.userId == 1">
-            <div class="company" @click="modalOpen = true">{{companyData.companyName}} <i class="el-icon-d-arrow-right" /></div>
+            <div class="company" @click="modalOpen = true">{{companyData.companyName || '公司'}} <i class="el-icon-d-arrow-right" /></div>
           </div>
           <div class="head-container">
             <el-input v-model="deptName" placeholder="请输入部门名称" clearable size="small" prefix-icon="el-icon-search"

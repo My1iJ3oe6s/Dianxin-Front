@@ -1,9 +1,9 @@
 <template>
     <el-dialog title="切换公司" visible>
         <el-table :data="list" @selection-change="handleSelectionChange" ref="multipleTable">
-            <el-table-column property="companyCode" width="55">
+            <el-table-column property="companyId" width="55">
                 <template slot-scope="scope">
-                    <el-radio v-model="radio" :label="scope.row.companyCode"> </el-radio>
+                    <el-radio v-model="radio" :label="scope.row.companyId"> </el-radio>
                 </template>
             </el-table-column>
             <el-table-column property="companyId" label="id"></el-table-column>
@@ -55,7 +55,7 @@ export default {
                 });
                 return
             }
-            const value = this.list.filter(v => v.companyCode == this.radio)?.[0];
+            const value = this.list.filter(v => v.companyId == this.radio)?.[0];
             this.$emit('submit',value);
         },
         cancel() {
