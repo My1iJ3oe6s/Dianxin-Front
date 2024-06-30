@@ -511,7 +511,9 @@ export default {
                         });
                     } else {
                         this.form.menuIds = this.getMenuAllCheckedKeys();
-                        this.form.companyId = this.companyData.companyId
+                        if (this.userInfo.userId == 1) {
+                            this.form.companyId = this.companyData.companyId
+                        }
                         addRole(this.form).then(response => {
                             this.$modal.msgSuccess("新增成功");
                             this.open = false;
