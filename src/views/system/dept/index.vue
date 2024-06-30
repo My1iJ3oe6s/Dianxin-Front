@@ -305,7 +305,9 @@ export default {
               this.getList();
             });
           } else {
-            this.form.companyId = this.companyData.companyId
+            if (this.userInfo.userId == 1) {
+              this.form.companyId = this.companyData.companyId
+            }
             addDept(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
