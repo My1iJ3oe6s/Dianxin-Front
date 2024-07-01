@@ -27,14 +27,16 @@
                     </el-col>
                     <div v-else>
                         <el-col :span="12">
-                            <div class="selectTips" @click="selectChange">{{ isSelect ? '手动输入' : '手动选择' }}</div>
+                            <div class="selectTips" @click="selectProduct"><i class="el-icon-circle-plus-outline"></i></div>
                             <el-form-item label="产品编码" prop="productCode" style="width: 80%">
-                                <el-input v-model="form.productCode" :placeholder="isSelect?'点击选择':'请输入产品编码'" @focus="selectProduct" @input="handleInput($event,'productCode')"></el-input>
+                                <el-input v-model="form.productCode" placeholder="请输入产品编码"
+                                    @input="handleInput($event, 'productCode')"></el-input>
                             </el-form-item>
                         </el-col>
                         <el-col :span="12">
                             <el-form-item label="产品名称" prop="productName">
-                                <el-input v-model="form.productName" placeholder="请输入产品名称" :readonly="isSelect" @input="handleInput($event,'productName')"></el-input>
+                                <el-input v-model="form.productName" placeholder="请输入产品名称"
+                                    @input="handleInput($event, 'productName')"></el-input>
                             </el-form-item>
                         </el-col>
                     </div>
@@ -204,11 +206,11 @@ export default {
             this.modalCancel();
         },
         selectProduct() {
-            if (this.isSelect) {
-                this.modalData.open = true;
-            }
+            // if (this.isSelect) {
+            this.modalData.open = true;
+            // }
         },
-        handleInput(e,name){
+        handleInput(e, name) {
             console.log(e)
             console.log(name)
             this.form[name] = e
@@ -303,7 +305,8 @@ export default {
 
 .selectTips
     float: right;
-    padding: 8px 10px;
+    padding: 2px 20px;
     color: #ff8c00;
     cursor pointer;
+    font-size 28px;
 </style>
