@@ -1,7 +1,7 @@
 <template>
-    <el-dialog title="产品选择" visible>
+    <el-dialog title="产品选择" visible @close="cancel">
         <el-table :data="list" @selection-change="handleSelectionChange" ref="multipleTable">
-            <el-table-column property="productCode" width="55">
+            <el-table-column property="productCode" width="55" border>
                 <template slot-scope="scope">
                     <el-radio v-model="radio" :label="scope.row.productCode"> </el-radio>
                 </template>
