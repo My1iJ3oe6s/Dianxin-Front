@@ -26,10 +26,10 @@
                         </el-form-item>
                     </el-col>
                     <div v-else>
-                        <el-col :span="12">
+                        <el-col :span="12" style="position: relative">
                             <div class="selectTips" @click="selectProduct"><i class="el-icon-circle-plus-outline"></i></div>
-                            <el-form-item label="产品编码" prop="productCode" style="width: 80%">
-                                <el-input v-model="form.productCode" placeholder="请输入产品编码"
+                            <el-form-item label="产品编码" prop="productCode">
+                                <el-input v-model="form.productCode" class="productInput" placeholder="请输入产品编码"
                                     @input="handleInput($event, 'productCode')"></el-input>
                             </el-form-item>
                         </el-col>
@@ -302,11 +302,15 @@ export default {
     width: 48px;
     height: 48px;
     line-height: 57px;
-
+.productInput input
+    padding-right 50px;
 .selectTips
-    float: right;
+    position absolute;
+    top 2px;
+    right 4px;
     padding: 2px 20px;
     color: #ff8c00;
     cursor pointer;
     font-size 28px;
+    z-index 999;
 </style>
