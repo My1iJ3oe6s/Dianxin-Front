@@ -64,7 +64,7 @@
         <el-table-column label="状态" prop="status">
           <template slot-scope="scope">{{ returnNameData(statusData, scope.row.status) }}</template>
         </el-table-column>
-        <el-table-column label="电商订单号" prop="externalSuppliercode" />
+        <el-table-column label="电商订单号" prop="externalSupplierCode" />
         <el-table-column label="外部供应商" prop="externalSupplierName" />
         <el-table-column label="外部供应商订单号" prop="externalSupplierOrderId" />
         <el-table-column label="订单详细状态" prop="orderStatusDetail"></el-table-column>
