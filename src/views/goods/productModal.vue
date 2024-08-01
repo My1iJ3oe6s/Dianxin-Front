@@ -1,6 +1,6 @@
 <template>
-    <el-dialog title="产品选择" visible>
-        <el-table :data="list" @selection-change="handleSelectionChange" ref="multipleTable">
+    <el-dialog title="产品选择" visible @close="cancel">
+        <el-table :data="list" @selection-change="handleSelectionChange" ref="multipleTable" border>
             <el-table-column property="productCode" width="55">
                 <template slot-scope="scope">
                     <el-radio v-model="radio" :label="scope.row.productCode"> </el-radio>
@@ -15,6 +15,9 @@
                 </template>
             </el-table-column>
         </el-table>
+
+        <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNo" :limit.sync="queryParams.pageSize"
+            @pagination="getList"/>
         <div slot="footer" class="dialog-footer">
             <el-button type="primary" @click="submitForm">确 定</el-button>
             <el-button @click="cancel">取 消</el-button>
@@ -28,7 +31,12 @@ export default {
         return {
             open: true,
             list: [],
-            radio: ''
+            total: 0,
+            radio: '',
+            queryParams: {
+                pageNo: 1,
+                pageSize: 10
+            }
         }
     },
     mounted() {
@@ -36,11 +44,9 @@ export default {
     },
     methods: {
         getList() {
-            productApi.getList({
-                pageNo: 1,
-                pageSize: 50
-            }).then(response => {
-                this.list = response.data.records
+            productApi.getList(this.queryParams).then(response => {
+                this.list = response.data.records;
+                this.total = response.data.total;
             });
         },
         handleSelectionChange(val) {
@@ -56,7 +62,7 @@ export default {
                 return
             }
             const value = this.list.filter(v => v.productCode == this.radio)?.[0];
-            this.$emit('submit',value);
+            this.$emit('submit', value);
         },
         cancel() {
             this.$emit('cancel');
@@ -68,5 +74,11 @@ export default {
 <style>
 .el-radio__label {
     display: none;
+}
+
+.pagination-container {
+    position: static !important;
+    background-color: transparent;
+    height: initial;
 }
 </style>

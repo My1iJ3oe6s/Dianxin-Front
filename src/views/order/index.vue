@@ -48,23 +48,24 @@
         cell-class-name="my-cell">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="订单id" prop="orderId" width="80" />
-        <el-table-column label="姓名" prop="receiver" width="100" />
-        <el-table-column label="预选手机号" prop="preBookingNumber" width="110" />
-        <el-table-column label="身份证号" prop="receiverIdCard" width="180" />
-        <el-table-column label="收件信息" prop="receiver" width="300">
+        <el-table-column label="客户信息" prop="receiver" width="300">
           <template v-slot="scope">
-            <div>收货姓名：{{ scope.row.receiver }}</div>
+            <div>姓名：{{ scope.row.receiver }}</div>
+            <div>身份证号：{{ scope.row.receiverIdCard }}</div>
             <div>手机号：{{ scope.row.receiverPhoneNumber }}</div>
             <div>地址：{{ scope.row.receiverProvinceName }}{{ scope.row.receiverCityName }}{{ scope.row.receiverAddress }}
             </div>
           </template>
         </el-table-column>
+        <!-- <el-table-column label="姓名" prop="receiver" width="100" /> -->
+        <el-table-column label="预选手机号" prop="preBookingNumber" width="110" />
+        <!-- <el-table-column label="身份证号" prop="receiverIdCard" width="180" /> -->
         <el-table-column label="来源" prop="orderSource" width="100" />
         <el-table-column label="状态" prop="status">
           <template slot-scope="scope">{{ returnNameData(statusData, scope.row.status) }}</template>
         </el-table-column>
         <el-table-column label="电商订单号" prop="marketingOrderId" />
-        <el-table-column label="外部供应商" prop="externalSupplierName" />
+        <el-table-column label="外部供应商" prop="externalSupplierCode" />
         <el-table-column label="外部供应商订单号" prop="externalSupplierOrderId" />
         <el-table-column label="订单详细状态" prop="orderStatusDetail"></el-table-column>
         <el-table-column label="办理失败原因" prop="failureReason" width="180"></el-table-column>
