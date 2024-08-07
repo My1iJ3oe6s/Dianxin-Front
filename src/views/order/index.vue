@@ -235,7 +235,7 @@ export default {
         pageSize: 10,
         queryParameters: {
           externalOrderNo: '',
-          orderSource: 'NEI_BU',
+          orderSource: '',
           receiverIdCard: '',
           receiverPhoneNumber: '',
           dateRange: []

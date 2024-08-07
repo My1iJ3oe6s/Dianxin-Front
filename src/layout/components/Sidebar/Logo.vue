@@ -40,7 +40,7 @@ export default {
   },
   data() {
     return {
-      title: '号卡分销系统',
+      title: '乐易通通信管理平台',
       logo: logoImg
     }
   }
