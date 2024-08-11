@@ -96,8 +96,8 @@
         <el-dialog title="下单链接" :visible.sync="open2" width="500" append-to-body v-if="open2">
             <div>默认生成的链接</div>
             <div class="bg_box">
-                <div>下单链接地址：http://60.204.215.154/mobile/index.html?id= {{ row.goodsId }}</div>
-                <el-button type="primary" v-clipboard:copy="'http://60.204.215.154/mobile/index.html?id=' + row.goodsId"
+                <div>下单链接地址：http://47.120.2.185/mobile/index.html?id= {{ row.goodsId }}</div>
+                <el-button type="primary" v-clipboard:copy="'http://47.120.2.185/mobile/index.html?id=' + row.goodsId"
                     v-clipboard:success="clipboardSuccess">复制链接</el-button>
                 <el-button type="primary" @click="openLink(row)">打开链接</el-button>
                 <div ref="qrcode1" class="qrcode1" id="qrcodeBox1"></div>
@@ -106,7 +106,7 @@
         <ProductModal v-if="modalData.open" @cancel="modalCancel" @submit="modalSubmit" />
     </div>
 </template>
-  
+
 <script>
 import { getList, add, edit, handleDelete, bindProduct } from "@/api/goods/index";
 import { returnName } from "@/utils/index.js";
@@ -224,12 +224,12 @@ export default {
                 new QRCode(this.$refs.qrcode1, {
                     width: 120,
                     height: 120,
-                    text: 'http://60.204.215.154/mobile/index.html?id=' + row.goodsId,
+                    text: 'http://47.120.2.185/mobile/index.html?id=' + row.goodsId,
                 })
             })
         },
         openLink(row) {
-            window.open('http://60.204.215.154/mobile/index.html?id=' + row.goodsId)
+            window.open('http://47.120.2.185/mobile/index.html?id=' + row.goodsId)
         },
         /**生成海报 */
         handleBanner(row) {
@@ -240,7 +240,7 @@ export default {
                 new QRCode(this.$refs.qrcode, {
                     width: 120,
                     height: 120,
-                    text: 'http://60.204.215.154/mobile/index.html?id=' + row.goodsId,
+                    text: 'http://47.120.2.185/mobile/index.html?id=' + row.goodsId,
                 })
                 this.$nextTick(() => {
                     const element = document.getElementById('banner'); // 需要生成图片的DOM元素的ID
@@ -388,4 +388,3 @@ export default {
     }
 }
 </style>
-  

@@ -818,10 +818,18 @@ export const genderData = [
   { name: "女", value: '0' },
 ]
 export const statusData = [
-  { name: "订单创建", value: '0' },
-  { name: "同步供应商", value: '1' },
-  { name: "订单完结", value: '2' },
-  { name: "下单失败", value: '3' },
+  { name: "新建订单", value: '0' },
+  { name: "已同步", value: '1' },
+  { name: "已下单", value: '2' },
+  { name: "待发货", value: '3' },
+  { name: "已发货", value: '4' },
+  { name: "已签收", value: '5' },
+  { name: "订单售后完成", value: '6' },
+  { name: "订单已完成", value: '7' },
+  { name: "同步失败", value: '8' },
+  { name: "下单失败", value: '9' },
+  { name: "订单取消", value: '10' },
+  { name: "订单取消失败", value: '11' },
 ]
 export const platRange = [{
   name: '快手',
@@ -829,4 +837,7 @@ export const platRange = [{
 }, {
   name: '抖音',
   value: 'DOUYIN',
+}, {
+    name: '号氪',
+    value: 'HAOKE',
 }]
