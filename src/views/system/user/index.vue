@@ -4,8 +4,8 @@
       <el-row :gutter="20">
 
         <!--部门数据-->
-        <el-col :span="4" :xs="24">
           <!-- 超管切换公司 -->
+        <!-- <el-col :span="4" :xs="24">
           <div class="head-container" v-if="userInfo.userId == 1">
             <div class="company" @click="modalOpen = true">{{ companyData.companyName || '公司' }} <i
                 class="el-icon-d-arrow-right" /></div>
@@ -19,7 +19,7 @@
               :filter-node-method="filterNode" ref="tree" node-key="id" default-expand-all highlight-current
               @node-click="handleNodeClick" />
           </div>
-        </el-col>
+        </el-col> -->
         <!--用户数据-->
         <el-col :span="20" :xs="24">
           <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch"
@@ -387,7 +387,7 @@ export default {
       this.loading = true;
       const param = this.userInfo.userId == 1 ? {
         ...this.addDateRange(this.queryParams, this.dateRange),
-        companyId: this.companyData.companyId
+        // companyId: this.companyData.companyId
 
       } : this.addDateRange(this.queryParams, this.dateRange)
       listUser(param).then(response => {
@@ -400,7 +400,7 @@ export default {
     /** 查询部门下拉树结构 */
     getDeptTree() {
       const data = this.userInfo.userId == 1 ? {
-        companyId: this.companyData.companyId
+        // companyId: this.companyData.companyId
       } : {}
       deptTreeSelect(data).then(response => {
         this.deptOptions = response.data;
@@ -543,9 +543,9 @@ export default {
               this.getList();
             });
           } else {
-            if (this.userInfo.userId == 1) {
-              this.form.companyId = this.companyData.companyId
-            }
+            // if (this.userInfo.userId == 1) {
+            //   this.form.companyId = this.companyData.companyId
+            // }
             addUser(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;

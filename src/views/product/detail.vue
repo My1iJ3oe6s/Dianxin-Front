@@ -75,14 +75,14 @@
                             </el-radio-group>
                         </el-form-item>
                     </el-col>
-                    <!-- <el-col :span="12" v-if="form.isNumbered == 1">
+                    <el-col :span="12" v-if="form.isNumbered == 1">
                         <el-form-item label="号池" prop="poolName">
                             <el-select v-model="form.poolName" placeholder="请选择" clearable>
-                                <el-option v-for="dict in poolList" :key="dict.poolName" :label="dict.poolName"
-                                    :value="dict.poolName" />
+                                <el-option v-for="dict in poolList" :key="dict" :label="dict"
+                                    :value="dict" />
                             </el-select>
                         </el-form-item>
-                    </el-col> -->
+                    </el-col>
                     <el-col :span="12">
                         <el-form-item label="状态" prop="productionStatus">
                             <el-radio-group v-model="form.productionStatus">

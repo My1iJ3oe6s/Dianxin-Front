@@ -2,11 +2,11 @@
   <div class="register">
     <el-form ref="registerForm" :model="registerForm" :rules="registerRules" class="register-form">
       <h3 class="title">乐易通通信管理平台</h3>
-      <el-form-item prop="companyName">
+      <!-- <el-form-item prop="companyName">
         <el-input v-model="registerForm.companyName" type="text" auto-complete="off" placeholder="公司名称">
           <svg-icon slot="prefix" icon-class="redis-list" class="el-input__icon input-icon" />
         </el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item prop="username">
         <el-input v-model="registerForm.username" type="text" auto-complete="off" placeholder="账号">
           <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
