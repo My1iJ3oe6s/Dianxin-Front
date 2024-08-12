@@ -27,9 +27,9 @@
         <el-col :span="1.5">
           <el-button type="info" plain icon="el-icon-sort" size="mini" @click="toggleExpandAll">展开/折叠</el-button>
         </el-col>
-        <div v-if="userInfo.userId == 1" class="company" @click="changeCompany">{{ companyData.companyName }} <i
+        <!-- <div v-if="userInfo.userId == 1" class="company" @click="changeCompany">{{ companyData.companyName }} <i
             class="el-icon-d-arrow-right" />
-        </div>
+        </div> -->
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
@@ -215,7 +215,7 @@ export default {
       this.loading = true;
       const param = this.userInfo.userId == 1 ? {
         ...this.queryParams,
-        companyId: this.companyData.companyId
+        // companyId: this.companyData.companyId
 
       } : this.queryParams
       listDept(param).then(response => {
@@ -306,7 +306,7 @@ export default {
             });
           } else {
             if (this.userInfo.userId == 1) {
-              this.form.companyId = this.companyData.companyId
+              // this.form.companyId = this.companyData.companyId
             }
             addDept(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");

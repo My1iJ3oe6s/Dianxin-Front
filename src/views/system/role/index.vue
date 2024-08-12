@@ -45,8 +45,8 @@
                     <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
                         v-hasPermi="['system:role:export']">导出</el-button>
                 </el-col>
-                <div class="company" v-if="userInfo.userId == 1" @click="changeCompany">{{ companyData.companyName }} <i
-                        class="el-icon-d-arrow-right" /></div>
+                <!-- <div class="company" v-if="userInfo.userId == 1" @click="changeCompany">{{ companyData.companyName }} <i
+                        class="el-icon-d-arrow-right" /></div> -->
                 <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
             </el-row>
             <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
@@ -293,7 +293,7 @@ export default {
             this.loading = true;
             const data = this.userInfo.userId == 1 ? {
                 ...this.addDateRange(this.queryParams, this.dateRange),
-                companyId: this.companyData.companyId,
+                // companyId: this.companyData.companyId,
             } : this.addDateRange(this.queryParams, this.dateRange)
             listRole(data).then(response => {
                 this.roleList = response.rows;
@@ -512,7 +512,7 @@ export default {
                     } else {
                         this.form.menuIds = this.getMenuAllCheckedKeys();
                         if (this.userInfo.userId == 1) {
-                            this.form.companyId = this.companyData.companyId
+                            // this.form.companyId = this.companyData.companyId
                         }
                         addRole(this.form).then(response => {
                             this.$modal.msgSuccess("新增成功");
