@@ -39,8 +39,8 @@
           <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
             v-hasPermi="['system:post:export']">导出</el-button>
         </el-col>
-        <div v-if="userInfo.userId == 1" class="company" @click="changeCompany">{{ companyData.companyName }} <i
-            class="el-icon-d-arrow-right" /></div>
+        <!-- <div v-if="userInfo.userId == 1" class="company" @click="changeCompany">{{ companyData.companyName }} <i
+            class="el-icon-d-arrow-right" /></div> -->
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
@@ -190,7 +190,7 @@ export default {
       this.loading = true;
       const param = this.userInfo.userId == 1 ? {
         ...this.queryParams,
-        companyId: this.companyData.companyId
+        // companyId: this.companyData.companyId
 
       } : this.queryParams
       listPost(param).then(response => {
@@ -260,7 +260,7 @@ export default {
             });
           } else {
             if (this.userInfo.userId == 1) {
-              this.form.companyId = this.companyData.companyId
+              // this.form.companyId = this.companyData.companyId
             }
             addPost(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
