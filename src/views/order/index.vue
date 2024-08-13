@@ -29,6 +29,22 @@
           <el-input v-model.trim="queryParams.queryParameters.preBookingNumber" placeholder="请输入手机号" clearable
             size="small" @keyup.enter.native="handleQuery" />
         </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-select multiple clearable v-model="queryParams.queryParameters.statusList" style="width: 100%">
+            <el-option v-for="(item, index) in statusData" :key="index" :label="item.name" :value="item.value">{{
+              item.name }}</el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="省份" prop="receiverProvinceCodes">
+          <el-select multiple clearable v-model="queryParams.queryParameters.receiverProvinceCodes" style="width: 100%">
+            <el-option v-for="(item, index) of provList" :key="index" :label="item.areaName" :value="item.id">{{
+                  item.areaName }}</el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="订单号" prop="orderId">
+          <el-input v-model.trim="queryParams.queryParameters.orderIds" placeholder="多个用逗号分隔" clearable
+            size="small" />
+        </el-form-item>
         <el-form-item class="flex_one tr">
           <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
           <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -42,6 +58,12 @@
         </el-col>
         <el-col :span="1.5">
           <el-button type="primary" plain icon="el-icon-upload2" size="mini" @click="handleImport">批量导入</el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button type="primary" plain icon="el-icon-upload2" size="mini" @click="handleImport">批量导出</el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button type="primary" plain icon="el-icon-upload2" size="mini" @click="handleImport">批量转单</el-button>
         </el-col>
       </el-row>
       <el-table v-loading="loading" :data="orderList" border @selection-change="handleSelectionChange"
@@ -238,7 +260,10 @@ export default {
           orderSource: '',
           receiverIdCard: '',
           receiverPhoneNumber: '',
-          dateRange: []
+          dateRange: [],
+          orderIds: '',
+          receiverProvinceCodes: [],
+          statusList: []
         }
       },
       // 表单参数
