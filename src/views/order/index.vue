@@ -29,21 +29,20 @@
           <el-input v-model.trim="queryParams.queryParameters.preBookingNumber" placeholder="请输入手机号" clearable
             size="small" @keyup.enter.native="handleQuery" />
         </el-form-item>
-        <el-form-item label="状态" prop="status">
+        <el-form-item label="状态">
           <el-select multiple clearable v-model="queryParams.queryParameters.statusList" style="width: 100%">
             <el-option v-for="(item, index) in statusData" :key="index" :label="item.name" :value="item.value">{{
               item.name }}</el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="省份" prop="receiverProvinceCodes">
+        <el-form-item label="省份">
           <el-select multiple clearable v-model="queryParams.queryParameters.receiverProvinceCodes" style="width: 100%">
             <el-option v-for="(item, index) of provList" :key="index" :label="item.areaName" :value="item.id">{{
-                  item.areaName }}</el-option>
+              item.areaName }}</el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="订单号" prop="orderId">
-          <el-input v-model.trim="queryParams.queryParameters.orderIds" placeholder="多个用逗号分隔" clearable
-            size="small" />
+        <el-form-item label="订单号">
+          <el-input v-model.trim="queryParams.queryParameters.orderIds" placeholder="多个用逗号分隔" clearable size="small" />
         </el-form-item>
         <el-form-item class="flex_one tr">
           <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -60,7 +59,8 @@
           <el-button type="primary" plain icon="el-icon-upload2" size="mini" @click="handleImport">批量导入</el-button>
         </el-col>
         <el-col :span="1.5">
-          <el-button type="primary" plain icon="el-icon-upload2" size="mini" @click="handleImport">批量导出</el-button>
+          <el-button type="primary" plain icon="el-icon-download" size="mini"
+            @click="handleExportOrderId">批量导出</el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button type="primary" plain icon="el-icon-upload2" size="mini" @click="handleImport">批量转单</el-button>
@@ -190,11 +190,38 @@
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 转换产品导入对话框 -->
+    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
+      <el-upload ref="upload" :limit="1" accept=".xlsx, .xls" :headers="upload.headers" :action="upload.url"
+        :disabled="upload.isUploading" :file-list="fileList" :on-change="handleChange"
+        :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :auto-upload="false"
+        :on-error="handleFileError" drag>
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <div class="el-upload__tip text-center" slot="tip">
+          <span>仅允许导入xlsx格式文件。</span>
+        </div>
+      </el-upload>
+      <el-form ref="form2" style="margin-top: 20px;"  label-width="90px">
+        <el-form-item label="产品" prop="productId">
+          <el-select clearable v-model="productId" style="width: 100%" multiple>
+            <el-option v-for="(item, index) of goodsList" :key="index" :label="item.goodsName" :value="item.goodsId">{{
+              item.goodsName }}</el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFileForm2">确 定</el-button>
+        <el-button @click="upload.open = false">取 消</el-button>
+      </div>
+    </el-dialog>
+
     <!-- 更新商品 -->
     <el-dialog title="更新商品" :visible.sync="open1" width="400px" append-to-body>
       <el-select clearable v-model="form.goodsId" style="width: 100%" multiple>
-        <el-option v-for="(item, index) of goodsList" :key="index" :label="item.goodsName" :value="item.goodsId">{{
-          item.goodsName }}</el-option>
+        <el-option v-for="(item, index) of productList" :key="index" :label="item.productName" :value="item.productId">{{
+          item.productName }}</el-option>
       </el-select>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm1">确 定</el-button>
@@ -215,8 +242,13 @@ import {
   getOrder,
   getAreaList,
   getAreaChildren,
-  getSource
+  getSource,
+  exportOrderId,
+  batchConvertProduct
 } from "@/api/order/index";
+import {
+  getList
+} from '@/api/product/index'
 import * as goodsApi from "@/api/goods/index";
 import AddressSelector from "@/views/components/AddressSelector/index.vue";
 import productTemplate from './order_template.xlsx'
@@ -316,14 +348,25 @@ export default {
       cityList: [],
       countyList: [],
       sourceList: [],
-      statusData
+      statusData,
+      productId: '',
+      orderIds: [],
+      productList: []
     };
   },
   created() {
     this.getProductList();
     this.getList();
+    this.getProductList();
   },
   methods: {
+    getProductList() {
+      getList({ pageNo: 1, pageSize: 100000 })
+        .then(response => {
+          const { records, total } = response.data
+          this.productList = records;
+        })
+    },
     // 更新商品
     changeGoods(row) {
       this.form = row;
@@ -376,6 +419,38 @@ export default {
     handleImport() {
       this.upload.title = "批量导入";
       this.upload.open = true;
+    },
+    // 导出订单id
+    handleExportOrderId() {
+      if (this.queryParams.queryParameters.dateRange?.length) {
+        this.queryParams.queryParameters.createStartDate = this.queryParams.queryParameters.dateRange[0] + ' 00:00:00';
+        this.queryParams.queryParameters.createEndDate = this.queryParams.queryParameters.dateRange[1] + ' 23:59:59';
+      } else {
+        this.queryParams.queryParameters.createStartDate = null;
+        this.queryParams.queryParameters.createEndDate = null;
+      }
+      this.loading = true;
+      const { pageNum, pageSize } = this.queryParams;
+      const query = { ...this.queryParams, pageNum: undefined, pageSize: undefined };
+      const pageReq = { pageNo: pageNum, pageSize: pageSize };
+      exportOrderId({ ...query, ...pageReq })
+        .then(response => {
+          console.log(response);
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', '订单.xlsx'); // 设置下载的文件名
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        })
+    },
+    submitFileForm2() {
+      batchConvertProduct({
+        orderIds: this.orderIds,
+        productId: this.productId
+      });
     },
     // 文件上传中处理
     handleFileUploadProgress(event, file, fileList) {
@@ -530,7 +605,7 @@ export default {
     handleWatch() {
       this.$modal.msgError("无操作权限");
     },
-    submitForm1(){
+    submitForm1() {
       this.handleAddOrder();
     },
     /** 提交按钮 */
@@ -544,13 +619,13 @@ export default {
     },
     handleAddOrder() {
       if (Array.isArray(this.form.goodsId)) {
-            this.form.goods = this.goodsList.filter((v) => this.form.goodsId.includes(v.goodsId))
-          }
-          addOrder(this.form).then((response) => {
-            this.$modal.msgSuccess("新增成功");
-            this.open = false;
-            this.getList();
-          });
+        this.form.goods = this.goodsList.filter((v) => this.form.goodsId.includes(v.goodsId))
+      }
+      addOrder(this.form).then((response) => {
+        this.$modal.msgSuccess("新增成功");
+        this.open = false;
+        this.getList();
+      });
     },
     /** 导出按钮操作 */
     handleExport() {

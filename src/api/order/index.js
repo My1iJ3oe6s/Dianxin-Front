@@ -64,3 +64,22 @@ export function getSource() {
     method: 'get'
   })
 }
+
+export function exportOrderId(data) {
+  return request({
+    url: '/selfOrders/exportOrderId',
+    method: 'post',
+    data,
+    headers: {
+      'response-type': 'blob'
+    }
+  })
+}  
+
+export function batchConvertProduct(data) {
+  return request({
+    url: '/selfOrders/batchConvertProduct',
+    method: 'post',
+    data,
+  })
+}
