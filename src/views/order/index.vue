@@ -14,8 +14,8 @@
           </el-select>
         </el-form-item>
         <el-form-item label="身份证号" prop="receiverIdCard">
-          <el-input v-model.trim="queryParams.queryParameters.receiverIdCard" placeholder="请输入身份证号" clearable
-            size="small" @keyup.enter.native="handleQuery" />
+          <el-input v-model.trim="queryParams.queryParameters.receiverIdCard" placeholder="请输入身份证号" clearable size="small"
+            @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="手机号" prop="receiverPhoneNumber">
           <el-input v-model.trim="queryParams.queryParameters.receiverPhoneNumber" placeholder="请输入手机号" clearable
@@ -63,7 +63,7 @@
             @click="handleExportOrderId">批量导出</el-button>
         </el-col>
         <el-col :span="1.5">
-          <el-button type="primary" plain icon="el-icon-upload2" size="mini" @click="handleImport">批量转单</el-button>
+          <el-button type="primary" plain icon="el-icon-upload2" size="mini" @click="handleImportOrderId">批量转单</el-button>
         </el-col>
       </el-row>
       <el-table v-loading="loading" :data="orderList" border @selection-change="handleSelectionChange"
@@ -195,7 +195,7 @@
     <el-dialog :title="upload2.title" :visible.sync="upload2.open" width="400px" append-to-body>
       <el-upload ref="upload2" :limit="1" accept=".xlsx, .xls" :headers="upload2.headers" :action="upload2.url"
         :disabled="upload2.isUploading" :file-list="fileList2" :on-change="handleChange2"
-        :on-progress="handleFileUploadProgress2" :on-success="handleFileSuccess2"
+        :on-progress="handleFileUploadProgress2" :auto-upload="false" :on-success="handleFileSuccess2"
         :on-error="handleFileError2" drag>
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -205,32 +205,30 @@
       </el-upload>
       <el-form ref="form2" style="margin-top: 20px;" label-width="90px">
         <el-form-item label="产品" prop="productId">
-          <el-select clearable v-model="productId" style="width: 100%" multiple>
-            <el-option v-for="(item, index) of goodsList" :key="index" :label="item.goodsName" :value="item.goodsId">{{
-              item.goodsName }}</el-option>
+          <el-select clearable v-model="productId" style="width: 100%">
+            <el-option v-for="(item, index) of productList" :key="index" :label="item.productName"
+              :value="item.productId">{{
+                item.productName }}</el-option>
           </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitFileForm2">确 定</el-button>
-        <el-button @click="upload.open = false">取 消</el-button>
+        <el-button @click="upload2.open = false">取 消</el-button>
       </div>
     </el-dialog>
 
     <!-- 更新商品 -->
     <el-dialog title="更新商品" :visible.sync="open1" width="400px" append-to-body>
       <el-select clearable v-model="form.goodsId" style="width: 100%" multiple>
-        <el-option v-for="(item, index) of productList" :key="index" :label="item.productName"
-          :value="item.productId">{{
-            item.productName }}</el-option>
+        <el-option v-for="(item, index) of goodsList" :key="index" :label="item.goodsName" :value="item.goodsId">{{
+          item.goodsName }}</el-option>
       </el-select>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm1">确 定</el-button>
+        <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="open1 = false">取 消</el-button>
       </div>
     </el-dialog>
-
-
   </div>
 </template>
 
@@ -245,11 +243,13 @@ import {
   getAreaChildren,
   getSource,
   exportOrderId,
-  batchConvertProduct
+  batchConvertProduct,
+  importOrderId
 } from "@/api/order/index";
 import {
   getList
 } from '@/api/product/index'
+import { getToken } from '@/utils/auth'
 import * as goodsApi from "@/api/goods/index";
 import AddressSelector from "@/views/components/AddressSelector/index.vue";
 import productTemplate from './order_template.xlsx'
@@ -330,6 +330,7 @@ export default {
         url: process.env.VUE_APP_BASE_API + "selfOrders/importOrderId",
         headers: {
           "Content-Type": "multipart/form-data",
+          'Authorization': 'Bearer ' + getToken()
         }
       },
       // 表单校验
@@ -367,16 +368,27 @@ export default {
       statusData,
       productId: '',
       orderIds: [],
-      productList: []
+      productList: [],
+
+      fileList2: []
     };
+  },
+  watch: {
+    open1: {
+      handler: function (n) {
+        if (!n) {
+          this.fileList2 = []
+        }
+      }
+    }
   },
   created() {
     this.getProductList();
     this.getList();
-    this.getProductList();
+    this.getProductList2();
   },
   methods: {
-    getProductList() {
+    getProductList2() {
       getList({ pageNo: 1, pageSize: 100000 })
         .then(response => {
           const { records, total } = response.data
@@ -436,6 +448,10 @@ export default {
       this.upload.title = "批量导入";
       this.upload.open = true;
     },
+    handleImportOrderId() {
+      this.upload2.title = "批量导入";
+      this.upload2.open = true;
+    },
     // 导出订单id
     handleExportOrderId() {
       if (this.queryParams.queryParameters.dateRange?.length) {
@@ -446,19 +462,27 @@ export default {
         this.queryParams.queryParameters.createEndDate = null;
       }
       this.loading = true;
+      this.queryParams.queryParameters.dateRange = this.queryParams.queryParameters.dateRange || []
       const { pageNum, pageSize } = this.queryParams;
       const query = { ...this.queryParams, pageNum: undefined, pageSize: undefined };
       const pageReq = { pageNo: pageNum, pageSize: pageSize };
 
       this.download('selfOrders/exportOrderId', {
         ...query, ...pageReq
-      }, `studentWeekReport_${new Date().getTime()}.xlsx`)
+      }, `订单号_${new Date().getTime()}.xlsx`)
+      this.loading = false;
     },
     submitFileForm2() {
-      batchConvertProduct({
-        orderIds: this.orderIds,
-        productId: this.productId
-      });
+
+      var formData = new FormData();
+      formData.append('file', this.fileList2[0].raw);
+      formData.append('productId', this.productId);
+      importOrderId(formData)
+        .then(() => {
+          this.upload2.open = false;
+          this.getList();
+        })
+      // batchConvertProduct(formData);
     },
     // 文件上传中处理
     handleFileUploadProgress(event, file, fileList) {
@@ -490,12 +514,9 @@ export default {
     },
     // 文件上传成功处理
     handleFileSuccess2(response, file, fileList) {
-      if (!response.message) {
-        this.upload2.open = false;
-      }
 
       console.log(111, response);
-      
+
       let msg = response.message || '上传成功'
       if (response.data && Array.isArray(response.data) && response.data.length) {
         msg = response.data.map((v) => {

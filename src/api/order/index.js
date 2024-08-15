@@ -69,17 +69,25 @@ export function exportOrderId(data) {
   return request({
     url: '/selfOrders/exportOrderId',
     method: 'post',
-    data,
-    headers: {
-      'response-type': 'blob'
-    }
+    data
   })
-}  
+}
 
 export function batchConvertProduct(data) {
   return request({
     url: '/selfOrders/batchConvertProduct',
     method: 'post',
     data,
+  })
+}
+
+export function importOrderId(data) {
+  return request({
+    url: '/selfOrders/importOrderId',
+    method: 'post',
+    data,
+    "headers": {
+      "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryX"
+    }
   })
 }
