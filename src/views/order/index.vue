@@ -14,8 +14,8 @@
           </el-select>
         </el-form-item>
         <el-form-item label="身份证号" prop="receiverIdCard">
-          <el-input v-model.trim="queryParams.queryParameters.receiverIdCard" placeholder="请输入身份证号" clearable size="small"
-            @keyup.enter.native="handleQuery" />
+          <el-input v-model.trim="queryParams.queryParameters.receiverIdCard" placeholder="请输入身份证号" clearable
+            size="small" @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="手机号" prop="receiverPhoneNumber">
           <el-input v-model.trim="queryParams.queryParameters.receiverPhoneNumber" placeholder="请输入手机号" clearable
@@ -192,18 +192,18 @@
     </el-dialog>
 
     <!-- 转换产品导入对话框 -->
-    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
-      <el-upload ref="upload" :limit="1" accept=".xlsx, .xls" :headers="upload.headers" :action="upload.url"
-        :disabled="upload.isUploading" :file-list="fileList" :on-change="handleChange"
-        :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :auto-upload="false"
-        :on-error="handleFileError" drag>
+    <el-dialog :title="upload2.title" :visible.sync="upload2.open" width="400px" append-to-body>
+      <el-upload ref="upload2" :limit="1" accept=".xlsx, .xls" :headers="upload2.headers" :action="upload2.url"
+        :disabled="upload2.isUploading" :file-list="fileList2" :on-change="handleChange2"
+        :on-progress="handleFileUploadProgress2" :on-success="handleFileSuccess2"
+        :on-error="handleFileError2" drag>
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <div class="el-upload__tip text-center" slot="tip">
           <span>仅允许导入xlsx格式文件。</span>
         </div>
       </el-upload>
-      <el-form ref="form2" style="margin-top: 20px;"  label-width="90px">
+      <el-form ref="form2" style="margin-top: 20px;" label-width="90px">
         <el-form-item label="产品" prop="productId">
           <el-select clearable v-model="productId" style="width: 100%" multiple>
             <el-option v-for="(item, index) of goodsList" :key="index" :label="item.goodsName" :value="item.goodsId">{{
@@ -220,8 +220,9 @@
     <!-- 更新商品 -->
     <el-dialog title="更新商品" :visible.sync="open1" width="400px" append-to-body>
       <el-select clearable v-model="form.goodsId" style="width: 100%" multiple>
-        <el-option v-for="(item, index) of productList" :key="index" :label="item.productName" :value="item.productId">{{
-          item.productName }}</el-option>
+        <el-option v-for="(item, index) of productList" :key="index" :label="item.productName"
+          :value="item.productId">{{
+            item.productName }}</el-option>
       </el-select>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm1">确 定</el-button>
@@ -312,6 +313,21 @@ export default {
         updateSupport: 0,
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + "selfOrders/importData",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        }
+      },
+      upload2: {
+        // 是否显示弹出层（用户导入）
+        open: false,
+        // 弹出层标题（用户导入）
+        title: "",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的用户数据
+        updateSupport: 0,
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + "selfOrders/importOrderId",
         headers: {
           "Content-Type": "multipart/form-data",
         }
@@ -433,18 +449,10 @@ export default {
       const { pageNum, pageSize } = this.queryParams;
       const query = { ...this.queryParams, pageNum: undefined, pageSize: undefined };
       const pageReq = { pageNo: pageNum, pageSize: pageSize };
-      exportOrderId({ ...query, ...pageReq })
-        .then(response => {
-          console.log(response);
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement('a');
-          link.href = url;
-          link.setAttribute('download', '订单.xlsx'); // 设置下载的文件名
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(url);
-        })
+
+      this.download('selfOrders/exportOrderId', {
+        ...query, ...pageReq
+      }, `studentWeekReport_${new Date().getTime()}.xlsx`)
     },
     submitFileForm2() {
       batchConvertProduct({
@@ -476,6 +484,32 @@ export default {
     handleFileError() {
       this.upload.isUploading = false;
     },
+    // 文件上传中处理
+    handleFileUploadProgress2(event, file, fileList) {
+      this.upload2.isUploading = true;
+    },
+    // 文件上传成功处理
+    handleFileSuccess2(response, file, fileList) {
+      if (!response.message) {
+        this.upload2.open = false;
+      }
+
+      console.log(111, response);
+      
+      let msg = response.message || '上传成功'
+      if (response.data && Array.isArray(response.data) && response.data.length) {
+        msg = response.data.map((v) => {
+          return v.message + '<br/>'
+        }).join(' ')
+      }
+      this.upload2.isUploading = false;
+      // this.$refs.upload2.clearFiles();
+      // this.getList();
+    },
+    // 文件上传失败
+    handleFileError2() {
+      this.upload2.isUploading = false;
+    },
     // 提交上传文件
     submitFileForm() {
       const t = this;
@@ -496,6 +530,9 @@ export default {
     },
     handleChange(file, fileList) {
       this.fileList = fileList.slice(-3);
+    },
+    handleChange2(file, fileList) {
+      this.fileList2 = fileList.slice(-3);
     },
     // 验证身份证
     validID(rule, value, callback) {
