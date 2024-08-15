@@ -201,6 +201,8 @@
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <div class="el-upload__tip text-center" slot="tip">
           <span>仅允许导入xlsx格式文件。</span>
+          <a target="_blank" :href="orderIdTemplate" type="primary" :underline="false"
+            style="font-size:12px;vertical-align: baseline;">下载模板</a>
         </div>
       </el-upload>
       <el-form ref="form2" style="margin-top: 20px;" label-width="90px">
@@ -252,7 +254,8 @@ import {
 import { getToken } from '@/utils/auth'
 import * as goodsApi from "@/api/goods/index";
 import AddressSelector from "@/views/components/AddressSelector/index.vue";
-import productTemplate from './order_template.xlsx'
+import productTemplate from './order_template.xlsx';
+import orderIdTemplate from './orderId_template.xlsx';
 import { statusData } from "@/utils/printData";
 import { returnName } from "@/utils/index.js";
 
@@ -360,6 +363,7 @@ export default {
       showMoreCondition: false,
       goodsList: [],
       productTemplate,
+      orderIdTemplate,
       fileList: [],
       provList: [],
       cityList: [],
@@ -374,12 +378,14 @@ export default {
     };
   },
   watch: {
-    open1: {
+    'upload2.open': {
       handler: function (n) {
         if (!n) {
           this.fileList2 = []
+          this.productId = undefined;
         }
-      }
+      },
+      deep: true
     }
   },
   created() {
@@ -392,7 +398,7 @@ export default {
       getList({ pageNo: 1, pageSize: 100000 })
         .then(response => {
           const { records, total } = response.data
-          this.productList = records;
+          this.productList = records.filter(c => c.productionStatus == 1);
         })
     },
     // 更新商品
@@ -468,7 +474,7 @@ export default {
       const pageReq = { pageNo: pageNum, pageSize: pageSize };
 
       this.download('selfOrders/exportOrderId', {
-        ...query, ...pageReq
+        ...this.queryParams.queryParameters,
       }, `订单号_${new Date().getTime()}.xlsx`)
       this.loading = false;
     },
