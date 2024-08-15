@@ -213,7 +213,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitFileForm2">确 定</el-button>
+        <el-button type="primary" @click="submitFileForm2" :loading="upload2.loading">确 定</el-button>
         <el-button @click="upload2.open = false">取 消</el-button>
       </div>
     </el-dialog>
@@ -473,12 +473,13 @@ export default {
       this.loading = false;
     },
     submitFileForm2() {
-
+      this.upload2.loading = true;
       var formData = new FormData();
       formData.append('file', this.fileList2[0].raw);
       formData.append('productId', this.productId);
       importOrderId(formData)
         .then(() => {
+          this.upload2.loading = false;
           this.upload2.open = false;
           this.getList();
         })
