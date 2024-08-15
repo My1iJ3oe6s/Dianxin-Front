@@ -56,6 +56,8 @@
           <el-table-column label="商品id" align="center" prop="goodsId" />
           <el-table-column label="商品名称" align="center" prop="goodsName" />
           <el-table-column label="商品编码" align="center" prop="goodsCode" />
+          <el-table-column label="产品名称" align="center" prop="productName" />
+          <el-table-column label="产品编码" align="center" prop="productCode" />
           <!-- <el-table-column label="状态" align="center" prop="productStatus">
             <template slot-scope="scope">
               {{ scope.row.productStatus == 1 ? '启用' : '禁用' }}
