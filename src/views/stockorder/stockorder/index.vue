@@ -83,8 +83,8 @@
           placeholder="请选择下单时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="订单状态: 0-新增, 1-发送短信, 2-订单确认, 3-订单完成, 4-短信发送失败, 5-下单失败, 6-异步下单成功" prop="orderStatus">
-        <el-select v-model="queryParams.orderStatus" placeholder="请选择订单状态: 0-新增, 1-发送短信, 2-订单确认, 3-订单完成, 4-短信发送失败, 5-下单失败, 6-异步下单成功" clearable>
+      <el-form-item label="订单状态" prop="orderStatus">
+        <el-select v-model="queryParams.orderStatus" placeholder="请选择订单状态" clearable>
           <el-option
             v-for="dict in dict.type.self_stock_status"
             :key="dict.value"
@@ -167,7 +167,7 @@
           <span>{{ parseTime(scope.row.orderTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="订单状态: 0-新增, 1-发送短信, 2-订单确认, 3-订单完成, 4-短信发送失败, 5-下单失败, 6-异步下单成功" align="center" prop="orderStatus">
+      <el-table-column label="订单状态" align="center" prop="orderStatus">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.self_stock_status" :value="scope.row.orderStatus"/>
         </template>
@@ -192,7 +192,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -254,7 +254,7 @@
             placeholder="请选择下单时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="订单状态: 0-新增, 1-发送短信, 2-订单确认, 3-订单完成, 4-短信发送失败, 5-下单失败, 6-异步下单成功" prop="orderStatus">
+        <el-form-item label="订单状态" prop="orderStatus">
           <el-radio-group v-model="form.orderStatus">
             <el-radio
               v-for="dict in dict.type.self_stock_status"
