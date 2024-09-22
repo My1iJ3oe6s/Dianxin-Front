@@ -93,10 +93,10 @@
 
       <el-table v-loading="loading" :data="stockgoodsList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center"/>
-        <el-table-column label="商品ID" align="center" prop="goodsId"/>
+<!--        <el-table-column label="商品ID" align="center" prop="goodsId"/>-->
         <el-table-column label="商品编码" align="center" prop="goodsCode"/>
         <el-table-column label="商品名称" align="center" prop="goodsName"/>
-        <el-table-column label="产品产商" align="center" prop="productType"/>
+        <el-table-column label="供应商" align="center" prop="supplierCode"/>
         <el-table-column label="产品省份" align="center" prop="provinceName"/>
         <el-table-column label="限制区域" align="center" prop="restrictedArea"/>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
