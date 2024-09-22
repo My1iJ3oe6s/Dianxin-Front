@@ -36,30 +36,30 @@
             @keyup.enter.native="handleQuery"
           />
         </el-form-item>
-        <el-form-item label="省份" prop="province">
+        <el-form-item label="归属地" prop="province">
           <el-input
             v-model="queryParams.province"
-            placeholder="请输入省份"
+            placeholder="请输入省份或地区"
             clearable
             @keyup.enter.native="handleQuery"
           />
         </el-form-item>
-        <el-form-item label="城市名称" prop="cityName">
-          <el-input
-            v-model="queryParams.cityName"
-            placeholder="请输入城市名称"
-            clearable
-            @keyup.enter.native="handleQuery"
-          />
-        </el-form-item>
-        <el-form-item label="短信验证码" prop="smsNum">
-          <el-input
-            v-model="queryParams.smsNum"
-            placeholder="请输入短信验证码"
-            clearable
-            @keyup.enter.native="handleQuery"
-          />
-        </el-form-item>
+<!--        <el-form-item label="城市名称" prop="cityName">-->
+<!--          <el-input-->
+<!--            v-model="queryParams.cityName"-->
+<!--            placeholder="请输入城市名称"-->
+<!--            clearable-->
+<!--            @keyup.enter.native="handleQuery"-->
+<!--          />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="短信验证码" prop="smsNum">-->
+<!--          <el-input-->
+<!--            v-model="queryParams.smsNum"-->
+<!--            placeholder="请输入短信验证码"-->
+<!--            clearable-->
+<!--            @keyup.enter.native="handleQuery"-->
+<!--          />-->
+<!--        </el-form-item>-->
         <el-form-item label="商品编码" prop="goodsCode">
           <el-input
             v-model="queryParams.goodsCode"
@@ -76,15 +76,22 @@
             @keyup.enter.native="handleQuery"
           />
         </el-form-item>
-        <el-form-item label="下单时间" prop="orderTime">
-          <el-date-picker clearable
-                          v-model="queryParams.orderTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择下单时间"
-          >
-          </el-date-picker>
+<!--        <el-form-item label="下单时间" prop="orderTime">-->
+<!--          <el-date-picker clearable-->
+<!--                          v-model="queryParams.orderTime"-->
+<!--                          type="date"-->
+<!--                          value-format="yyyy-MM-dd"-->
+<!--                          placeholder="请选择下单时间"-->
+<!--          >-->
+<!--          </el-date-picker>-->
+<!--        </el-form-item>-->
+
+        <el-form-item label="下单时间">
+          <el-date-picker v-model="queryParams.dateRange" style="width: 240px" value-format="yyyy-MM-dd"
+                          type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
         </el-form-item>
+
+
         <el-form-item label="订单状态" prop="orderStatus">
           <el-select v-model="queryParams.orderStatus" placeholder="请选择订单状态" clearable>
             <el-option
@@ -155,32 +162,36 @@
 
       <el-table v-loading="loading" :data="stockorderList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center"/>
-        <el-table-column label="订单ID" align="center" prop="orderId"/>
+<!--        <el-table-column label="订单ID" align="center" prop="orderId"/>-->
         <el-table-column label="订单号" align="center" prop="orderNo"/>
+        <el-table-column label="下单时间" align="center" prop="orderTime" width="180">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.orderTime) }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="分销商编码" align="center" prop="distributorCode">
           <template slot-scope="scope">
             <dict-tag :options="dict.type.channel_customer" :value="scope.row.distributorCode"/>
           </template>
         </el-table-column>
-        <el-table-column label="分销商营销地址" align="center" prop="distributorUrl"/>
+<!--        <el-table-column label="分销商营销地址" align="center" prop="distributorUrl"/>-->
         <el-table-column label="分销商订单号" align="center" prop="externalOrderNo"/>
         <el-table-column label="客户手机号" align="center" prop="phone"/>
-        <el-table-column label="省份" align="center" prop="province"/>
-        <el-table-column label="城市名称" align="center" prop="cityName"/>
+        <el-table-column label="归属地" align="center" prop="province">
+          <template slot-scope="scope">
+            <span>{{ scope.row.province }} {{ scope.row.cityName }}</span>
+          </template>
+        </el-table-column>
+<!--        <el-table-column label="城市名称" align="center" prop="cityName"/>-->
         <el-table-column label="短信验证码" align="center" prop="smsNum"/>
         <el-table-column label="商品编码" align="center" prop="goodsCode"/>
         <el-table-column label="供应商编码" align="center" prop="supplierCode"/>
-        <el-table-column label="下单时间" align="center" prop="orderTime" width="180">
-          <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.orderTime, '{y}-{m}-{d}') }}</span>
-          </template>
-        </el-table-column>
         <el-table-column label="订单状态" align="center" prop="orderStatus">
           <template slot-scope="scope">
             <dict-tag :options="dict.type.self_stock_status" :value="scope.row.orderStatus"/>
           </template>
         </el-table-column>
-        <el-table-column label="备注" align="center" prop="remark"/>
+<!--        <el-table-column label="备注" align="center" prop="remark"/>-->
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
             <el-button
@@ -327,13 +338,14 @@ export default {
       // 查询参数
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 50,
         orderNo: null,
         distributorCode: null,
         externalOrderNo: null,
         phone: null,
         province: null,
         cityName: null,
+        dateRange: [],
         smsNum: null,
         goodsCode: null,
         supplierCode: null,
@@ -362,7 +374,14 @@ export default {
   methods: {
     /** 查询权益包订单列表 */
     getList() {
-      this.loading = true
+      if (this.queryParams.dateRange?.length) {
+        this.queryParams.createStartDate = this.queryParams.dateRange[0] + ' 00:00:00';
+        this.queryParams.createEndDate = this.queryParams.dateRange[1] + ' 23:59:59';
+      } else {
+        this.queryParams.createStartDate = null;
+        this.queryParams.createEndDate = null;
+      }
+        this.loading = true
       listStockorder(this.queryParams).then(response => {
         this.stockorderList = response.rows
         this.total = response.total
