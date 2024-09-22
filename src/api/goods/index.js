@@ -60,3 +60,10 @@ export function bindProduct(data) {
     data: data
   })
 }
+// 企业信息
+export function companyInfo() {
+  return request({
+    url: '/selfGoods/company',
+    method: 'post',
+  })
+}
