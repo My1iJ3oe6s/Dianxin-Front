@@ -172,6 +172,16 @@
         <el-form-item label="商品名称" prop="goodsName">
           <el-input v-model="form.goodsName" placeholder="请输入商品名称" />
         </el-form-item>
+        <el-form-item label="产商" prop="productType">
+          <el-select v-model="form.productType" placeholder="请选择产品产商;">
+            <el-option
+              v-for="dict in dict.type.product_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+            </el-select>
+        </el-form-item>
         <el-form-item label="商品描述" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
         </el-form-item>
@@ -188,31 +198,31 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="产品介绍图片" prop="headUrl">
-          <image-upload v-model="form.headUrl"/>
+        <el-form-item label="产品介绍图片" prop="headUrl" v-show="form.pageType == 'IMG'">
+          <image-upload :limit="1" v-model="form.headUrl"/>
         </el-form-item>
-        <el-form-item label="订购说明图片" prop="zixunUrl">
-          <image-upload v-model="form.zixunUrl"/>
+        <el-form-item label="订购说明图片" prop="zixunUrl" v-show="form.pageType == 'IMG'">
+          <image-upload :limit="1" v-model="form.zixunUrl"/>
         </el-form-item>
-        <el-form-item label="业务确认图片" prop="ywqrUrl">
-          <image-upload v-model="form.ywqrUrl"/>
+        <el-form-item label="业务确认图片" prop="ywqrUrl" v-show="form.pageType">
+          <image-upload :limit="1" v-model="form.ywqrUrl"/>
         </el-form-item>
-        <el-form-item label="业务受理协议图片" prop="ywslxyUrl">
-          <image-upload v-model="form.ywslxyUrl"/>
+        <el-form-item label="业务受理协议图片" prop="ywslxyUrl" v-show="form.pageType == 'IMG'">
+          <image-upload :limit="1" v-model="form.ywslxyUrl"/>
         </el-form-item>
-        <el-form-item label="隐私条款图片" prop="ystkUrl">
-          <image-upload v-model="form.ystkUrl"/>
+        <el-form-item label="隐私条款图片" prop="ystkUrl"  v-show="form.pageType == 'IMG'">
+          <image-upload :limit="1" v-model="form.ystkUrl"/>
         </el-form-item>
-        <el-form-item label="产品介绍内容">
+        <el-form-item label="产品介绍内容" v-show="form.pageType && form.pageType !== 'IMG'">
           <editor v-model="form.headContent" :min-height="192"/>
         </el-form-item>
-        <el-form-item label="订购说明内容">
+        <el-form-item label="订购说明内容" v-show="form.pageType && form.pageType !== 'IMG'">
           <editor v-model="form.zixunContent" :min-height="192"/>
         </el-form-item>
-        <el-form-item label="业务受理协议内容">
+        <el-form-item label="业务受理协议内容" v-show="form.pageType && form.pageType !== 'IMG'">
           <editor v-model="form.ywslxyContent" :min-height="192"/>
         </el-form-item>
-        <el-form-item label="隐私条款内容">
+        <el-form-item label="隐私条款内容"  v-show="form.pageType && form.pageType !== 'IMG'">
           <editor v-model="form.ystkContent" :min-height="192"/>
         </el-form-item>
         <el-form-item label="是否二确" prop="isComfired">
@@ -225,7 +235,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="二确模板" prop="comfiredType">
+        <el-form-item label="二确模板" prop="comfiredType"  v-show="form.isComfired == 1">
           <el-select v-model="form.comfiredType" placeholder="请选择二确模板">
             <el-option
               v-for="dict in dict.type.comfire_img_type"
@@ -235,7 +245,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="二确文字">
+        <el-form-item label="二确文字"  v-show="form.isComfired == 1">
           <editor v-model="form.comfiredContent" :min-height="192"/>
         </el-form-item>
         <el-form-item label="是否开启" prop="staus">
@@ -258,8 +268,8 @@
           </el-col>
         </el-row>
         <el-table :data="selfStockGoodsDetailsList" :row-class-name="rowSelfStockGoodsDetailsIndex" @selection-change="handleSelfStockGoodsDetailsSelectionChange" ref="selfStockGoodsDetails">
-          <el-table-column type="selection" width="200" align="center" />
-          <el-table-column label="序号" align="center" prop="index" width="50"/>
+          <el-table-column type="selection" width="100" align="center" />
+<!--          <el-table-column label="序号" align="center" prop="index" width="50"/>-->
           <el-table-column label="产商" prop="productType" width="150">
             <template slot-scope="scope">
               <el-select v-model="scope.row.productType" placeholder="请选择产品产商;电信、移动、联通">
@@ -272,39 +282,57 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="归属省份编码" prop="provinceCode" width="150">
+          <el-table-column label="归属省份编码" prop="provinceCode" width="200">
             <template slot-scope="scope">
               <el-input v-model="scope.row.provinceCode" placeholder="请输入归属省份编码" />
             </template>
           </el-table-column>
-          <el-table-column label="归属省份" prop="provinceName" width="150">
+          <el-table-column label="归属省份" prop="provinceName" width="200">
             <template slot-scope="scope">
               <el-input v-model="scope.row.provinceName" placeholder="请输入归属省份" />
             </template>
           </el-table-column>
           <el-table-column label="供应商编码" prop="supplierCode" width="150">
+
             <template slot-scope="scope">
-              <el-input v-model="scope.row.supplierCode" placeholder="请输入供应商编码" />
+              <el-select v-model="scope.row.supplierCode" placeholder="请输入供应商编码">
+                <el-option
+                  v-for="dict in dict.type.stock_supplier"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
             </template>
+
+<!--            <template slot-scope="scope">-->
+<!--              <el-input v-model="scope.row.supplierCode" placeholder="请输入供应商编码" />-->
+<!--            </template>-->
           </el-table-column>
           <el-table-column label="供应商产品编码" prop="supplierGoodsCode" width="150">
             <template slot-scope="scope">
               <el-input v-model="scope.row.supplierGoodsCode" placeholder="请输入供应商产品编码" />
             </template>
           </el-table-column>
-          <el-table-column label="供应商产品配置" prop="supplierGoodsConfig" width="150">
+          <el-table-column label="供应商产品配置" prop="supplierGoodsConfig" width="250">
+<!--            <el-input v-model="scope.row.supplierGoodsConfig" type="textarea" placeholder="请输入供应商产品配置" />-->
             <template slot-scope="scope">
-              <el-input v-model="scope.row.supplierGoodsConfig" placeholder="请输入供应商产品配置" />
+              <el-input v-model="scope.row.supplierGoodsConfig" type="textarea"  placeholder="请输入供应商产品配置" />
             </template>
           </el-table-column>
+
+          <el-form-item label="商品描述" prop="description">
+            <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
+          </el-form-item>
+
           <el-table-column label="是否开启" prop="staus" width="150">
             <template slot-scope="scope">
               <el-select v-model="scope.row.staus" placeholder="请选择是否开启">
                 <el-option
                   v-for="dict in dict.type.kaiguan"
-                  :key="dict.value"
+                  :key="dict.key"
                   :label="dict.label"
-                  :value="dict.value"
+                  :value="parseInt(dict.value)"
                 ></el-option>
               </el-select>
             </template>
@@ -324,7 +352,7 @@ import { listStockgoods, getStockgoods, delStockgoods, addStockgoods, updateStoc
 
 export default {
   name: "Stockgoods",
-  dicts: ['product_type', 'stockgoods_page_type', 'kaiguan', 'comfire_img_type'],
+  dicts: ['product_type', 'stockgoods_page_type', 'kaiguan', 'comfire_img_type', 'stock_supplier'],
   data() {
     return {
       // 遮罩层
