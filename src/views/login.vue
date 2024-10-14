@@ -140,7 +140,14 @@ export default {
             Cookies.remove("password");
             Cookies.remove('rememberMe');
           }
-          this.$store.dispatch("Login", this.loginForm).then(() => {
+          // 密码加密
+          const loginFormEncrypt = {
+            ...this.loginForm,
+            username: encrypt(this.loginForm.username),
+            password: encrypt(this.loginForm.password),
+
+          }
+          this.$store.dispatch("Login", loginFormEncrypt).then(() => {
             this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
           }).catch(() => {
             this.loading = false;
