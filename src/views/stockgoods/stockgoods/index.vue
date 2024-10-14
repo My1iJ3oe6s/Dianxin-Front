@@ -204,8 +204,11 @@
         <el-form-item label="订购说明图片" prop="zixunUrl" v-show="form.pageType == 'IMG'">
           <image-upload :limit="1" v-model="form.zixunUrl"/>
         </el-form-item>
-        <el-form-item label="业务确认图片" prop="ywqrUrl" v-show="form.pageType">
+        <el-form-item label="业务办理底图" prop="ywqrUrl" v-show="form.pageType">
           <image-upload :limit="1" v-model="form.ywqrUrl"/>
+        </el-form-item>
+        <el-form-item label="业务办理按钮文字" prop="buttonContent">
+          <el-input v-model="form.buttonContent" placeholder="请输入业务办理按钮文字" />
         </el-form-item>
         <el-form-item label="业务受理协议图片" prop="ywslxyUrl" v-show="form.pageType == 'IMG'">
           <image-upload :limit="1" v-model="form.ywslxyUrl"/>
@@ -442,6 +445,7 @@ export default {
         ywqrUrl: null,
         ywslxyUrl: null,
         ystkUrl: null,
+        buttonContent: null,
         headContent: null,
         zixunContent: null,
         ywslxyContent: null,
