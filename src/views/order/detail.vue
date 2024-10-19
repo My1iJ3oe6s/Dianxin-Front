@@ -25,6 +25,15 @@
           <el-descriptions-item label="下单时间">{{
             parseTime(orderDetail.createdAt, "")
           }}</el-descriptions-item>
+          <el-descriptions-item label="是否激活">{{
+              orderDetail.activeState == 1 ? '是' : '否'
+            }}</el-descriptions-item>
+          <el-descriptions-item label="激活时间">{{
+              orderDetail.activeTime
+            }}</el-descriptions-item>
+          <el-descriptions-item label="充值金额">{{
+              orderDetail.initialChargeAmount
+            }}</el-descriptions-item>
         </el-descriptions>
       </el-card>
       <el-card class="mt10">
