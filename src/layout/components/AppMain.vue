@@ -30,7 +30,7 @@ export default {
   width: 100%;
   position: relative;
   overflow: hidden;
-  padding-bottom: 45px;
+  padding-bottom: 10px;
 }
 
 .fixed-header + .app-main {
@@ -40,7 +40,7 @@ export default {
 .hasTagsView {
   .app-main {
     /* 84 = navbar + tags-view = 50 + 34 */
-    min-height: calc(100vh - 84px);
+    min-height: calc(100vh - 110px);
   }
 
   .fixed-header + .app-main {

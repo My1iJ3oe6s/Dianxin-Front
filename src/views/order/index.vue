@@ -66,7 +66,7 @@
           <el-button type="primary" plain icon="el-icon-upload2" size="mini" @click="handleImportOrderId">批量转单</el-button>
         </el-col>
       </el-row>
-      <el-table v-loading="loading" :data="orderList" border @selection-change="handleSelectionChange"
+      <el-table v-loading="loading" :data="orderList" @selection-change="handleSelectionChange"
         cell-class-name="my-cell">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="订单id" prop="orderId" width="80" />

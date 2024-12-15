@@ -309,7 +309,7 @@ export default {
     top 2px;
     right 4px;
     padding: 2px 20px;
-    color: #ff8c00;
+    color: #409EFF;
     cursor pointer;
     font-size 28px;
     z-index 999;

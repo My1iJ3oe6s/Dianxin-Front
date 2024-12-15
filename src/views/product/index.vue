@@ -97,7 +97,7 @@ export default {
   name: "PmsProduct",
   data() {
     return {
-      activeColor: storageSetting.theme || '#FF8C00',
+      activeColor: storageSetting.theme || '#409EFF',
       // 遮罩层
       loading: true,
       loading1: false,

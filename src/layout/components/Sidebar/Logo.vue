@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import logoImg from '@/assets/logo/logo.png'
+import logoImg from '@/assets/images/qiye_logo.png'
 import variables from '@/assets/styles/variables.scss'
 
 export default {
@@ -40,7 +40,7 @@ export default {
   },
   data() {
     return {
-      title: '乐易通通信管理平台',
+      title: '分销管理平台',
       logo: logoImg
     }
   }
@@ -65,7 +65,8 @@ export default {
   background: #2b2f3a;
   text-align: center;
   overflow: hidden;
-
+  padding-left: 20px;
+  text-align: left;
   & .sidebar-logo-link {
     height: 100%;
     width: 100%;
@@ -83,13 +84,16 @@ export default {
       color: #fff;
       font-weight: 600;
       line-height: 50px;
-      font-size: 14px;
+      font-size: 16px;
       font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
       vertical-align: middle;
+      margin-top: 8px;
 
       img{
-        width: 20px;
+        width: 40px;
         transform: translateY(4px);
+        vertical-align: top;
+        margin-right: 10px;
       }
     }
   }

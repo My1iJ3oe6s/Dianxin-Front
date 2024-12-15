@@ -557,7 +557,7 @@ export default {
 .company {
     float: right;
     cursor: pointer;
-    background: #ff8c00;
+    background: #409EFF;
     text-align: center;
     color: #fff;
     padding: 6px 0;

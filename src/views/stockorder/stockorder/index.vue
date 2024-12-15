@@ -1,105 +1,69 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form label-width="100px" :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
         <el-form-item label="订单号" prop="orderNo">
-          <el-input
-            v-model="queryParams.orderNo"
-            placeholder="请输入订单号"
-            clearable
-            @keyup.enter.native="handleQuery"
-          />
+          <el-input v-model="queryParams.orderNo" placeholder="请输入订单号" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="分销商编码" prop="distributorCode">
           <el-select v-model="queryParams.distributorCode" placeholder="请选择分销商编码" clearable>
-            <el-option
-              v-for="dict in dict.type.channel_customer"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            />
+            <el-option v-for="dict in dict.type.channel_customer" :key="dict.value" :label="dict.label"
+              :value="dict.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="分销商订单号" prop="externalOrderNo">
-          <el-input
-            v-model="queryParams.externalOrderNo"
-            placeholder="请输入分销商订单号"
-            clearable
-            @keyup.enter.native="handleQuery"
-          />
+          <el-input v-model="queryParams.externalOrderNo" placeholder="请输入分销商订单号" clearable
+            @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="客户手机号" prop="phone">
-          <el-input
-            v-model="queryParams.phone"
-            placeholder="请输入客户手机号"
-            clearable
-            @keyup.enter.native="handleQuery"
-          />
+          <el-input v-model="queryParams.phone" placeholder="请输入客户手机号" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="归属地" prop="province">
-          <el-input
-            v-model="queryParams.province"
-            placeholder="请输入省份或地区"
-            clearable
-            @keyup.enter.native="handleQuery"
-          />
+          <el-input v-model="queryParams.province" placeholder="请输入省份或地区" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
-<!--        <el-form-item label="城市名称" prop="cityName">-->
-<!--          <el-input-->
-<!--            v-model="queryParams.cityName"-->
-<!--            placeholder="请输入城市名称"-->
-<!--            clearable-->
-<!--            @keyup.enter.native="handleQuery"-->
-<!--          />-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="短信验证码" prop="smsNum">-->
-<!--          <el-input-->
-<!--            v-model="queryParams.smsNum"-->
-<!--            placeholder="请输入短信验证码"-->
-<!--            clearable-->
-<!--            @keyup.enter.native="handleQuery"-->
-<!--          />-->
-<!--        </el-form-item>-->
+        <!--        <el-form-item label="城市名称" prop="cityName">-->
+        <!--          <el-input-->
+        <!--            v-model="queryParams.cityName"-->
+        <!--            placeholder="请输入城市名称"-->
+        <!--            clearable-->
+        <!--            @keyup.enter.native="handleQuery"-->
+        <!--          />-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item label="短信验证码" prop="smsNum">-->
+        <!--          <el-input-->
+        <!--            v-model="queryParams.smsNum"-->
+        <!--            placeholder="请输入短信验证码"-->
+        <!--            clearable-->
+        <!--            @keyup.enter.native="handleQuery"-->
+        <!--          />-->
+        <!--        </el-form-item>-->
         <el-form-item label="商品编码" prop="goodsCode">
-          <el-input
-            v-model="queryParams.goodsCode"
-            placeholder="请输入商品编码"
-            clearable
-            @keyup.enter.native="handleQuery"
-          />
+          <el-input v-model="queryParams.goodsCode" placeholder="请输入商品编码" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="供应商编码" prop="supplierCode">
-          <el-input
-            v-model="queryParams.supplierCode"
-            placeholder="请输入供应商编码"
-            clearable
-            @keyup.enter.native="handleQuery"
-          />
+          <el-input v-model="queryParams.supplierCode" placeholder="请输入供应商编码" clearable
+            @keyup.enter.native="handleQuery" />
         </el-form-item>
-<!--        <el-form-item label="下单时间" prop="orderTime">-->
-<!--          <el-date-picker clearable-->
-<!--                          v-model="queryParams.orderTime"-->
-<!--                          type="date"-->
-<!--                          value-format="yyyy-MM-dd"-->
-<!--                          placeholder="请选择下单时间"-->
-<!--          >-->
-<!--          </el-date-picker>-->
-<!--        </el-form-item>-->
+        <!--        <el-form-item label="下单时间" prop="orderTime">-->
+        <!--          <el-date-picker clearable-->
+        <!--                          v-model="queryParams.orderTime"-->
+        <!--                          type="date"-->
+        <!--                          value-format="yyyy-MM-dd"-->
+        <!--                          placeholder="请选择下单时间"-->
+        <!--          >-->
+        <!--          </el-date-picker>-->
+        <!--        </el-form-item>-->
 
         <el-form-item label="下单时间">
-          <el-date-picker v-model="queryParams.dateRange" style="width: 240px" value-format="yyyy-MM-dd"
-                          type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+          <el-date-picker v-model="queryParams.dateRange" style="width: 215px" value-format="yyyy-MM-dd" type="daterange"
+            range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
         </el-form-item>
 
 
         <el-form-item label="订单状态" prop="orderStatus">
           <el-select v-model="queryParams.orderStatus" placeholder="请选择订单状态" clearable>
-            <el-option
-              v-for="dict in dict.type.self_stock_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            />
+            <el-option v-for="dict in dict.type.self_stock_status" :key="dict.value" :label="dict.label"
+              :value="dict.value" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -112,58 +76,33 @@
     <div class="table-container">
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
-          <el-button
-            type="primary"
-            plain
-            icon="el-icon-plus"
-            size="mini"
-            @click="handleAdd"
-            v-hasPermi="['stockorder:stockorder:add']"
-          >新增
+          <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
+            v-hasPermi="['stockorder:stockorder:add']">新增
           </el-button>
         </el-col>
         <el-col :span="1.5">
-          <el-button
-            type="success"
-            plain
-            icon="el-icon-edit"
-            size="mini"
-            :disabled="single"
-            @click="handleUpdate"
-            v-hasPermi="['stockorder:stockorder:edit']"
-          >修改
+          <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
+            v-hasPermi="['stockorder:stockorder:edit']">修改
           </el-button>
         </el-col>
         <el-col :span="1.5">
-          <el-button
-            type="danger"
-            plain
-            icon="el-icon-delete"
-            size="mini"
-            :disabled="multiple"
-            @click="handleDelete"
-            v-hasPermi="['stockorder:stockorder:remove']"
-          >删除
+          <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
+            v-hasPermi="['stockorder:stockorder:remove']">删除
           </el-button>
         </el-col>
         <el-col :span="1.5">
-          <el-button
-            type="warning"
-            plain
-            icon="el-icon-download"
-            size="mini"
-            @click="handleExport"
-            v-hasPermi="['stockorder:stockorder:export']"
-          >导出
+          <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
+            v-hasPermi="['stockorder:stockorder:export']">导出
           </el-button>
         </el-col>
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
-      <el-table v-loading="loading" :data="stockorderList" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center"/>
-<!--        <el-table-column label="订单ID" align="center" prop="orderId"/>-->
-        <el-table-column label="订单号" align="center" prop="orderNo"/>
+      <el-table :key="tableHeight" :height="tableHeight" v-loading="loading" :data="stockorderList"
+        @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center" />
+        <!--        <el-table-column label="订单ID" align="center" prop="orderId"/>-->
+        <el-table-column label="订单号" align="center" prop="orderNo" />
         <el-table-column label="下单时间" align="center" prop="orderTime" width="180">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.orderTime) }}</span>
@@ -171,135 +110,115 @@
         </el-table-column>
         <el-table-column label="分销商编码" align="center" prop="distributorCode">
           <template slot-scope="scope">
-            <dict-tag :options="dict.type.channel_customer" :value="scope.row.distributorCode"/>
+            <dict-tag :options="dict.type.channel_customer" :value="scope.row.distributorCode" />
           </template>
         </el-table-column>
-<!--        <el-table-column label="分销商营销地址" align="center" prop="distributorUrl"/>-->
-        <el-table-column label="分销商订单号" align="center" prop="externalOrderNo"/>
-        <el-table-column label="客户手机号" align="center" prop="phone"/>
+        <!--        <el-table-column label="分销商营销地址" align="center" prop="distributorUrl"/>-->
+        <el-table-column label="分销商订单号" align="center" prop="externalOrderNo" />
+        <el-table-column label="客户手机号" align="center" prop="phone" />
         <el-table-column label="归属地" align="center" prop="province">
           <template slot-scope="scope">
             <span>{{ scope.row.province }} {{ scope.row.cityName }}</span>
           </template>
         </el-table-column>
-<!--        <el-table-column label="城市名称" align="center" prop="cityName"/>-->
-        <el-table-column label="短信验证码" align="center" prop="smsNum"/>
-        <el-table-column label="商品编码" align="center" prop="goodsCode"/>
-        <el-table-column label="供应商编码" align="center" prop="supplierCode"/>
+        <!--        <el-table-column label="城市名称" align="center" prop="cityName"/>-->
+        <el-table-column label="短信验证码" align="center" prop="smsNum" />
+        <el-table-column label="商品编码" align="center" prop="goodsCode" />
+        <el-table-column label="供应商编码" align="center" prop="supplierCode" />
         <el-table-column label="订单状态" align="center" prop="orderStatus">
           <template slot-scope="scope">
-            <dict-tag :options="dict.type.self_stock_status" :value="scope.row.orderStatus"/>
+            <dict-tag :options="dict.type.self_stock_status" :value="scope.row.orderStatus" />
           </template>
         </el-table-column>
-<!--        <el-table-column label="备注" align="center" prop="remark"/>-->
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <!--        <el-table-column label="备注" align="center" prop="remark"/>-->
+        <el-table-column label="操作" width="200" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-edit"
-              @click="handleUpdate(scope.row)"
-              v-hasPermi="['stockorder:stockorder:edit']"
-            >修改
+            <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
+              v-hasPermi="['stockorder:stockorder:edit']">修改
             </el-button>
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-delete"
-              @click="handleDelete(scope.row)"
-              v-hasPermi="['stockorder:stockorder:remove']"
-            >删除
+            <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
+              v-hasPermi="['stockorder:stockorder:remove']">删除
             </el-button>
           </template>
         </el-table-column>
       </el-table>
+      <div>
+        <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
+          @pagination="getList" />
+      </div>
     </div>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
-
     <!-- 添加或修改权益包订单对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="1000px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="150px">
+
+    <el-drawer custom-class="drawer-container" :visible.sync="open" size="40%" append-to-body>
+      <template #title>
+        <div style="font-size: 20px; text-align: center; color: #606266">
+          {{ title }}
+        </div>
+      </template>
+      <el-form class="form-container" ref="form" :model="form" :rules="rules" label-width="150px">
         <el-form-item label="订单号" prop="orderNo">
-          <el-input v-model="form.orderNo" placeholder="请输入订单号"/>
+          <el-input v-model="form.orderNo" placeholder="请输入订单号" />
         </el-form-item>
         <el-form-item label="分销商编码" prop="distributorCode">
           <el-radio-group v-model="form.distributorCode">
-            <el-radio
-              v-for="dict in dict.type.channel_customer"
-              :key="dict.value"
-              :label="dict.value"
-            >{{ dict.label }}
+            <el-radio v-for="dict in dict.type.channel_customer" :key="dict.value" :label="dict.value">{{ dict.label }}
             </el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="分销商营销地址" prop="distributorUrl">
-          <el-input v-model="form.distributorUrl" type="textarea" placeholder="请输入内容"/>
+          <el-input v-model="form.distributorUrl" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="分销商订单号" prop="externalOrderNo">
-          <el-input v-model="form.externalOrderNo" placeholder="请输入分销商订单号"/>
+          <el-input v-model="form.externalOrderNo" placeholder="请输入分销商订单号" />
         </el-form-item>
         <el-form-item label="客户手机号" prop="phone">
-          <el-input v-model="form.phone" placeholder="请输入客户手机号"/>
+          <el-input v-model="form.phone" placeholder="请输入客户手机号" />
         </el-form-item>
         <el-form-item label="省份" prop="province">
-          <el-input v-model="form.province" placeholder="请输入省份"/>
+          <el-input v-model="form.province" placeholder="请输入省份" />
         </el-form-item>
         <el-form-item label="城市名称" prop="cityName">
-          <el-input v-model="form.cityName" placeholder="请输入城市名称"/>
+          <el-input v-model="form.cityName" placeholder="请输入城市名称" />
         </el-form-item>
         <el-form-item label="城市编码" prop="cityCode">
-          <el-input v-model="form.cityCode" placeholder="请输入城市编码"/>
+          <el-input v-model="form.cityCode" placeholder="请输入城市编码" />
         </el-form-item>
         <el-form-item label="短信验证码" prop="smsNum">
-          <el-input v-model="form.smsNum" placeholder="请输入短信验证码"/>
+          <el-input v-model="form.smsNum" placeholder="请输入短信验证码" />
         </el-form-item>
         <el-form-item label="商品编码" prop="goodsCode">
-          <el-input v-model="form.goodsCode" placeholder="请输入商品编码"/>
+          <el-input v-model="form.goodsCode" placeholder="请输入商品编码" />
         </el-form-item>
         <el-form-item label="供应商编码" prop="supplierCode">
-          <el-input v-model="form.supplierCode" placeholder="请输入供应商编码"/>
+          <el-input v-model="form.supplierCode" placeholder="请输入供应商编码" />
         </el-form-item>
         <el-form-item label="供应商商品编码" prop="supplierGoodsCode">
-          <el-input v-model="form.supplierGoodsCode" placeholder="请输入供应商商品编码"/>
+          <el-input v-model="form.supplierGoodsCode" placeholder="请输入供应商商品编码" />
         </el-form-item>
         <el-form-item label="下单时间" prop="orderTime">
-          <el-date-picker clearable
-                          v-model="form.orderTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择下单时间"
-          >
+          <el-date-picker clearable v-model="form.orderTime" type="date" value-format="yyyy-MM-dd" placeholder="请选择下单时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="订单状态" prop="orderStatus">
           <el-radio-group v-model="form.orderStatus">
-            <el-radio
-              v-for="dict in dict.type.self_stock_status"
-              :key="dict.value"
-              :label="parseInt(dict.value)"
-            >{{ dict.label }}
+            <el-radio v-for="dict in dict.type.self_stock_status" :key="dict.value" :label="parseInt(dict.value)">{{
+              dict.label }}
             </el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="供应商订单查询消息" prop="syncOrderMessage">
-          <el-input v-model="form.syncOrderMessage" type="textarea" placeholder="请输入内容"/>
+          <el-input v-model="form.syncOrderMessage" type="textarea" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div class="draw-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
-    </el-dialog>
+    </el-drawer>
   </div>
 </template>
 
@@ -365,13 +284,29 @@ export default {
         goodsCode: [
           { required: true, message: '商品编码不能为空', trigger: 'blur' }
         ]
-      }
+      },
+      tableHeight: 400
     }
   },
   created() {
     this.getList()
   },
+
+  mounted() {
+    this.calcHeight();
+    window.onresize = () => {
+      this.calcHeight();
+    };
+  },
+  beforeDestroy() {
+    window.onresize = null;
+  },
   methods: {
+    calcHeight() {
+      this.tableHeight = document.documentElement.clientHeight - 440;
+
+      console.log(this.tableHeight)
+    },
     /** 查询权益包订单列表 */
     getList() {
       if (this.queryParams.dateRange?.length) {
@@ -381,9 +316,9 @@ export default {
         this.queryParams.createStartDate = null;
         this.queryParams.createEndDate = null;
       }
-        this.loading = true
+      this.loading = true
       listStockorder(this.queryParams).then(response => {
-        this.stockorderList = response.rows
+        this.stockorderList = response.rows;
         this.total = response.total
         this.loading = false
       })
@@ -475,7 +410,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const orderIds = row.orderId || this.ids
-      this.$modal.confirm('是否确认删除权益包订单编号为"' + orderIds + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除权益包订单编号为"' + orderIds + '"的数据项？').then(function () {
         return delStockorder(orderIds)
       }).then(() => {
         this.getList()
@@ -492,3 +427,32 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.drawer-container {
+  padding: 10px 40px;
+  display: flex;
+}
+
+// .el-drawer__body {
+//   display: flex;
+//   flex-direction: column;
+//   overflow: hidden;
+// }
+
+.form-container {
+  margin-bottom: 70px;
+}
+
+.draw-footer {
+  height: 60px;
+  text-align: right;
+  position: absolute;
+  /* position: fixed; */
+  bottom: -8px;
+  right: 60px;
+  background: #fff;
+  width: 100%;
+  z-index: 9;
+}
+</style>

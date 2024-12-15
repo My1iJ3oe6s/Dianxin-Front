@@ -24,7 +24,7 @@
                 </el-col>
             </el-row>
 
-            <el-table v-loading="loading" border :data="list" @selection-change="handleSelectionChange">
+            <el-table v-loading="loading" :data="list" @selection-change="handleSelectionChange">
                 <!-- <el-table-column type="selection" width="55" align="center" /> -->
                 <el-table-column label="主图" align="center" prop="mainImage" width="100">
                     <template slot-scope="scope">
