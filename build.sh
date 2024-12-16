@@ -8,7 +8,13 @@ PARENT_DIR=$(pwd)
 
 # 克隆仓库
 echo "克隆仓库..."
-git clone $REPO_URL $DEST_DIR
+# 检查目标目录是否存在
+if [ -d "$TARGET_DIR" ]; then
+    echo "仓库已存在，跳过克隆步骤。"
+else
+    echo "仓库不存在，开始克隆..."
+    git clone $REPO_URL $TARGET_DIR
+fi
 
 # 进入仓库目录
 cd $DEST_DIR
