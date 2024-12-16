@@ -1,16 +1,13 @@
 <template>
-  <div class="sidebar-logo-container" :class="{ 'collapse': collapse }"
-    :style="{ backgroundColor: sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground }">
+  <div class="sidebar-logo-container" :class="{ 'collapse': collapse }">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <h1 class="sidebar-title"
-          :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">{{
-            title }} </h1>
+        <h1 class="sidebar-title">{{
+          title }} </h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <h1 class="sidebar-title"
-          :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">
-          <img :src="logo"/>
+        <h1 class="sidebar-title">
+          <img :src="logo" />
           {{ title }}
         </h1>
       </router-link>
@@ -62,11 +59,12 @@ export default {
   width: 100%;
   height: 50px;
   line-height: 50px;
-  background: #2b2f3a;
+  background:#f7f7f7;
   text-align: center;
   overflow: hidden;
   padding-left: 20px;
   text-align: left;
+
   & .sidebar-logo-link {
     height: 100%;
     width: 100%;
@@ -81,7 +79,7 @@ export default {
     & .sidebar-title {
       display: inline-block;
       margin: 0;
-      color: #fff;
+      color: #333;
       font-weight: 600;
       line-height: 50px;
       font-size: 16px;
@@ -89,7 +87,7 @@ export default {
       vertical-align: middle;
       margin-top: 8px;
 
-      img{
+      img {
         width: 40px;
         transform: translateY(4px);
         vertical-align: top;
@@ -103,4 +101,5 @@ export default {
       margin-right: 0px;
     }
   }
-}</style>
+}
+</style>
