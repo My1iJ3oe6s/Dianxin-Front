@@ -15,7 +15,7 @@ cd $DEST_DIR
 
 # 拉取最新代码
 echo "拉取最新代码..."
-git pull origin master
+git pull origin khfx-prod
 
 # 安装依赖
 echo "安装依赖..."
