@@ -26,15 +26,15 @@ echo "构建生产环境代码..."
 npm run build:prod
 
 # 检查构建目录是否存在
-if [ -d "$BUILD_DIR" ]; then
-    # 复制dist目录到同级目录
-    echo "复制dist目录到同级目录..."
-    cp -r $BUILD_DIR $PARENT_DIR
-else
-    echo "构建目录不存在，构建可能失败。"
-fi
+# if [ -d "$BUILD_DIR" ]; then
+#     # 复制dist目录到同级目录
+#     echo "复制dist目录到同级目录..."
+#     cp -r $BUILD_DIR $PARENT_DIR
+# else
+#     echo "构建目录不存在，构建可能失败。"
+# fi
 
 # 返回到原始目录
-cd $PARENT_DIR
+# cd $PARENT_DIR
 
 echo "操作完成。"
