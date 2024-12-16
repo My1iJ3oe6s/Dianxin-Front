@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="80px" size="medium"
+      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="120px" size="small"
         class="ry_form">
         <el-form-item label="产品名称" prop="queryParameters.productName">
           <el-input v-model="queryParams.queryParameters.productName" placeholder="请输入产品名称" clearable size="small"
@@ -24,7 +24,7 @@
         </el-col>
       </el-row>
 
-      <el-table v-loading="loading" border :data="list">
+      <el-table :key="tableHeight" :height="tableHeight" v-loading="loading" :data="list">
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
         <el-table-column label="产品编码" align="center" prop="productCode" />
         <el-table-column label="产品名称" align="center" prop="productName" />
@@ -48,14 +48,14 @@
           </template>
         </el-table-column>
         <el-table-column label="备注" align="center" prop="des" />
-        <el-table-column label="操作" align="center" width="120" class-name="small-padding fixed-width" fixed="right">
+        <el-table-column label="操作" align="center" width="220" class-name="small-padding" fixed="right">
           <template slot-scope="scope">
-            <el-button size="mini" type="text" @click="handleCheck(scope.row, 1)">详情</el-button>
-            <el-button size="mini" type="text" @click="handleCheck(scope.row, 0)">修改</el-button>
-            <el-button size="mini" type="text" @click="handleConnectGoods(scope.row)">关联商品</el-button>
+            <el-link :underline="false" type="primary" @click="handleConnectGoods(scope.row)">关联商品</el-link>
+            <el-link :underline="false" type="primary" @click="handleCheck(scope.row, 0)">修改</el-link>
             <el-popconfirm title="确定删除？" @confirm="handleDelect(scope.row)">
-              <el-button size="mini" type="text" slot="reference">删除</el-button>
+              <el-link :underline="false" type="primary" slot="reference">删除</el-link>
             </el-popconfirm>
+            <el-link :underline="false" type="primary" size="mini"  @click="handleCheck(scope.row, 1)">详情</el-link>
           </template>
         </el-table-column>
       </el-table>
@@ -135,12 +135,25 @@ export default {
       open1: false,
       conenctData: {},
       productCode: '',
+      tableHeight: 400
     };
   },
   activated() {
     this.getList();
   },
+  mounted() {
+    this.calcHeight();
+    window.onresize = () => {
+      this.calcHeight();
+    };
+  },
+  beforeDestroy() {
+    window.onresize = null;
+  },
   methods: {
+    calcHeight() {
+      this.tableHeight = document.documentElement.clientHeight - 380;
+    },
     handleDelect(row) {
       handleDelete(row.productId)
         .then((res) => {

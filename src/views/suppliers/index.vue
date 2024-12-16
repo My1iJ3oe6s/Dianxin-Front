@@ -2,7 +2,7 @@
     <div class="app-container">
         <div class="filter-container">
             <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="120px"
-                size="medium" class="ry_form">
+                size="small" class="ry_form">
                 <el-form-item label="外部供应商名称" prop="queryParameters.supplierName">
                     <el-input v-model="queryParams.queryParameters.supplierName" placeholder="请输入外部供应商名称" clearable
                         size="small" @keyup.enter.native="handleQuery" />
@@ -24,7 +24,7 @@
                 </el-col>
             </el-row>
 
-            <el-table v-loading="loading" border :data="list">
+            <el-table :key="tableHeight" :height="tableHeight" v-loading="loading" :data="list">
                 <!-- <el-table-column type="selection" width="55" align="center" /> -->
                 <el-table-column label="id" align="center" prop="supplierId" />
                 <el-table-column label="外部供应商编码" align="center" prop="supplierCode" />
@@ -39,12 +39,12 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="开通时间" align="center" prop="activationTime" />
-                <el-table-column label="操作" align="center" class-name="small-padding">
+                <el-table-column label="操作" align="center" width="200" class-name="small-padding">
                     <template slot-scope="scope">
-                        <el-button size="mini" type="text" @click="handleCheck(scope.row, 0)">修改</el-button>
-                        <el-button size="mini" type="text" @click="handleConnectProducts(scope.row)">关联产品</el-button>
+                        <el-link :underline="false" type="primary" @click="handleCheck(scope.row, 0)">修改</el-link>
+                        <el-link :underline="false" type="primary" @click="handleConnectProducts(scope.row)">关联产品</el-link>
                         <el-popconfirm title="确定删除？" @confirm="handleDelect(scope.row)">
-                            <el-button size="mini" type="text" slot="reference">删除</el-button>
+                            <el-link :underline="false" type="primary" slot="reference">删除</el-link>
                         </el-popconfirm>
                     </template>
                 </el-table-column>
@@ -117,13 +117,26 @@ export default {
             conenctData: {},
             productList: [],
             productList: [],
-            suppliercode: ''
+            suppliercode: '',
+            height: 400
         };
     },
     activated() {
         this.getList();
     },
+    mounted() {
+        this.calcHeight();
+        window.onresize = () => {
+            this.calcHeight();
+        };
+    },
+    beforeDestroy() {
+        window.onresize = null;
+    },
     methods: {
+        calcHeight() {
+            this.tableHeight = document.documentElement.clientHeight - 380;
+        },
         handleStatusChange(row) { },
         returnNameData(list, target, value, name) {
             return returnName(list, target, value, name);
@@ -178,7 +191,7 @@ export default {
                 })
         },
         /** 下载文件 */
-        handleDownLoad(url){
+        handleDownLoad(url) {
             window.open(url);
         },
         /** 修改 */

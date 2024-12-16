@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-form label-width="100px" :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
+      <el-form label-width="120px" :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
         <el-form-item label="订单号" prop="orderNo">
           <el-input v-model="queryParams.orderNo" placeholder="请输入订单号" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
@@ -133,12 +133,12 @@
         <!--        <el-table-column label="备注" align="center" prop="remark"/>-->
         <el-table-column label="操作" width="200" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
-            <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
+            <el-link :underline="false" type="primary" icon="el-icon-edit" @click="handleUpdate(scope.row)"
               v-hasPermi="['stockorder:stockorder:edit']">修改
-            </el-button>
-            <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
+            </el-link>
+            <el-link :underline="false" type="primary" icon="el-icon-delete" @click="handleDelete(scope.row)"
               v-hasPermi="['stockorder:stockorder:remove']">删除
-            </el-button>
+            </el-link>
           </template>
         </el-table-column>
       </el-table>

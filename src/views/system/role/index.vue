@@ -49,12 +49,13 @@
                         class="el-icon-d-arrow-right" /></div> -->
                 <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
             </el-row>
-            <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
+            <el-table :key="tableHeight" :height="tableHeight" v-loading="loading" :data="roleList"
+                @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center" />
                 <el-table-column label="角色编号" prop="roleId" />
                 <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" />
                 <el-table-column label="权限字符" prop="roleKey" :show-overflow-tooltip="true" />
-                <el-table-column label="显示顺序" prop="roleSort"  />
+                <el-table-column label="显示顺序" prop="roleSort" />
                 <el-table-column label="状态" align="center">
                     <template slot-scope="scope">
                         <el-switch v-model="scope.row.status" active-value="0" inactive-value="1"
@@ -68,13 +69,13 @@
                 </el-table-column>
                 <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
                     <template slot-scope="scope" v-if="scope.row.roleId !== 1">
-                        <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
-                            v-hasPermi="['system:role:edit']">修改</el-button>
-                        <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
-                            v-hasPermi="['system:role:remove']">删除</el-button>
+                        <el-link size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
+                            v-hasPermi="['system:role:edit']">修改</el-link>
+                        <el-link size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
+                            v-hasPermi="['system:role:remove']">删除</el-link>
                         <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)"
                             v-hasPermi="['system:role:edit']">
-                            <el-button size="mini" type="text" icon="el-icon-d-arrow-right">更多</el-button>
+                            <el-link size="mini" type="text" icon="el-icon-d-arrow-right">更多</el-link>
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item command="handleDataScope" icon="el-icon-circle-check"
                                     v-hasPermi="['system:role:edit']">数据权限</el-dropdown-item>
@@ -263,12 +264,25 @@ export default {
             modalOpen: false,
             userInfo: {},
             companyData: store.getters.companyData,
+            tableHeight: 400
         };
     },
     created() {
         this.getUserProfile();
     },
+    mounted() {
+        this.calcHeight();
+        window.onresize = () => {
+            this.calcHeight();
+        };
+    },
+    beforeDestroy() {
+        window.onresize = null;
+    },
     methods: {
+        calcHeight() {
+            this.tableHeight = document.documentElement.clientHeight - 380;
+        },
         /** 获取当前登陆人信息 */
         getUserProfile() {
             getUserProfile().then(res => {
