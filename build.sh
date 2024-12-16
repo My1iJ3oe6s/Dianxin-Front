@@ -5,6 +5,8 @@ REPO_URL="https://gitee.com/My1iJ3oe6s/Dianxin-Front.git"
 DEST_DIR="Dianxin-Front"
 BUILD_DIR="dist"
 PARENT_DIR=$(pwd)
+# 目标目录
+TARGET_DIR="Dianxin-Front"
 
 # 克隆仓库
 echo "克隆仓库..."
