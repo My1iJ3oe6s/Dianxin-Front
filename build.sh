@@ -37,5 +37,12 @@ fi
 
 # 后续操作，例如构建等
 cd $TARGET_DIR
-# 假设构建命令为 npm run build:prod
+
+# 安装依赖
+echo "安装依赖..."
+npm install
+echo "依赖安装完成..."
+
+echo "开始构建..."
 npm run build:prod
+echo "构建完成..."
