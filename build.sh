@@ -35,9 +35,6 @@ else
     git clone -b $BRANCH_NAME --single-branch $REPO_URL $TARGET_DIR
 fi
 
-# 后续操作，例如构建等
-cd $TARGET_DIR
-
 # 安装依赖
 echo "安装依赖..."
 npm install
