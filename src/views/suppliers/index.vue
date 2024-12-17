@@ -73,18 +73,108 @@
                 </el-table-column>
             </el-table>
         </el-dialog>
+        <el-drawer custom-class="drawer-container" size="40%" :visible.sync="open2" append-to-body>
+            <template #title>
+                <div style="font-size: 20px; text-align: center; color: #606266">
+                    {{ form.supplierId ? '修改' : '新增' }}供应商
+                </div>
+            </template>
+            <el-form class="form-container" ref="form" :model="form" :rules="rules" label-width="150px">
+                <el-row>
+                    <el-col :span="24">
+                        <el-form-item label="外部供应商名称" prop="supplierName">
+                            <el-input v-model="form.supplierName" placeholder="请输入外部供应商名称"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="外部供应商编码" prop="supplierCode">
+                            <el-input v-model="form.supplierCode" placeholder="请输入外部供应商编码"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="联系人" prop="contactPerson">
+                            <el-input v-model="form.contactPerson" placeholder="请输入联系人"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="联系电话" prop="phone">
+                            <el-input v-model="form.phone" placeholder="请输入联系电话"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="邮箱" prop="email">
+                            <el-input v-model="form.email" placeholder="请输入邮箱"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="地址" prop="address">
+                            <el-input v-model="form.address" placeholder="请输入地址"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="公共配置" prop="devConfig">
+                            <el-input class="multi-line-placeholder" type="textarea" v-model="form.devConfig"
+                                placeholder="请输入公共配置"></el-input>
+                        </el-form-item>
+                        <div class="example">
+                            示例：<br />key:value<br />key:value
+                        </div>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="文档" prop="docUrl">
+                            <el-upload ref="upload" :action="upload.url + '?updateSupport=' + upload.updateSupport"
+                                :limit="1" :file-list="form.docUrlData" v-model="form.docUrl"
+                                :on-success="handleFileSuccess">
+                                <el-button size="small" type="primary">点击上传</el-button>
+                            </el-upload>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <div class="draw-footer">
+                    <el-button :loading="formLoading" type="primary" @click="submitForm" v-if="!isReadonly">确 定</el-button>
+                    <el-button @click="cancel2">取 消</el-button>
+                </div>
+            </el-form>
+        </el-drawer>
     </div>
 </template>
   
 <script>
-import { getList, add, edit, cancelBind, handleDelete } from "@/api/suppliers/index";
+import { getList, add, edit, cancelBind, handleDelete, getInfo } from "@/api/suppliers/index";
 import * as productApi from '@/api/product/index';
 import { returnName } from "@/utils/index.js";
+import { prodTypeData } from '@/utils/printData';
+import { getToken } from "@/utils/auth";
 
 export default {
     name: "Suppliers",
     data() {
         return {
+            prodTypeData,
+            formLoading: false,
+            open2: false,
+            form: {
+
+            },
+            rules: {
+                supplierName: [{ required: true, message: "外部供应商名称必填", trigger: "blur" }],
+                supplierCode: [{ required: true, message: "外部供应商编码必填", trigger: "blur" }],
+            },
+            isEdit: false,
+            upload: {
+                // 是否显示弹出层（用户导入）
+                open: false,
+                // 弹出层标题（用户导入）
+                title: "",
+                // 是否禁用上传
+                isUploading: false,
+                // 是否更新已经存在的用户数据
+                updateSupport: 0,
+                // 设置上传的请求头部
+                headers: { Authorization: "Bearer " + getToken() },
+                // 上传的地址
+                url: process.env.VUE_APP_BASE_API + "file/upload",
+            },
             // 遮罩层
             loading: false,
             loading1: false,
@@ -133,6 +223,22 @@ export default {
     beforeDestroy() {
         window.onresize = null;
     },
+    watch: {
+        open2: {
+            handler(val) {
+                if (!val) {
+                    this.form = {
+                        productionStatus: '1',
+                        isNumbered: '0',
+                        checkIdentity: '0',
+                        configParam: {}
+                    };
+                    this.isEdit = false;
+                    this.isReadonly = false;
+                }
+            }
+        }
+    },
     methods: {
         calcHeight() {
             this.tableHeight = document.documentElement.clientHeight - 380;
@@ -180,7 +286,7 @@ export default {
         },
         /** 新增按钮操作 */
         handleAdd() {
-            this.$router.push({ path: "/suppliers/detail" });
+            this.open2 = true;
         },
         /** 删除 */
         handleDelect(row) {
@@ -195,8 +301,10 @@ export default {
             window.open(url);
         },
         /** 修改 */
-        handleCheck(row) {
-            this.$router.push({ path: "/suppliers/detail", query: { id: row.supplierId } });
+        handleCheck(row, target) {
+            const id = row.productId;
+
+            this.openAddForm(row, target)
         },
         getConnectProduct(row, fn) {
             console.log(row)
@@ -247,16 +355,105 @@ export default {
                     this.getConnectProduct(data)
                 })
         },
+
+        openAddForm(row, target) {
+            this.open2 = true;
+            const { supplierId } = row;
+            this.isReadonly = target == 1 ? true : false;
+            if (supplierId) {
+                this.isEdit = true;
+                this.queryDetail(supplierId)
+            }
+        },
+
+        handleFileSuccess(res) {
+            const { url, name } = res.data;
+            this.form.docUrlData = [{ name: name, url: url }];
+            this.form.docUrl = url;
+        },
+        cancel2() {
+            this.open2 = false;
+        },
+        queryDetail(id) {
+            this.formLoading = true;
+            getInfo(id).then((res) => {
+                const { data } = res;
+                data.docUrlData = data.docUrl && [{ name: data.docUrl, url: data.docUrl }]
+                this.form = data
+                this.formLoading = false;
+            });
+        },
+        submitForm() {
+            this.$refs["form"].validate((valid, a) => {
+                if (valid) {
+                    this.formLoading = true;
+                    if (this.form.supplierId) {
+                        edit(this.form).then((response) => {
+                            this.formLoading = false;
+                            this.cancel2();
+                            this.getList();
+                        })
+                            .catch(() => {
+                                this.formLoading = false;
+                            });
+                    } else {
+                        add(this.form).then((response) => {
+                            this.formLoading = false;
+                            this.cancel2();
+                            this.getList();
+                        })
+                            .catch(() => {
+                                this.formLoading = false;
+                            });
+
+                    }
+                }
+            })
+        },
     }
 };
 </script>
-<style>
+<style scoped lang="scss">
 .cell {
 
     .el-button+span,
     span+span {
         margin-left: 10px;
     }
+}
+
+
+::v-deep .drawer-container {
+    padding: 10px 40px;
+    display: flex;
+
+    .form-container {
+        margin-bottom: 70px;
+    }
+
+    .draw-footer {
+        height: 60px;
+        text-align: right;
+        position: absolute;
+        /* position: fixed; */
+        bottom: -8px;
+        right: 60px;
+        background: #fff;
+        width: 100%;
+        z-index: 9;
+    }
+}
+
+::v-deep .el-drawer__body {
+    overflow: unset;
+    overflow-y: auto;
+}
+
+.example{
+    color: #ccc;
+    padding-left: 150px;
+    margin-top: -10px;
+    margin-bottom: 10px;
 }
 </style>
   
