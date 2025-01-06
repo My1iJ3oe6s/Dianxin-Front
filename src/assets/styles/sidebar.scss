@@ -15,7 +15,7 @@
     -webkit-transition: width .28s;
     transition: width 0.28s;
     width: $base-sidebar-width !important;
-    background-color: $base-menu-background;
+    background-color: #f7f7f7;
     height: 100%;
     position: fixed;
     font-size: 0px;
@@ -34,6 +34,8 @@
 
     .scrollbar-wrapper {
       overflow-x: hidden !important;
+
+      background-color: #f7f7f7;
     }
 
     .el-scrollbar__bar.is-vertical {
@@ -70,6 +72,7 @@
       height: 100%;
       width: 100% !important;
       padding: 0 10px;
+      background-color: #f7f7f7;
     }
 
     .el-menu-item, .el-submenu__title {
@@ -84,7 +87,7 @@
     .submenu-title-noDropdown,
     .el-submenu__title {
       &:hover {
-        background-color: rgba(0, 0, 0, 0.06) !important;
+        // background-color: rgba(0, 0, 0, 0.06) !important;
       }
     }
     .is-opened {
@@ -92,28 +95,6 @@
         border-radius: 12px;
         background-color: #ffffff !important;
         color: rgb(24, 144, 255) !important
-      }
-    }
-
-    & .theme-dark .is-active > .el-submenu__title {
-      color: $base-menu-color-active !important;
-    }
-
-    & .nest-menu .el-submenu>.el-submenu__title,
-    & .el-submenu .el-menu-item {
-      // min-width: $base-sidebar-width !important;
-
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.06) !important;
-      }
-    }
-
-    & .theme-dark .nest-menu .el-submenu>.el-submenu__title,
-    & .theme-dark .el-submenu .el-menu-item {
-      background-color: $base-sub-menu-background !important;
-
-      &:hover {
-        background-color: $base-sub-menu-hover !important;
       }
     }
   }
@@ -206,14 +187,6 @@
   &>.el-menu {
     .svg-icon {
       margin-right: 16px;
-    }
-  }
-
-  .nest-menu .el-submenu>.el-submenu__title,
-  .el-menu-item {
-    &:hover {
-      // you can use $subMenuHover
-      background-color: rgba(0, 0, 0, 0.06) !important;
     }
   }
 

@@ -106,6 +106,7 @@
   border-radius: 6px !important;
   height: 32px !important;
   line-height: 32px !important;
+  font-size: 14px !important;
 }
 
 .el-input__inner {
@@ -150,6 +151,7 @@
 
 .el-menu-item.is-active {
   font-weight: bold;
+  color: #606266;
 }
 
 // .el-form-item__label {

@@ -212,9 +212,10 @@ export default {
   }
 
   .input-icon {
-    height: 39px;
+    height: 50px;
     width: 14px;
     margin-left: 2px;
+    line-height: 50px;
   }
 }
 

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="100px">
+      <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="120px">
         <el-form-item label="商品编码" prop="goodsCode">
           <el-input v-model="queryParams.goodsCode" placeholder="请输入商品编码" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
@@ -98,10 +98,10 @@
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
-            <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
-              v-hasPermi="['stockgoods:stockgoods:edit']">修改</el-button>
-            <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
-              v-hasPermi="['stockgoods:stockgoods:remove']">删除</el-button>
+            <el-link :underline="false" type="primary"  icon="el-icon-edit" @click="handleUpdate(scope.row)"
+              v-hasPermi="['stockgoods:stockgoods:edit']">修改</el-link>
+              <el-link :underline="false" type="primary"  icon="el-icon-delete" @click="handleDelete(scope.row)"
+              v-hasPermi="['stockgoods:stockgoods:remove']">删除</el-link>
           </template>
         </el-table-column>
       </el-table>
@@ -350,8 +350,6 @@ export default {
   methods: {
     calcHeight() {
       this.tableHeight = document.documentElement.clientHeight - 380;
-
-      console.log(this.tableHeight)
     },
     /** 查询权益商品列表 */
     getList() {

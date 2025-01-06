@@ -1,8 +1,7 @@
 <template>
     <div class="app-container">
         <div class="filter-container">
-            <el-form :model="queryParams" ref="queryForm1" :inline="true" v-show="showSearch" label-width="80px"
-                size="medium" class="ry_form">
+            <el-form :model="queryParams" ref="queryForm1" size="small" :inline="true" v-show="showSearch" label-width="100px" class="ry_form">
                 <el-form-item label="号池" prop="poolName">
                     <el-select v-model="queryParams.queryParameters.poolName" placeholder="请选择号池" clearable size="small">
                         <el-option v-for="item in list" :key="item" :label="item"
