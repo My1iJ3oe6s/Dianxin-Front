@@ -173,7 +173,7 @@ export default {
 
     .login-logo {
       flex: 1;
-      background-image: url("../assets/images/login-background.jpg");
+      background-image: url("../assets/images/login-background.png");
       background-size: cover;
     }
 
