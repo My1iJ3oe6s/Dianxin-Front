@@ -37,7 +37,7 @@ export default {
   },
   data() {
     return {
-      title: '分销管理平台',
+      title: '讯翼行分销管理平台',
       logo: logoImg
     }
   }

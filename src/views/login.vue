@@ -5,7 +5,7 @@
       </div>
       <div class="login-main">
         <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
-          <h3 class="title">分销管理平台</h3>
+          <h3 class="title">讯翼行分销管理平台</h3>
           <el-form-item prop="username" style="margin-bottom: 30px;">
             <el-input v-model="loginForm.username" type="text" auto-complete="off" placeholder="账号">
               <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
@@ -173,7 +173,7 @@ export default {
 
     .login-logo {
       flex: 1;
-      background-image: url("../assets/images/login-background.jpg");
+      background-image: url("../assets/images/login-background.png");
       background-size: cover;
     }
 

@@ -1,7 +1,7 @@
 <template>
   <div class="register">
     <el-form ref="registerForm" :model="registerForm" :rules="registerRules" class="register-form">
-      <h3 class="title">分销管理平台</h3>
+      <h3 class="title">讯翼行分销管理平台</h3>
       <!-- <el-form-item prop="companyName">
         <el-input v-model="registerForm.companyName" type="text" auto-complete="off" placeholder="公司名称">
           <svg-icon slot="prefix" icon-class="redis-list" class="el-input__icon input-icon" />
@@ -157,7 +157,7 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100%;
-  background-image: url("../assets/images/login-background.jpg");
+  background-image: url("../assets/images/login-background.png");
   background-size: cover;
 }
 .title {
