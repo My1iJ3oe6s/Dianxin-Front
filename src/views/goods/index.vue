@@ -1,14 +1,14 @@
 <template>
     <div class="app-container">
         <div class="filter-container">
-            <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="80px"
+            <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="120px"
                 size="medium" class="ry_form">
                 <el-form-item label="商品名称" prop="queryParameters.goodsName">
-                    <el-input v-model="queryParams.queryParameters.goodsName" placeholder="请输入商品名称" clearable size="small"
+                    <el-input style="width: 240px" v-model="queryParams.queryParameters.goodsName" placeholder="请输入商品名称" clearable size="small"
                         @keyup.enter.native="handleQuery" />
                 </el-form-item>
                 <el-form-item label="商品编码" prop="queryParameters.goodsCode">
-                    <el-input v-model="queryParams.queryParameters.goodsCode" placeholder="请输入商品编码" clearable size="small"
+                    <el-input style="width: 240px" v-model="queryParams.queryParameters.goodsCode" placeholder="请输入商品编码" clearable size="small"
                         @keyup.enter.native="handleQuery" />
                 </el-form-item>
                 <el-form-item class="flex_one tr">
@@ -43,22 +43,22 @@
                 <!-- <el-table-column label="身份证验证" align="center" prop="checkIdentity">
                     <template slot-scope="scope">{{ returnNameData(dictData, scope.row.checkIdentity) }}</template>
                 </el-table-column> -->
-                <el-table-column label="操作" align="center" class-name="small-padding" fixed="right">
+                <el-table-column label="操作" align="left" :width="200" class-name="small-padding" fixed="right">
                     <template slot-scope="scope">
-                        <el-button size="mini" type="text" @click="handleCheck(scope.row, 1)">详情</el-button>
-                        <el-button size="mini" type="text" @click="handleCheck(scope.row, 0)">修改</el-button>
-                        <el-button size="mini" type="text" @click="handleProduct(scope.row)">产品配置</el-button>
-                        <el-button size="mini" type="text" @click="handleLink(scope.row)">下单链接</el-button>
-                        <el-button size="mini" type="text" @click="handleBanner(scope.row)">生成海报</el-button>
+                        <el-link :underline="false" size="mini" type="text" @click="handleCheck(scope.row, 1)">详情</el-link>
+                        <el-link :underline="false" size="mini" type="text" @click="handleCheck(scope.row, 0)">修改</el-link>
+                        <el-link :underline="false" size="mini" type="text" @click="handleProduct(scope.row)">产品配置</el-link>
+                        <el-link :underline="false" size="mini" type="text" @click="handleLink(scope.row)">下单链接</el-link>
+                        <el-link :underline="false" size="mini" type="text" @click="handleBanner(scope.row)">生成海报</el-link>
                         <el-popconfirm title="确定删除？" @confirm="handleDelect(scope.row)">
-                            <el-button size="mini" type="text" slot="reference">删除</el-button>
+                            <el-link :underline="false" size="mini" type="text" slot="reference">删除</el-link>
                         </el-popconfirm>
                         <el-popconfirm :title="'确定更改为' + (scope.row.productionType == 1 ? '手动提交' : '自动提交') + '？'"
                             @confirm="handleCheckType(scope.row)">
-                            <el-button size="mini" type="text" slot="reference">
+                            <el-link :underline="false" size="mini" type="text" slot="reference">
                                 {{ scope.row.productionType == 1 ?
                                     '手动提交' : '自动提交' }}
-                            </el-button>
+                            </el-link>
                         </el-popconfirm>
                     </template>
                 </el-table-column>

@@ -92,15 +92,15 @@
               <span>{{ parseTime(scope.row.createTime) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="center" width="160" class-name="small-padding fixed-width">
+          <el-table-column label="操作" align="left" width="200" class-name="small-padding fixed-width">
             <template slot-scope="scope" v-if="scope.row.userId !== 1">
-              <el-link size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
+              <el-link :underline="false" size="mini" type="text" @click="handleUpdate(scope.row)"
                 v-hasPermi="['system:user:edit']">修改</el-link>
-              <el-link size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
+              <el-link :underline="false" size="mini" type="text" @click="handleDelete(scope.row)"
                 v-hasPermi="['system:user:remove']">删除</el-link>
               <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)"
                 v-hasPermi="['system:user:resetPwd', 'system:user:edit']">
-                <el-link size="mini" type="text" icon="el-icon-d-arrow-right">更多</el-link>
+                <el-link :underline="false" size="mini" type="text" icon="el-icon-d-arrow-right">更多</el-link>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="handleResetPwd" icon="el-icon-key"
                     v-hasPermi="['system:user:resetPwd']">重置密码</el-dropdown-item>

@@ -4,11 +4,11 @@
       <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="120px" size="small"
         class="ry_form">
         <el-form-item label="产品名称" prop="queryParameters.productName">
-          <el-input v-model="queryParams.queryParameters.productName" placeholder="请输入产品名称" clearable size="small"
+          <el-input style="width: 240px" v-model="queryParams.queryParameters.productName" placeholder="请输入产品名称" clearable size="small"
             @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="产品编码" prop="queryParameters.productCode">
-          <el-input v-model="queryParams.queryParameters.productCode" placeholder="请输入产品编码" clearable size="small"
+          <el-input style="width: 240px" v-model="queryParams.queryParameters.productCode" placeholder="请输入产品编码" clearable size="small"
             @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item class="flex_one tr">
@@ -48,7 +48,7 @@
           </template>
         </el-table-column>
         <el-table-column label="备注" align="center" prop="des" />
-        <el-table-column label="操作" align="center" width="360" class-name="small-padding" fixed="right">
+        <el-table-column label="操作" align="left" width="200" class-name="small-padding" fixed="right">
           <template slot-scope="scope">
             <el-link :underline="false" type="primary" @click="handleConnectGoods(scope.row)">关联商品</el-link>
             <el-link :underline="false" type="primary" @click="handleCheck(scope.row, 0)">修改</el-link>

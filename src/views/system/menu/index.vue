@@ -52,14 +52,14 @@
                         <span>{{ parseTime(scope.row.createTime) }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+                <el-table-column label="操作" align="left" width="160" fixed="right" class-name="small-padding fixed-width">
                     <template slot-scope="scope">
-                        <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
-                            v-hasPermi="['system:menu:edit']">修改</el-button>
-                        <el-button size="mini" type="text" icon="el-icon-plus" @click="handleAdd(scope.row)"
-                            v-hasPermi="['system:menu:add']">新增</el-button>
-                        <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
-                            v-hasPermi="['system:menu:remove']">删除</el-button>
+                        <el-link :underline="false" size="mini" type="text" @click="handleUpdate(scope.row)"
+                            v-hasPermi="['system:menu:edit']">修改</el-link>
+                        <el-link :underline="false" size="mini" type="text" @click="handleAdd(scope.row)"
+                            v-hasPermi="['system:menu:add']">新增</el-link>
+                        <el-link :underline="false" size="mini" type="text" @click="handleDelete(scope.row)"
+                            v-hasPermi="['system:menu:remove']">删除</el-link>
                     </template>
                 </el-table-column>
             </el-table>

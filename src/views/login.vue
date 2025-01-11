@@ -253,4 +253,7 @@ export default {
   height: 50px;
   border-radius: 5px;
 }
+::v-deep .el-form-item__error {
+  padding-top: 10px;
+}
 </style>

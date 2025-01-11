@@ -4,11 +4,11 @@
             <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="120px"
                 size="small" class="ry_form">
                 <el-form-item label="外部供应商名称" prop="queryParameters.supplierName">
-                    <el-input v-model="queryParams.queryParameters.supplierName" placeholder="请输入外部供应商名称" clearable
+                    <el-input style="width: 240px" v-model="queryParams.queryParameters.supplierName" placeholder="请输入外部供应商名称" clearable
                         size="small" @keyup.enter.native="handleQuery" />
                 </el-form-item>
                 <el-form-item label="外部供应商编码" prop="queryParameters.supplierCode">
-                    <el-input v-model="queryParams.queryParameters.supplierCode" placeholder="请输入外部供应商编码" clearable
+                    <el-input style="width: 240px" v-model="queryParams.queryParameters.supplierCode" placeholder="请输入外部供应商编码" clearable
                         size="small" @keyup.enter.native="handleQuery" />
                 </el-form-item>
                 <el-form-item class="flex_one tr">
@@ -39,7 +39,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="开通时间" align="center" prop="activationTime" />
-                <el-table-column label="操作" align="center" width="200" class-name="small-padding">
+                <el-table-column label="操作" align="left" width="200" class-name="small-padding">
                     <template slot-scope="scope">
                         <el-link :underline="false" type="primary" @click="handleCheck(scope.row, 0)">修改</el-link>
                         <el-link :underline="false" type="primary" @click="handleConnectProducts(scope.row)">关联产品</el-link>
@@ -63,12 +63,12 @@
                 <el-table-column label="产品ID" align="center" prop="productId" />
                 <el-table-column label="产品名称" align="center" prop="productName" />
                 <el-table-column label="产品编码" align="center" prop="productCode" />
-                <el-table-column label="操作" align="center" width="120" class-name="small-padding fixed-width" fixed="right">
+                <el-table-column label="操作" align="left" width="120" class-name="small-padding fixed-width" fixed="right">
                     <template slot-scope="scope">
-                        <el-button type="text" size="mini" @click="handleCancelBind({
+                        <el-link type="text" size="mini" @click="handleCancelBind({
                             suppliercode: scope.row.suppliercode,
                             productIds: [scope.row.productId]
-                        })">解除绑定</el-button>
+                        })">解除绑定</el-link>
                     </template>
                 </el-table-column>
             </el-table>
