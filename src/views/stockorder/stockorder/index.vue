@@ -138,7 +138,7 @@
         <el-table-column label="商品名称" align="center" prop="goodsName">
           <template slot-scope="scope">
             <el-tooltip effect="dark" :content="scope.row.goodsName" placement="top">
-              <span>{{ scope.row.goodsName.slice(0, 6) + '..' }}</span>
+              <span>{{ scope.row.goodsName.slice(0, 10) + '..' }}</span>
             </el-tooltip>
           </template>
         </el-table-column>
