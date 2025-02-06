@@ -37,8 +37,8 @@
         <!--            @keyup.enter.native="handleQuery"-->
         <!--          />-->
         <!--        </el-form-item>-->
-        <el-form-item label="商品编码" prop="goodsCode">
-          <el-input v-model="queryParams.goodsCode" placeholder="请输入商品编码" clearable @keyup.enter.native="handleQuery" />
+        <el-form-item label="商品名称" prop="goodsCode">
+          <el-input v-model="queryParams.goodsName" placeholder="请输入商品名称" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="供应商编码" prop="supplierCode">
           <el-input v-model="queryParams.supplierCode" placeholder="请输入供应商编码" clearable
@@ -102,7 +102,13 @@
         @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <!--        <el-table-column label="订单ID" align="center" prop="orderId"/>-->
-        <el-table-column label="订单号" align="center" prop="orderNo" />
+        <el-table-column label="订单号" align="center" prop="orderNo">
+          <template slot-scope="scope">
+            <el-tooltip effect="dark" :content="scope.row.orderNo" placement="top">
+              <span>{{ scope.row.orderNo.slice(0, 10) + '..' }}</span>
+            </el-tooltip>
+          </template>
+        </el-table-column>
         <el-table-column label="下单时间" align="center" prop="orderTime" width="180">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.orderTime) }}</span>
@@ -114,7 +120,13 @@
           </template>
         </el-table-column>
         <!--        <el-table-column label="分销商营销地址" align="center" prop="distributorUrl"/>-->
-        <el-table-column label="分销商订单号" align="center" prop="externalOrderNo" />
+        <el-table-column label="分销商订单号" align="center" prop="externalOrderNo">
+          <template slot-scope="scope">
+            <el-tooltip effect="dark" :content="scope.row.externalOrderNo" placement="top">
+              <span>{{ scope.row.externalOrderNo.slice(0, 10) + '..' }}</span>
+            </el-tooltip>
+          </template>
+        </el-table-column>
         <el-table-column label="客户手机号" align="center" prop="phone" />
         <el-table-column label="归属地" align="center" prop="province">
           <template slot-scope="scope">
@@ -123,8 +135,14 @@
         </el-table-column>
         <!--        <el-table-column label="城市名称" align="center" prop="cityName"/>-->
         <el-table-column label="短信验证码" align="center" prop="smsNum" />
-        <el-table-column label="商品编码" align="center" prop="goodsCode" />
-        <el-table-column label="供应商编码" align="center" prop="supplierCode" />
+        <el-table-column label="商品名称" align="center" prop="goodsName">
+          <template slot-scope="scope">
+            <el-tooltip effect="dark" :content="scope.row.goodsName" placement="top">
+              <span>{{ scope.row.goodsName.slice(0, 6) + '..' }}</span>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+<!--        <el-table-column label="供应商编码" align="center" prop="supplierCode" />-->
         <el-table-column label="订单状态" align="center" prop="orderStatus">
           <template slot-scope="scope">
             <dict-tag :options="dict.type.self_stock_status" :value="scope.row.orderStatus" />
@@ -189,6 +207,9 @@
         </el-form-item>
         <el-form-item label="商品编码" prop="goodsCode">
           <el-input v-model="form.goodsCode" placeholder="请输入商品编码" />
+        </el-form-item>
+        <el-form-item label="商品名称" prop="goodsCode">
+          <el-input v-model="form.goodsName" placeholder="请输入商品名称" />
         </el-form-item>
         <el-form-item label="供应商编码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商编码" />
@@ -267,6 +288,7 @@ export default {
         dateRange: [],
         smsNum: null,
         goodsCode: null,
+        goodsName: null,
         supplierCode: null,
         orderTime: null,
         orderStatus: null
@@ -423,6 +445,12 @@ export default {
       this.download('stockorder/stockorder/export', {
         ...this.queryParams
       }, `stockorder_${new Date().getTime()}.xlsx`)
+    },
+    formatGoodsName(cellValue) {
+      if (cellValue.length > 6) {
+        return '<span title="${cellValue}">${cellValue.slice(0, 6)}...</span>';
+      }
+      return cellValue;
     }
   }
 }
