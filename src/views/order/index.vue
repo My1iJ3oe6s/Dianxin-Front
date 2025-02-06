@@ -1,24 +1,24 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="140px" size="medium"
+      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="120px" size="medium"
         class="ry_form">
         <el-form-item label="外部订单编号" prop="externalOrderNo">
-          <el-input v-model.trim="queryParams.queryParameters.externalOrderNo" placeholder="请输入外部订单编号" clearable
+          <el-input style="width: 240px" v-model.trim="queryParams.queryParameters.externalOrderNo" placeholder="请输入外部订单编号" clearable
             size="small" @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="来源" prop="orderSource">
-          <el-select clearable v-model="queryParams.queryParameters.orderSource" style="width: 100%">
+          <el-select style="width: 240px" clearable v-model="queryParams.queryParameters.orderSource">
             <el-option v-for="(item, index) in sourceList" :key="index" :label="item.value" :value="item.code">{{
               item.value }}</el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="身份证号" prop="receiverIdCard">
-          <el-input v-model.trim="queryParams.queryParameters.receiverIdCard" placeholder="请输入身份证号" clearable size="small"
+          <el-input style="width: 240px" v-model.trim="queryParams.queryParameters.receiverIdCard" placeholder="请输入身份证号" clearable size="small"
             @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="手机号" prop="receiverPhoneNumber">
-          <el-input v-model.trim="queryParams.queryParameters.receiverPhoneNumber" placeholder="请输入手机号" clearable
+          <el-input style="width: 240px" v-model.trim="queryParams.queryParameters.receiverPhoneNumber" placeholder="请输入手机号" clearable
             size="small" @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="创建时间">
@@ -26,23 +26,23 @@
             type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
         </el-form-item>
         <el-form-item label="预选手机号" prop="preBookingNumber ">
-          <el-input v-model.trim="queryParams.queryParameters.preBookingNumber" placeholder="请输入手机号" clearable
+          <el-input style="width: 240px" v-model.trim="queryParams.queryParameters.preBookingNumber" placeholder="请输入手机号" clearable
             size="small" @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select multiple clearable v-model="queryParams.queryParameters.statusList" style="width: 100%">
+          <el-select style="width: 240px" multiple clearable v-model="queryParams.queryParameters.statusList">
             <el-option v-for="(item, index) in statusData" :key="index" :label="item.name" :value="item.value">{{
               item.name }}</el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="省份">
-          <el-select multiple clearable v-model="queryParams.queryParameters.receiverProvinceCodes" style="width: 100%">
+          <el-select style="width: 240px" multiple clearable v-model="queryParams.queryParameters.receiverProvinceCodes">
             <el-option v-for="(item, index) of provList" :key="index" :label="item.areaName" :value="item.id">{{
               item.areaName }}</el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="订单号">
-          <el-input v-model.trim="queryParams.queryParameters.orderIds" placeholder="多个用逗号分隔" clearable size="small" />
+          <el-input style="width: 240px" v-model.trim="queryParams.queryParameters.orderIds" placeholder="多个用逗号分隔" clearable size="small" />
         </el-form-item>
         <el-form-item class="flex_one tr">
           <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -96,11 +96,11 @@
             <span>{{ parseTime(scope.row.createdAt) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" class-name="small-padding fixed-width" fixed="right" width="140">
+        <el-table-column label="操作" class-name="small-padding fixed-width" fixed="right" width="180">
           <template slot-scope="scope">
-            <el-button size="mini" type="text" @click="goDetail(scope.row)">详情</el-button>
-            <el-button size="mini" type="text" @click="edit(scope.row)">修改</el-button>
-            <el-button size="mini" type="text" @click="changeGoods(scope.row)">更新商品</el-button>
+            <el-link :underline="false" size="mini" type="text" @click="goDetail(scope.row)">详情</el-link>
+            <el-link :underline="false" size="mini" type="text" @click="edit(scope.row)">修改</el-link>
+            <el-link :underline="false" size="mini" type="text" @click="changeGoods(scope.row)">更新商品</el-link>
             <!-- <el-popconfirm title="确定撤销吗？" @confirm="handleRevoke(scope.row)"
               v-if="scope.row.orderStatus === 40706 || scope.row.orderStatus === 40707 || scope.row.orderStatus === 40708 || scope.row.orderStatus === 20100">
               <el-button slot="reference" size="mini" type="text">撤销</el-button>

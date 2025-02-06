@@ -59,23 +59,23 @@
                 </el-table-column>
                 <el-table-column label="操作" align="center" width="160" class-name="small-padding fixed-width">
                     <template slot-scope="scope" v-if="scope.row.userId !== 1">
-                        <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
-                            v-hasPermi="['system:user:edit']">修改</el-button>
-                        <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
-                            v-hasPermi="['system:user:remove']">删除</el-button>
+                        <el-link :underline="false" size="mini" type="text" @click="handleUpdate(scope.row)"
+                            v-hasPermi="['system:user:edit']">修改</el-link>
+                        <el-link :underline="false" size="mini" type="text" @click="handleDelete(scope.row)"
+                            v-hasPermi="['system:user:remove']">删除</el-link>
                         <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)"
                             v-hasPermi="['system:user:resetPwd', 'system:user:edit']">
                             <span class="el-dropdown-link">
                                 <i class="el-icon-d-arrow-right el-icon--right"></i>更多
                             </span>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item command="handleResetPwd" icon="el-icon-key"
+                                <el-dropdown-item command="handleResetPwd"
                                     v-hasPermi="['system:user:resetPwd']">重置密码</el-dropdown-item>
-                                <el-dropdown-item command="handleAuthRole" icon="el-icon-circle-check"
+                                <el-dropdown-item command="handleAuthRole"
                                     v-hasPermi="['system:user:edit']">分配角色</el-dropdown-item>
-                                <el-dropdown-item command="handleBindEss" icon="el-icon-edit"
+                                <el-dropdown-item command="handleBindEss"
                                     v-hasPermi="['system:user:ess']">绑定电子签</el-dropdown-item>
-                                <el-dropdown-item command="handleBindTeacher" icon="el-icon-edit"
+                                <el-dropdown-item command="handleBindTeacher"
                                     v-hasPermi="['system:user:teacher']">绑定人员</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>

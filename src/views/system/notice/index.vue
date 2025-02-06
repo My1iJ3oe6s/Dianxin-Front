@@ -58,12 +58,12 @@
             <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="left" fixed="right" width="120"  class-name="small-padding fixed-width">
           <template slot-scope="scope">
-            <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
-              v-hasPermi="['system:notice:edit']">修改</el-button>
-            <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
-              v-hasPermi="['system:notice:remove']">删除</el-button>
+            <el-link size="mini" type="text" @click="handleUpdate(scope.row)"
+              v-hasPermi="['system:notice:edit']">修改</el-link>
+            <el-link size="mini" type="text" @click="handleDelete(scope.row)"
+              v-hasPermi="['system:notice:remove']">删除</el-link>
           </template>
         </el-table-column>
       </el-table>

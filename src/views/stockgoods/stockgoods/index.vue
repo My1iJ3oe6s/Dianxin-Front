@@ -3,10 +3,10 @@
     <div class="filter-container">
       <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="120px">
         <el-form-item label="商品编码" prop="goodsCode">
-          <el-input v-model="queryParams.goodsCode" placeholder="请输入商品编码" clearable @keyup.enter.native="handleQuery" />
+          <el-input style="width: 240px" v-model="queryParams.goodsCode" placeholder="请输入商品编码" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="商品名称" prop="goodsName">
-          <el-input v-model="queryParams.goodsName" placeholder="请输入商品名称" clearable @keyup.enter.native="handleQuery" />
+          <el-input style="width: 240px" v-model="queryParams.goodsName" placeholder="请输入商品名称" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <!--      <el-form-item label="商品链接" prop="goodsUrl">-->
         <!--        <el-input-->
@@ -27,12 +27,12 @@
         <!--        </el-select>-->
         <!--      </el-form-item>-->
         <el-form-item label="是否开启" prop="staus">
-          <el-select v-model="queryParams.staus" placeholder="请选择是否开启" clearable>
+          <el-select style="width: 240px" v-model="queryParams.staus" placeholder="请选择是否开启" clearable>
             <el-option v-for="dict in dict.type.kaiguan" :key="dict.value" :label="dict.label" :value="dict.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="创建时间" prop="createdAt">
-          <el-date-picker style="width: 215px" clearable v-model="queryParams.createdAt" type="date"
+          <el-date-picker style="width: 240px" clearable v-model="queryParams.createdAt" type="date"
             value-format="yyyy-MM-dd" placeholder="请选择创建时间">
           </el-date-picker>
         </el-form-item>
@@ -115,7 +115,7 @@
     </div>
 
     <!-- 添加或修改权益商品对话框 -->
-    <el-drawer custom-class="drawer-container" size="900" :visible.sync="open" append-to-body>
+    <el-drawer custom-class="drawer-container" :size="900" :visible.sync="open" append-to-body>
       <template #title>
         <div style="font-size: 20px; text-align: center; color: #606266">
           {{ title }}
