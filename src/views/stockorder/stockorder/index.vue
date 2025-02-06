@@ -160,6 +160,9 @@
           </template>
         </el-table-column>
       </el-table>
+
+
+
       <div>
         <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
           @pagination="getList" />
