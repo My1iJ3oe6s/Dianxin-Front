@@ -137,6 +137,15 @@
         <el-form-item label="商品描述" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
         </el-form-item>
+        <el-form-item label="是否扣减" prop="isComfired">
+          <el-select v-model="form.isDeduct" placeholder="请选择是否扣减">
+            <el-option v-for="dict in dict.type.kaiguan" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="扣减比例" prop="deductionRate">
+          <el-input v-model="form.deductionRate" placeholder="扣减比例如:0.3" />
+        </el-form-item>
         <el-form-item label="商品链接" prop="goodsUrl">
           <el-input v-model="form.goodsUrl" placeholder="请输入商品链接" />
         </el-form-item>

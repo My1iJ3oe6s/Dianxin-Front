@@ -231,6 +231,12 @@
             </el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="是否扣减" prop="isComfired">
+          <el-select v-model="form.isDeduct" placeholder="请选择是否扣减">
+            <el-option v-for="dict in dict.type.kaiguan" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
@@ -257,7 +263,7 @@ import {
 
 export default {
   name: 'Stockorder',
-  dicts: ['self_stock_status', 'channel_customer'],
+  dicts: ['self_stock_status', 'kaiguan', 'channel_customer'],
   data() {
     return {
       // 遮罩层
