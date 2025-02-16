@@ -159,6 +159,22 @@ export const dynamicRoutes = [
     ]
   },
   {
+    path: '/krgoods',
+    component: Layout,
+    hidden: true,
+    permissions: ['goods:detail'],
+    noCache:true,
+    children: [
+      {
+        path: 'detail',
+        component: () => import('@/views/krgoods/detail'),
+        name: 'GoodsDetail',
+        meta: { title: '商品详情' },
+        noCache:true,
+      }
+    ]
+  },
+  {
     path: '/marketing',
     component: Layout,
     hidden: true,

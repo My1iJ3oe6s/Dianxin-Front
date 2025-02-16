@@ -300,12 +300,12 @@ export default {
         },
         /** 新增按钮操作 */
         handleAdd() {
-            this.$router.push({ path: "/goods/detail" });
+            this.$router.push({ path: "/krgoods/detail" });
         },
         /** 查看按钮操作 */
         handleCheck(row, target) {
             const id = row.goodsId;
-            this.$router.push({ path: "/goods/detail", query: { id, target } });
+            this.$router.push({ path: "/krgoods/detail", query: { id, target } });
         },
         handleDelect(row) {
             handleDelete(row.goodsId)
