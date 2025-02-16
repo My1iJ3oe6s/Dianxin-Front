@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 // 查询产品信息列表
 export function getList(query) {
-  query.orderType = 1
+  query.queryParameters.orderType = 1
   return request({
     url: '/selfGoods/page',
     method: 'post',

@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 // 查询订单表列表
 export function listOrder(query,) {
-  query.orderType = 1
+  query.queryParameters.orderType = 1
   return request({
     url: '/selfOrders/page',
     method: 'post',
