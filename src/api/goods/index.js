@@ -2,7 +2,8 @@ import request from '@/utils/request'
 
 // 查询产品信息列表
 export function getList(query) {
-  query.queryParameters.orderType = 1
+  if(location.pathname == '/goods/index'){
+    query.queryParameters.orderType = 1  }
   return request({
     url: '/selfGoods/page',
     method: 'post',
