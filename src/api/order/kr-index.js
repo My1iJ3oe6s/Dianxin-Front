@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 // 查询订单表列表
 export function listOrder(query,) {
-  query.orderType = 1
+    query.orderType = 3
   return request({
     url: '/selfOrders/page',
     method: 'post',
@@ -20,7 +20,7 @@ export function getOrder(id) {
 
 // 新增订单表
 export function addOrder(data) {
-  data.orderType = 1
+    data.orderType = 3
   return request({
     url: '/selfOrders/save',
     method: 'post',
@@ -31,7 +31,7 @@ export function addOrder(data) {
 
 // 撤销订单表
 export function cancelOrder(query) {
-  query.orderType = 1
+    query.orderType = 3
   return request({
     url: '/order/cancelOrder',
     method: 'get',
@@ -41,7 +41,7 @@ export function cancelOrder(query) {
 
 // 导出订单表
 export function exportOrder(query) {
-  query.orderType = 1
+    query.orderType = 3
   return request({
     url: '/order/export',
     method: 'get',
@@ -70,7 +70,7 @@ export function getSource() {
 }
 
 export function exportOrderId(data) {
-  data.orderType = 1
+    data.orderType = 3
   return request({
     url: '/selfOrders/exportOrderId',
     method: 'post',
@@ -79,7 +79,7 @@ export function exportOrderId(data) {
 }
 
 export function batchConvertProduct(data) {
-    data.orderType = 1
+    data.orderType = 3
   return request({
     url: '/selfOrders/batchConvertProduct',
     method: 'post',
@@ -88,7 +88,7 @@ export function batchConvertProduct(data) {
 }
 
 export function importOrderId(data) {
-  data.orderType = 1
+    data.orderType = 3
   return request({
     url: '/selfOrders/importOrderId',
     method: 'post',
