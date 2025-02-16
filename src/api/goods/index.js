@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询产品信息列表
 export function getList(query) {
   if(location.pathname == '/goods/index'){
-    query.queryParameters.orderType = 1  }
+    query.queryParameters.goodsType = 1  }
   return request({
     url: '/selfGoods/page',
     method: 'post',
@@ -28,7 +28,7 @@ export function getInfo(id) {
 
 // 新增产品信息
 export function add(data) {
-  data.orderType = 1
+  data.goodsType = 1
   return request({
     url: '/selfGoods/saveGoodsAndProduct',
     method: 'post',
@@ -36,7 +36,7 @@ export function add(data) {
   })
 }
 export function edit(data) {
-  data.orderType = 1
+  data.goodsType = 1
   return request({
     url: '/selfGoods/edit',
     method: 'post',
@@ -58,7 +58,7 @@ export function getImg (id) {
 }
 // 绑定产品
 export function bindProduct(data) {
-  data.orderType = 1
+  data.goodsType = 1
   return request({
     url: '/selfGoods/bindingProduct',
     method: 'post',
