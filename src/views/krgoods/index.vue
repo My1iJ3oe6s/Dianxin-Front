@@ -96,8 +96,8 @@
         <el-dialog title="下单链接" :visible.sync="open2" width="500" append-to-body v-if="open2">
             <div>默认生成的链接</div>
             <div class="bg_box">
-                <div>下单链接地址：http://xyy.jxschot.com/mobile-haoka/index.html?id= {{ row.goodsId }}&companyId={{ companyId }}</div>
-                <el-button type="primary" v-clipboard:copy="'http://xyy.jxschot.com/mobile-haoka/index.html?id=' + row.goodsId + '&companyId=' + companyId"
+                <div>下单链接地址：https://xyy.jxschot.com/mobile-haoka/index.html?id= {{ row.goodsId }}&companyId={{ companyId }}</div>
+                <el-button type="primary" v-clipboard:copy="'https://xyy.jxschot.com/mobile-haoka/index.html?id=' + row.goodsId + '&companyId=' + companyId"
                     v-clipboard:success="clipboardSuccess">复制链接</el-button>
                 <el-button type="primary" @click="openLink(row)">打开链接</el-button>
                 <div ref="qrcode1" class="qrcode1" id="qrcodeBox1"></div>
@@ -244,7 +244,7 @@ export default {
                 new QRCode(this.$refs.qrcode, {
                     width: 120,
                     height: 120,
-                    text: 'http://xyy.jxschot.com/mobile-haoka/index.html?id=' + row.goodsId + '&companyId=' + this.companyId,
+                    text: 'https://xyy.jxschot.com/mobile-haoka/index.html?id=' + row.goodsId + '&companyId=' + this.companyId,
                 })
                 this.$nextTick(() => {
                     const element = document.getElementById('banner'); // 需要生成图片的DOM元素的ID
