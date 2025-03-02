@@ -95,6 +95,9 @@
             v-hasPermi="['stockorder:stockorder:export']">导出
           </el-button>
         </el-col>
+        <el-col :span="1.5">
+          <el-button type="warning" plain icon="el-icon-upload2" size="mini" @click="handleImportUnsubscribe">退订导入</el-button>
+        </el-col>
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
@@ -146,6 +149,11 @@
         <el-table-column label="订单状态" align="center" prop="orderStatus">
           <template slot-scope="scope">
             <dict-tag :options="dict.type.self_stock_status" :value="scope.row.orderStatus" />
+          </template>
+        </el-table-column>
+        <el-table-column label="是否退订" align="center" prop="isUnsubscribe">
+          <template slot-scope="scope">
+            <dict-tag :options="dict.type.kaiguan" :value="scope.row.isUnsubscribe"/>
           </template>
         </el-table-column>
         <!--        <el-table-column label="备注" align="center" prop="remark"/>-->
@@ -243,12 +251,62 @@
         <el-form-item label="供应商订单查询消息" prop="syncOrderMessage">
           <el-input v-model="form.syncOrderMessage" type="textarea" placeholder="请输入内容" />
         </el-form-item>
+        <el-form-item label="链接参数" prop="urlParams">
+          <el-input v-model="form.urlParams" type="textarea" placeholder="请输入链接参数"/>
+        </el-form-item>
+        <el-form-item label="供应商订单号" prop="supplierOrderNo">
+          <el-input v-model="form.supplierOrderNo" placeholder="请输入供应商订单号"/>
+        </el-form-item>
+        <el-form-item label="是否退订" prop="isUnsubscribe">
+          <el-select v-model="form.isUnsubscribe" placeholder="请选择是否退订">
+            <el-option v-for="dict in dict.type.kaiguan" :key="dict.value" :label="dict.label"
+              :value="parseInt(dict.value)"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="退订时间" prop="unsubscribeTime">
+          <el-date-picker clearable v-model="form.unsubscribeTime" type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss" placeholder="请选择退订时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="是否拉黑" prop="isBlacklist">
+          <el-select v-model="form.isBlacklist" placeholder="请选择是否拉黑">
+            <el-option v-for="dict in dict.type.kaiguan" :key="dict.value" :label="dict.label"
+              :value="parseInt(dict.value)"/>
+          </el-select>
+        </el-form-item>
       </el-form>
       <div class="draw-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-drawer>
+
+    <!-- 添加退订导入对话框 -->
+    <el-dialog :title="upload3.title" :visible.sync="upload3.open" width="400px" append-to-body>
+      <el-upload ref="upload3" :limit="1" accept=".xlsx, .xls"
+        :headers="upload3.headers"
+        :action="upload3.url"
+        :disabled="upload3.isUploading"
+        :file-list="fileList3"
+        :on-change="handleChange3"
+        :on-progress="handleFileUploadProgress3"
+        :auto-upload="false"
+        :on-success="handleFileSuccess3"
+        :on-error="handleFileError3"
+        drag>
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <div class="el-upload__tip text-center" slot="tip">
+          <span>仅允许导入xlsx格式文件。</span>
+          <a target="_blank" :href="unsubscribeTemplate" type="primary" :underline="false"
+            style="font-size:12px;vertical-align: baseline;">下载模板</a>
+        </div>
+      </el-upload>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFileForm3" :loading="upload3.loading">确 定</el-button>
+        <el-button @click="upload3.open = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -260,6 +318,7 @@ import {
   addStockorder,
   updateStockorder
 } from '@/api/stockorder/stockorder'
+import { getToken } from '@/utils/auth'
 
 export default {
   name: 'Stockorder',
@@ -300,7 +359,9 @@ export default {
         goodsName: null,
         supplierCode: null,
         orderTime: null,
-        orderStatus: null
+        orderStatus: null,
+        createStartDate: null,
+        createEndDate: null
       },
       // 表单参数
       form: {},
@@ -316,7 +377,19 @@ export default {
           { required: true, message: '商品编码不能为空', trigger: 'blur' }
         ]
       },
-      tableHeight: 400
+      tableHeight: 400,
+      upload3: {
+        open: false,
+        title: "",
+        isUploading: false,
+        loading: false,
+        url: process.env.VUE_APP_BASE_API + "stockorder/stockorder/importUnsubscribe",
+        headers: {
+          Authorization: 'Bearer ' + getToken()
+        }
+      },
+      fileList3: [],
+      unsubscribeTemplate: '/unsubscribe_template.xlsx'
     }
   },
   created() {
@@ -382,7 +455,12 @@ export default {
         createBy: null,
         createTime: null,
         updateBy: null,
-        updateTime: null
+        updateTime: null,
+        urlParams: null,
+        supplierOrderNo: null,
+        isUnsubscribe: 0,
+        unsubscribeTime: null,
+        isBlacklist: 0
       }
       this.resetForm('form')
     },
@@ -460,6 +538,70 @@ export default {
         return '<span title="${cellValue}">${cellValue.slice(0, 6)}...</span>';
       }
       return cellValue;
+    },
+    // 退订导入按钮操作
+    handleImportUnsubscribe() {
+      this.upload3.title = "退订导入";
+      this.upload3.open = true;
+    },
+
+    // 文件上传相关方法
+    handleChange3(file, fileList) {
+      this.fileList3 = fileList.slice(-1);
+    },
+
+    handleFileUploadProgress3(event, file, fileList) {
+      this.upload3.isUploading = true;
+    },
+
+    handleFileSuccess3(response, file, fileList) {
+      this.upload3.loading = false;
+      this.upload3.open = false;
+
+      let msg = response.message || '上传成功'
+      if (response.data && Array.isArray(response.data) && response.data.length) {
+        msg = response.data.map((v) => {
+          return v.message + '<br/>'
+        }).join(' ')
+      }
+
+      this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + msg + "</div>",
+        "导入结果", { dangerouslyUseHTMLString: true });
+
+      this.getList();
+    },
+
+    handleFileError3() {
+      this.upload3.isUploading = false;
+      this.upload3.loading = false;
+    },
+
+    submitFileForm3() {
+      if (!this.fileList3.length) {
+        this.$message.warning('请选择要上传的文件');
+        return;
+      }
+
+      this.upload3.loading = true;
+      var formData = new FormData();
+      formData.append('file', this.fileList3[0].raw);
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', this.upload3.url, true);
+      xhr.setRequestHeader('Authorization', this.upload3.headers.Authorization);
+
+      const t = this;
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
+            const response = JSON.parse(xhr.responseText);
+            t.handleFileSuccess3(response);
+          } else {
+            t.handleFileError3();
+          }
+        }
+      };
+      xhr.send(formData);
     }
   }
 }
