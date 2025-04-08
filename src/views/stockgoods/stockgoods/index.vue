@@ -115,13 +115,13 @@
     </div>
 
     <!-- 添加或修改权益商品对话框 -->
-    <el-drawer custom-class="drawer-container" :size="900" :visible.sync="open" append-to-body>
+    <el-drawer custom-class="drawer-container" :size="1300" :visible.sync="open" append-to-body>
       <template #title>
         <div style="font-size: 20px; text-align: center; color: #606266">
           {{ title }}
         </div>
       </template>
-      <el-form class="form-container" ref="form" :model="form" :rules="rules" label-width="150px">
+      <el-form class="form-container" ref="form" :model="form" :rules="rules" label-width="300px">
         <el-form-item label="商品编码" prop="goodsCode">
           <el-input v-model="form.goodsCode" placeholder="请输入商品编码" />
         </el-form-item>
@@ -217,26 +217,46 @@
               @click="handleDeleteSelfStockGoodsDetails">删除</el-button>
           </el-col>
         </el-row>
+        <el-row :gutter="10" class="mb8">
+          <el-col :span="24">
+            <el-alert title="推单模式描述" type="info" banner show-icon>
+              <p style="font-size: 14px; color: #666;">默认：平台的默认下单策略，支持不同地区对应不同供应商的一个产品，但不支持同一地区配置多个供应商或者同一供应商的不同产品；</p>
+              <p style="font-size: 14px; color: #666;">自营：针对自营的订单的特殊推单策略，支持某个地区配置同个供应商多个工号推订单，满足自营订单分流需求；</p>
+            </el-alert>
+          </el-col>
+        </el-row>
         <el-table :data="selfStockGoodsDetailsList" :row-class-name="rowSelfStockGoodsDetailsIndex"
-          @selection-change="handleSelfStockGoodsDetailsSelectionChange" ref="selfStockGoodsDetails">
+                  @selection-change="handleSelfStockGoodsDetailsSelectionChange" ref="selfStockGoodsDetails">
           <el-table-column type="selection" width="100" align="center" />
-          <!--          <el-table-column label="序号" align="center" prop="index" width="50"/>-->
-          <el-table-column label="产商" prop="productType" width="150">
+<!--          <el-table-column label="产商" prop="productType" width="150">-->
+<!--            <template slot-scope="scope">-->
+<!--              <el-select v-model="scope.row.productType" placeholder="请选择产品产商;">-->
+<!--                <el-option v-for="dict in dict.type.product_type" :key="dict.value" :label="dict.label"-->
+<!--                           :value="dict.value"></el-option>-->
+<!--              </el-select>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+          <el-table-column label="推单模式" prop="mode" width="150">
             <template slot-scope="scope">
-              <el-select v-model="scope.row.productType" placeholder="请选择产品产商;电信、移动、联通">
-                <el-option v-for="dict in dict.type.product_type" :key="dict.value" :label="dict.label"
-                  :value="dict.value"></el-option>
+              <el-select v-model="scope.row.mode" placeholder="请选择推单模式;">
+                <el-option v-for="dict in dict.type.stock_goods_mode" :key="dict.value" :label="dict.label"
+                           :value="dict.value"></el-option>
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="归属省份编码" prop="provinceCode" width="200">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.provinceCode" placeholder="请输入归属省份编码" />
-            </template>
-          </el-table-column>
-          <el-table-column label="归属省份" prop="provinceName" width="200">
+<!--          <el-table-column label="归属省份编码" prop="provinceCode" width="200">-->
+<!--            <template slot-scope="scope">-->
+<!--              <el-input v-model="scope.row.provinceCode" placeholder="请输入归属省份编码" />-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+          <el-table-column label="生效省份" prop="provinceName" width="200">
             <template slot-scope="scope">
               <el-input v-model="scope.row.provinceName" placeholder="请输入归属省份" />
+            </template>
+          </el-table-column>
+          <el-table-column label="生效城市" prop="city" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.city" placeholder="请输入城市"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="供应商编码" prop="supplierCode" width="150">
@@ -276,6 +296,20 @@
               </el-select>
             </template>
           </el-table-column>
+          <el-table-column label="是否分单" prop="isSplit" width="150">
+
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.isSplit" placeholder="是否分单">
+                <el-option v-for="dict in dict.type.kaiguan" :key="dict.key" :label="dict.label"
+                           :value="parseInt(dict.value)"></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="分单比例" prop="splitRatio" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.splitRatio" type="number" placeholder="请输入分单比例"></el-input>
+            </template>
+          </el-table-column>
         </el-table>
       </el-form>
       <div class="draw-footer">
@@ -291,7 +325,7 @@ import { listStockgoods, getStockgoods, delStockgoods, addStockgoods, updateStoc
 
 export default {
   name: "Stockgoods",
-  dicts: ['product_type', 'stockgoods_page_type', 'kaiguan', 'comfire_img_type', 'stock_supplier'],
+  dicts: ['product_type', 'stockgoods_page_type', 'kaiguan', 'comfire_img_type', 'stock_supplier', 'stock_goods_mode'],
   data() {
     return {
       // 遮罩层

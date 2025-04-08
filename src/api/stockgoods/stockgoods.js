@@ -22,7 +22,13 @@ export function addStockgoods(data) {
   return request({
     url: '/stockgoods/stockgoods',
     method: 'post',
-    data: data
+    data: {
+      ...data,
+      mode: data.mode,
+      city: data.city,
+      isSplit: data.isSplit,
+      splitRatio: data.splitRatio
+    }
   })
 }
 
@@ -31,7 +37,13 @@ export function updateStockgoods(data) {
   return request({
     url: '/stockgoods/stockgoods',
     method: 'put',
-    data: data
+    data: {
+      ...data,
+      mode: data.mode,
+      city: data.city,
+      isSplit: data.isSplit,
+      splitRatio: data.splitRatio
+    }
   })
 }
 
