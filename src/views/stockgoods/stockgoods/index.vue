@@ -272,6 +272,11 @@
             <!--              <el-input v-model="scope.row.supplierCode" placeholder="请输入供应商编码" />-->
             <!--            </template>-->
           </el-table-column>
+          <el-table-column label="工号" prop="splitRatio" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.gongHao" placeholder="工号"></el-input>
+            </template>
+          </el-table-column>
           <el-table-column label="供应商产品编码" prop="supplierGoodsCode" width="150">
             <template slot-scope="scope">
               <el-input v-model="scope.row.supplierGoodsCode" placeholder="请输入供应商产品编码" />
