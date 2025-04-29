@@ -23,45 +23,28 @@
               >
             </div>
             <div class="search-item">
-              <label class="search-label" for="searchArea">地区选择</label>
-              <select
-                id="searchArea"
-                v-model="selectedArea"
-                :disabled="!areas.length"
-              >
-                <option value="">全部地区</option>
-                <option
-                  v-for="area in areas"
-                  :key="area"
-                  :value="area"
-                >
-                  {{ area }}
-                </option>
-              </select>
-            </div>
-            <div class="search-item">
               <label class="search-label">&nbsp;</label>
               <button @click="handleSearch">查询</button>
             </div>
           </div>
         </div>
 
-        <div class="view-toggle">
-          <button
-            :class="{ active: currentView === 'list' }"
-            @click="setViewMode('list')"
-            title="列表视图"
-          >
-            列表视图
-          </button>
-          <button
-            :class="{ active: currentView === 'card' }"
-            @click="setViewMode('card')"
-            title="卡片视图"
-          >
-            卡片视图
-          </button>
-        </div>
+<!--        <div class="view-toggle">-->
+<!--          <button-->
+<!--            :class="{ active: currentView === 'list' }"-->
+<!--            @click="setViewMode('list')"-->
+<!--            title="列表视图"-->
+<!--          >-->
+<!--            列表视图-->
+<!--          </button>-->
+<!--          <button-->
+<!--            :class="{ active: currentView === 'card' }"-->
+<!--            @click="setViewMode('card')"-->
+<!--            title="卡片视图"-->
+<!--          >-->
+<!--            卡片视图-->
+<!--          </button>-->
+<!--        </div>-->
 
         <div id="goodsContainer">
           <div id="goodsCount" style="margin-bottom: 15px; color: #666;">
@@ -134,7 +117,6 @@
 </template>
 
 <script>
-import { listArea } from "@/api/juhe/area";
 import { listGoods, getOrderUrl } from "@/api/juhe/goods";
 
 export default {
@@ -142,8 +124,6 @@ export default {
   data() {
     return {
       searchKeyword: '',
-      selectedArea: '',
-      areas: [],
       goodsList: [],
       currentView: 'list',
       selectedGoodsId: null,
@@ -159,22 +139,9 @@ export default {
     getList() {
       this.loading = true
       Promise.all([
-        this.getAreaList(),
         this.getGoodsList()
       ]).finally(() => {
         this.loading = false
-      })
-    },
-
-    // 获取地区列表
-    getAreaList() {
-      return listArea().then(response => {
-        if (response.code === 200) {
-          this.areas = response.data
-        }
-      }).catch(error => {
-        console.error('加载地区列表失败:', error)
-        this.$modal.msgError('加载地区列表失败')
       })
     },
 
@@ -184,7 +151,6 @@ export default {
         pageNum: 1,
         pageSize: 100,
         keyword: this.searchKeyword,
-        area: this.selectedArea
       }
 
       return listGoods(params).then(response => {
