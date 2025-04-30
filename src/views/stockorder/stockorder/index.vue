@@ -274,7 +274,14 @@
               :value="parseInt(dict.value)"/>
           </el-select>
         </el-form-item>
+        <el-form-item label="触点" prop="platform">
+          <el-input v-model="form.platform" type="textarea" placeholder="触点"/>
+        </el-form-item>
+        <el-form-item label="订单来源相关信息" prop="sourceData">
+          <el-input v-model="form.sourceData" type="textarea" placeholder="订单来源相关信息"/>
+        </el-form-item>
       </el-form>
+
       <div class="draw-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
