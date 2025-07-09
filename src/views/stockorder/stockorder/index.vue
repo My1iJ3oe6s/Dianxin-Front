@@ -5,6 +5,14 @@
         <el-form-item label="订单号" prop="orderNo">
           <el-input style="width: 240px" v-model="queryParams.orderNo" placeholder="请输入订单号" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
+        <el-form-item label="供应商编码" prop="supplierCode">
+          <!--          <el-input style="width: 240px" v-model="queryParams.supplierCode" placeholder="请输入供应商编码" clearable-->
+          <!--            @keyup.enter.native="handleQuery" />-->
+          <el-select style="width: 240px" v-model="queryParams.supplierCode" placeholder="请输入供应商编码" clearable>
+            <el-option v-for="dict in dict.type.stock_supplier" :key="dict.value" :label="dict.label"
+                       :value="dict.value" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="分销商编码" prop="distributorCode">
           <el-select style="width: 240px" v-model="queryParams.distributorCode" placeholder="请选择分销商编码" clearable>
             <el-option v-for="dict in dict.type.channel_customer" :key="dict.value" :label="dict.label"
@@ -37,13 +45,10 @@
         <!--            @keyup.enter.native="handleQuery"-->
         <!--          />-->
         <!--        </el-form-item>-->
-        <el-form-item label="商品名称" prop="goodsCode">
-          <el-input style="width: 240px" v-model="queryParams.goodsName" placeholder="请输入商品名称" clearable @keyup.enter.native="handleQuery" />
+        <el-form-item label="商品编码" prop="goodsCode">
+          <el-input style="width: 240px" v-model="queryParams.goodsCode" placeholder="请输入商品编码" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
-        <el-form-item label="供应商编码" prop="supplierCode">
-          <el-input style="width: 240px" v-model="queryParams.supplierCode" placeholder="请输入供应商编码" clearable
-            @keyup.enter.native="handleQuery" />
-        </el-form-item>
+
         <!--        <el-form-item label="下单时间" prop="orderTime">-->
         <!--          <el-date-picker clearable-->
         <!--                          v-model="queryParams.orderTime"-->
@@ -329,7 +334,7 @@ import { getToken } from '@/utils/auth'
 
 export default {
   name: 'Stockorder',
-  dicts: ['self_stock_status', 'kaiguan', 'channel_customer'],
+  dicts: ['self_stock_status', 'kaiguan', 'channel_customer', 'stock_supplier'],
   data() {
     return {
       // 遮罩层
