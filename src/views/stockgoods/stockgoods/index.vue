@@ -206,6 +206,18 @@
               :value="parseInt(dict.value)"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="生效时间">
+          <el-time-picker
+            v-model="effectiveTimeRange"
+            is-range
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            placeholder="选择时间范围"
+            format="HH:mm:ss"
+            value-format="HH:mm:ss">
+          </el-time-picker>
+        </el-form-item>
         <el-divider content-position="center">商品明细</el-divider>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
@@ -371,6 +383,7 @@ export default {
 
       // 表单参数
       form: {},
+      effectiveTimeRange: null,
       // 表单校验
       rules: {
         goodsCode: [
@@ -382,6 +395,21 @@ export default {
       },
       tableHeight: 400,
     };
+  },
+  watch: {
+    effectiveTimeRange: {
+      handler(newVal) {
+        if (newVal && newVal.length === 2) {
+          // 将时间范围分解为开始时间和结束时间
+          this.$set(this.form, 'effectiveStartTime', newVal[0]);
+          this.$set(this.form, 'effectiveEndTime', newVal[1]);
+        } else {
+          this.$set(this.form, 'effectiveStartTime', null);
+          this.$set(this.form, 'effectiveEndTime', null);
+        }
+      },
+      immediate: true
+    }
   },
   created() {
     this.getList();
@@ -450,6 +478,7 @@ export default {
         isDeleted: null,
         companyId: null
       };
+      this.effectiveTimeRange = null;
       this.selfStockGoodsDetailsList = [];
       this.resetForm("form");
     },
@@ -482,6 +511,12 @@ export default {
       getStockgoods(goodsId).then(response => {
         this.form = response.data;
         this.selfStockGoodsDetailsList = response.data.selfStockGoodsDetailsList;
+
+        // 处理生效时间范围
+        if (this.form.effectiveStartTime && this.form.effectiveEndTime) {
+          this.effectiveTimeRange = [this.form.effectiveStartTime, this.form.effectiveEndTime];
+        }
+
         this.open = true;
         this.title = "修改权益商品";
       });
