@@ -9,6 +9,15 @@ export function listStockgoods(query) {
   })
 }
 
+// 根据城市查询权益商品列表
+export function listStockgoodsByCity(query) {
+  return request({
+    url: '/stockgoods/stockgoods/listByCity',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询权益商品详细
 export function getStockgoods(goodsId) {
   return request({

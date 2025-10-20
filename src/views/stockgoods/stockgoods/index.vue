@@ -8,6 +8,9 @@
         <el-form-item label="商品名称" prop="goodsName">
           <el-input style="width: 240px" v-model="queryParams.goodsName" placeholder="请输入商品名称" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
+        <el-form-item label="城市" prop="city">
+          <el-input style="width: 240px" v-model="queryParams.city" placeholder="请输入城市" clearable @keyup.enter.native="handleQuery" />
+        </el-form-item>
         <!--      <el-form-item label="商品链接" prop="goodsUrl">-->
         <!--        <el-input-->
         <!--          v-model="queryParams.goodsUrl"-->
@@ -338,7 +341,7 @@
 </template>
 
 <script>
-import { listStockgoods, getStockgoods, delStockgoods, addStockgoods, updateStockgoods } from "@/api/stockgoods/stockgoods";
+import { listStockgoods, listStockgoodsByCity, getStockgoods, delStockgoods, addStockgoods, updateStockgoods } from "@/api/stockgoods/stockgoods";
 
 export default {
   name: "Stockgoods",
@@ -373,6 +376,7 @@ export default {
         pageSize: 10,
         goodsCode: null,
         goodsName: null,
+        city: null,
         productType: null,
         goodsUrl: null,
         comfiredType: null,
@@ -430,11 +434,20 @@ export default {
     /** 查询权益商品列表 */
     getList() {
       this.loading = true;
-      listStockgoods(this.queryParams).then(response => {
-        this.stockgoodsList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
+      // 如果有城市查询条件，则使用 listByCity 接口
+      if (this.queryParams.city) {
+        listStockgoodsByCity(this.queryParams).then(response => {
+          this.stockgoodsList = response.rows;
+          this.total = response.total;
+          this.loading = false;
+        });
+      } else {
+        listStockgoods(this.queryParams).then(response => {
+          this.stockgoodsList = response.rows;
+          this.total = response.total;
+          this.loading = false;
+        });
+      }
     },
     // 取消按钮
     cancel() {
@@ -632,3 +645,9 @@ export default {
   /* 显示省略号 */
 }
 </style>
+
+
+
+
+
+
