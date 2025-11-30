@@ -42,3 +42,29 @@ export function delSelfCallRecord(id) {
     method: 'delete'
   })
 }
+
+// 设置外呼产品
+export function setCallProduct(data) {
+  return request({
+    url: '/selfCallRecord/selfCallRecord/setCallProduct',
+    method: 'post',
+    data: data
+  })
+}
+
+// 分配外呼人员
+export function assignCallUser(data) {
+  return request({
+    url: '/selfCallRecord/selfCallRecord/assignCallUser',
+    method: 'post',
+    data: data
+  })
+}
+
+// 拨打电话
+export function dialPhone(id) {
+  return request({
+    url: '/selfCallRecord/selfCallRecord/dialPhone/' + id,
+    method: 'get'
+  })
+}
