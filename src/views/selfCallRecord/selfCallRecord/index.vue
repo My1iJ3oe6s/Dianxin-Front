@@ -349,7 +349,7 @@
       </div>
 
     </el-dialog>
-    
+
     <!-- 导入外呼记录对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
       <el-upload
@@ -634,24 +634,24 @@ export default {
       this.$modal.msgError("导入失败");
       this.$refs.upload.clearFiles();
     },
-    
+
     /** 设置外呼产品 */
     handleSetProduct() {
       // 检查选中的记录是否是新增或已确认产品状态
       const selectedRecords = this.selfCallRecordList.filter(record => this.ids.includes(record.id));
       const invalidRecords = selectedRecords.filter(record => record.status !== 'NEW' && record.status !== 'CONFIRM_PRODUCT');
-      
+
       if (invalidRecords.length > 0) {
         this.$modal.msgWarning('只能为状态为"新增"或"确认外呼产品"的记录设置外呼产品');
         return;
       }
-      
+
       this.recordIds = this.ids;
       this.productDialog.open = true;
       this.productDialog.selectedProducts = [];
       this.getProductList();
     },
-    
+
     /** 获取商品列表 */
     getProductList() {
       this.productDialog.loading = true;
@@ -661,32 +661,32 @@ export default {
         this.productDialog.loading = false;
       });
     },
-    
+
     /** 重置商品查询 */
     resetProductQuery() {
       this.resetForm("productQueryForm");
       this.getProductList();
     },
-    
+
     /** 商品选择变更 */
     handleProductSelectionChange(selection) {
       this.productDialog.selectedProducts = selection;
     },
-    
+
     /** 确认商品选择 */
     confirmProductSelection() {
       if (this.productDialog.selectedProducts.length === 0) {
         this.$modal.msgWarning('请选择商品');
         return;
       }
-      
+
       const product = this.productDialog.selectedProducts[0];
       const params = {
         ids: this.recordIds,
         callProduct: product.goodsName,
         status: 'CONFIRM_PRODUCT' // 确认外呼产品状态
       };
-      
+
       // 确保使用导入的API函数而不是this.setCallProduct
       try {
         setCallProduct(params).then(response => {
@@ -702,24 +702,24 @@ export default {
         this.$modal.msgError('设置外呼产品失败');
       }
     },
-    
+
     /** 分配外呼人员 */
     handleAssignUser() {
       // 检查选中的记录是否是确认外呼产品或已分配人员状态
       const selectedRecords = this.selfCallRecordList.filter(record => this.ids.includes(record.id));
       const invalidRecords = selectedRecords.filter(record => record.status !== 'CONFIRM_PRODUCT' && record.status !== 'ALLOCATE_USER');
-      
+
       if (invalidRecords.length > 0) {
         this.$modal.msgWarning('只能为状态为"确认外呼产品"或"分配外呼人员"的记录分配外呼人员');
         return;
       }
-      
+
       this.recordIds = this.ids;
       this.userDialog.open = true;
       this.userDialog.selectedUsers = [];
       this.getUserList();
     },
-    
+
     /** 获取用户列表 */
     getUserList() {
       this.userDialog.loading = true;
@@ -729,31 +729,32 @@ export default {
         this.userDialog.loading = false;
       });
     },
-    
+
     /** 重置用户查询 */
     resetUserQuery() {
       this.resetForm("userQueryForm");
       this.getUserList();
     },
-    
+
     /** 用户选择变更 */
     handleUserSelectionChange(selection) {
       this.userDialog.selectedUsers = selection;
     },
-    
+
     /** 确认用户选择 */
     confirmUserSelection() {
       if (this.userDialog.selectedUsers.length === 0) {
         this.$modal.msgWarning('请选择用户');
         return;
       }
-      
+
       const user = this.userDialog.selectedUsers[0];
       const params = {
         ids: this.recordIds,
+        userId: user.userId || user.id,
         callUser: user.nickName
       };
-      
+
       assignCallUser(params).then(response => {
         this.$modal.msgSuccess('分配外呼人员成功');
         this.userDialog.open = false;
@@ -762,13 +763,13 @@ export default {
         this.$modal.msgError('分配外呼人员失败');
       });
     },
-    
+
     /** 一键拨号 */
     handleDial(row) {
-      this.$modal.confirm(`确定要拨打 ${row.phoneNumber} 吗？`).then(() => {
-        
+      this.$modal.confirm(`确定要创建 ${row.phoneNumber}的外呼任务吗？`).then(() => {
+
         dialPhone(row.id).then(response => {
-          this.$modal.msgSuccess('拨号成功');
+          this.$modal.msgSuccess('外呼任务创建成功！');
           // 更新外呼时间
           const updateParams = {
             id: row.id,
@@ -779,7 +780,7 @@ export default {
             this.getList();
           });
         }).catch(() => {
-          this.$modal.msgError('拨号失败');
+          this.$modal.msgError('外呼任务创建失败！');
         });
       }).catch(() => {});
     }
