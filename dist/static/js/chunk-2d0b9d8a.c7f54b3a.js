@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0b9d8a"],{"354f":function(e,n,p){"use strict";p.r(n),n["default"]=p.p+"order_template.xlsx"}}]);
