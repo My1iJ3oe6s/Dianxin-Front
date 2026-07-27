@@ -50,14 +50,12 @@ module.exports = {
         sassOptions: { outputStyle: "expanded" }
       },
       stylus: {
-        stylusOptions: {
-          import: [
-            resolve('./src/style/variables.styl')
-          ],
-          paths: [
-            resolve('./src/style')
-          ]
-        }
+        import: [
+          resolve('./src/style/variables.styl')
+        ],
+        paths: [
+          resolve('./src/style')
+        ]
       },
     }
   },

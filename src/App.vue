@@ -18,7 +18,7 @@ export default  {
 }
 </script>
 <style lang="stylus">
-@import "base"
+@import "./style/base.styl"
 .el-table .el-table__header-wrapper th,.el-table .el-table__fixed-header-wrapper th{
   background-color: #dbdbe7;
 }
