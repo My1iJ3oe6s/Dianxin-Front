@@ -53,7 +53,9 @@ module.exports = {
         import: [
           resolve('./src/style/variables.styl')
         ],
-        paths: resolve('./src/style')
+        paths: [
+          resolve('./src/style')
+        ]
       },
     }
   },
