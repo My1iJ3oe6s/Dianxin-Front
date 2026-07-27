@@ -32,7 +32,7 @@ const permission = {
     // 生成路由
     GenerateRoutes({ commit }) {
       return new Promise(resolve => {
-        // 向后端请求路由数据
+        // 向后端请求路由数�?
         getRouters().then(res => {
           const sdata = JSON.parse(JSON.stringify(res.data))
           const rdata = JSON.parse(JSON.stringify(res.data))
@@ -130,7 +130,8 @@ export const loadView = (view) => {
     return (resolve) => require([`@/views/${view}`], resolve)
   } else {
     // 使用 import 实现生产环境的路由懒加载
-    return () => import(`@/views/${view}`)
+    const viewPath = view.endsWith('.vue') ? view : `${view}.vue`
+    return () => import(`@/views/${viewPath}`)
   }
 }
 
