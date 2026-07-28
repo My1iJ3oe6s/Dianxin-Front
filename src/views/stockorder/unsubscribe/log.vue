@@ -1,8 +1,10 @@
 <template>
   <div class="app-container">
-    <el-form ref="queryForm" :model="queryParams" size="small" :inline="true">
+    <div class="filter-container">
+    <el-form ref="queryForm" :model="queryParams" label-width="100px" size="small" :inline="true" v-show="showSearch">
       <el-form-item label="查询日期">
         <el-date-picker
+          style="width: 240px"
           v-model="queryParams.queryDate"
           value-format="yyyy-MM-dd"
           type="date"
@@ -11,7 +13,7 @@
         />
       </el-form-item>
       <el-form-item label="执行状态">
-        <el-select v-model="queryParams.executeStatus" clearable placeholder="全部">
+        <el-select v-model="queryParams.executeStatus" style="width: 240px" clearable placeholder="全部">
           <el-option label="处理中" :value="0" />
           <el-option label="成功" :value="1" />
           <el-option label="部分成功" :value="2" />
@@ -19,14 +21,16 @@
         </el-select>
       </el-form-item>
       <el-form-item label="请求流水">
-        <el-input v-model="queryParams.requestId" clearable @keyup.enter.native="handleQuery" />
+        <el-input v-model="queryParams.requestId" style="width: 240px" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="handleQuery">查询</el-button>
         <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    </div>
 
+    <div class="table-container">
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -40,6 +44,7 @@
           拉取退订数据
         </el-button>
       </el-col>
+      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" />
     </el-row>
 
     <el-table v-loading="loading" :data="rows">
@@ -79,6 +84,7 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
+    </div>
 
     <el-dialog title="执行退订查询" :visible.sync="executeOpen" width="420px">
       <el-form label-width="90px">
@@ -119,6 +125,7 @@ export default {
   data() {
     return {
       loading: false, executing: false, executeOpen: false, detailOpen: false,
+      showSearch: true,
       rows: [], total: 0, detail: null, executeDate: this.yesterday(),
       queryParams: { pageNum: 1, pageSize: 10, supplierCode: 'YUYUYUAN',
         queryDate: undefined, executeStatus: undefined, requestId: undefined }
