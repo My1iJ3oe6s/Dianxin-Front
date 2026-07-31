@@ -320,10 +320,23 @@
 
         <el-card shadow="never" class="detail-card process-log-card">
           <div slot="header" class="process-log-header">
-            <span class="detail-section-title">订单过程日志</span>
             <div>
-              <el-select v-model="logQuery.logType" size="small" clearable placeholder="日志类型" @change="handleLogFilter">
-                <el-option v-for="item in logTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+              <span class="detail-section-title">订单过程日志</span>
+              <span class="process-log-count">共 {{ logTotal }} 条</span>
+            </div>
+            <el-button size="small" icon="el-icon-refresh" :loading="processLogLoading" @click="loadProcessLogs">刷新</el-button>
+          </div>
+
+          <div class="process-log-toolbar">
+            <el-radio-group v-model="logQuery.logDimension" size="small" class="dimension-switch" @change="handleDimensionChange">
+              <el-radio-button label="ALL">全部</el-radio-button>
+              <el-radio-button label="DISTRIBUTOR">分销商</el-radio-button>
+              <el-radio-button label="INTERNAL">系统内部</el-radio-button>
+              <el-radio-button label="SUPPLIER">供应商</el-radio-button>
+            </el-radio-group>
+            <div class="process-log-filters">
+              <el-select v-model="logQuery.logType" size="small" clearable placeholder="具体日志类型" @change="handleLogFilter">
+                <el-option v-for="item in availableLogTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
               <el-select v-model="logQuery.resultStatus" size="small" clearable placeholder="执行结果" @change="handleLogFilter">
                 <el-option label="成功" value="SUCCESS" />
@@ -331,7 +344,6 @@
                 <el-option label="执行中" value="RUNNING" />
                 <el-option label="结果未知" value="UNKNOWN" />
               </el-select>
-              <el-button size="small" icon="el-icon-refresh" @click="loadProcessLogs">刷新</el-button>
             </div>
           </div>
 
@@ -343,26 +355,36 @@
                 :timestamp="parseTime(log.startTime)" placement="top" :type="timelineType(log.resultStatus)">
                 <el-card shadow="hover" class="process-log-item">
                   <div class="process-log-summary">
-                    <div>
-                      <el-tag size="mini" effect="plain">{{ logTypeLabel(log.logType) }}</el-tag>
+                    <div class="process-log-title">
+                      <el-tag size="mini" effect="plain" :type="dimensionTagType(log.logType)">{{ logTypeLabel(log.logType) }}</el-tag>
                       <strong>{{ log.eventName }}</strong>
                       <el-tag size="mini" :type="resultTagType(log.resultStatus)">{{ resultStatusLabel(log.resultStatus) }}</el-tag>
                     </div>
                     <div class="process-log-meta">
-                      <span v-if="log.beforeStatus !== null && log.beforeStatus !== undefined">
-                        状态 {{ log.beforeStatus }} → {{ log.afterStatus }}
+                      <span v-if="log.beforeStatus !== null && log.beforeStatus !== undefined" class="status-flow">
+                        {{ orderStatusLabel(log.beforeStatus) }} <i class="el-icon-right" /> {{ orderStatusLabel(log.afterStatus) }}
                       </span>
                       <span v-if="log.durationMs !== null && log.durationMs !== undefined">耗时 {{ log.durationMs }}ms</span>
-                      <span>Trace {{ log.traceId }}</span>
+                      <el-tooltip v-if="log.traceId" :content="log.traceId" placement="top">
+                        <button type="button" class="trace-button" @click="copyText(log.traceId)">Trace {{ shortTrace(log.traceId) }} <i class="el-icon-document-copy" /></button>
+                      </el-tooltip>
                     </div>
                   </div>
                   <div v-if="log.errorMessage" class="process-log-error">{{ log.errorMessage }}</div>
                   <el-collapse v-if="hasLogDetail(log)" v-model="processLogActiveNames">
-                    <el-collapse-item title="查看请求、响应和字段变化" :name="String(log.id)">
-                      <div v-if="log.requestUrl" class="payload-block"><span>请求地址</span><pre>{{ log.requestUrl }}</pre></div>
-                      <div v-if="log.requestBody" class="payload-block"><span>请求参数</span><pre>{{ prettyPayload(log.requestBody) }}</pre></div>
-                      <div v-if="log.responseBody" class="payload-block"><span>响应参数</span><pre>{{ prettyPayload(log.responseBody) }}</pre></div>
-                      <div v-if="log.changedFields" class="payload-block"><span>字段变化</span><pre>{{ prettyPayload(log.changedFields) }}</pre></div>
+                    <el-collapse-item title="查看调用详情" :name="String(log.id)">
+                      <el-tabs type="border-card" class="payload-tabs">
+                        <el-tab-pane v-if="log.requestUrl || log.requestBody" label="请求">
+                          <div v-if="log.requestUrl" class="payload-block"><span>请求地址</span><pre>{{ log.requestUrl }}</pre></div>
+                          <div v-if="log.requestBody" class="payload-block"><span>请求参数</span><el-button type="text" icon="el-icon-document-copy" @click="copyText(prettyPayload(log.requestBody))">复制</el-button><pre>{{ prettyPayload(log.requestBody) }}</pre></div>
+                        </el-tab-pane>
+                        <el-tab-pane v-if="log.responseBody" label="响应">
+                          <div class="payload-block"><span>响应参数</span><el-button type="text" icon="el-icon-document-copy" @click="copyText(prettyPayload(log.responseBody))">复制</el-button><pre>{{ prettyPayload(log.responseBody) }}</pre></div>
+                        </el-tab-pane>
+                        <el-tab-pane v-if="log.changedFields" label="字段变化">
+                          <div class="payload-block"><span>变更内容</span><el-button type="text" icon="el-icon-document-copy" @click="copyText(prettyPayload(log.changedFields))">复制</el-button><pre>{{ prettyPayload(log.changedFields) }}</pre></div>
+                        </el-tab-pane>
+                      </el-tabs>
                     </el-collapse-item>
                   </el-collapse>
                 </el-card>
@@ -448,17 +470,18 @@ export default {
       logQuery: {
         pageNum: 1,
         pageSize: 20,
+        logDimension: 'ALL',
         logType: null,
         resultStatus: null
       },
       logTypeOptions: [
-        { label: '分销商调用', value: 'DISTRIBUTOR_API' },
-        { label: '订单变更', value: 'ORDER_MUTATION' },
-        { label: '供应商调用', value: 'SUPPLIER_API' },
-        { label: '供应商回调', value: 'SUPPLIER_CALLBACK' },
-        { label: '定时查单', value: 'SCHEDULE_QUERY' },
-        { label: '订单任务', value: 'ORDER_TASK' },
-        { label: '人工操作', value: 'MANUAL_OPERATION' }
+        { label: '分销商调用', value: 'DISTRIBUTOR_API', dimension: 'DISTRIBUTOR' },
+        { label: '订单变更', value: 'ORDER_MUTATION', dimension: 'INTERNAL' },
+        { label: '供应商调用', value: 'SUPPLIER_API', dimension: 'SUPPLIER' },
+        { label: '供应商回调', value: 'SUPPLIER_CALLBACK', dimension: 'SUPPLIER' },
+        { label: '定时查单', value: 'SCHEDULE_QUERY', dimension: 'SUPPLIER' },
+        { label: '订单任务', value: 'ORDER_TASK', dimension: 'INTERNAL' },
+        { label: '人工操作', value: 'MANUAL_OPERATION', dimension: 'INTERNAL' }
       ],
       // 查询参数
       queryParams: {
@@ -521,6 +544,14 @@ export default {
   },
   beforeDestroy() {
     window.onresize = null;
+  },
+  computed: {
+    availableLogTypeOptions() {
+      if (this.logQuery.logDimension === 'ALL') {
+        return this.logTypeOptions
+      }
+      return this.logTypeOptions.filter(item => item.dimension === this.logQuery.logDimension)
+    }
   },
   methods: {
     calcHeight() {
@@ -621,6 +652,7 @@ export default {
       this.processLogs = []
       this.processLogActiveNames = []
       this.logQuery.pageNum = 1
+      this.logQuery.logDimension = 'ALL'
       this.logQuery.logType = null
       this.logQuery.resultStatus = null
       getStockorder(row.orderId).then(response => {
@@ -644,7 +676,12 @@ export default {
     },
     handleLogFilter() {
       this.logQuery.pageNum = 1
+      this.processLogActiveNames = []
       this.loadProcessLogs()
+    },
+    handleDimensionChange() {
+      this.logQuery.logType = null
+      this.handleLogFilter()
     },
     logTypeLabel(value) {
       const option = this.logTypeOptions.find(item => item.value === value)
@@ -660,6 +697,32 @@ export default {
     },
     timelineType(value) {
       return this.resultTagType(value)
+    },
+    dimensionTagType(value) {
+      if (value === 'DISTRIBUTOR_API') return ''
+      if (['SUPPLIER_API', 'SUPPLIER_CALLBACK', 'SCHEDULE_QUERY'].includes(value)) return 'warning'
+      return 'info'
+    },
+    orderStatusLabel(value) {
+      const options = (this.dict && this.dict.type && this.dict.type.self_stock_status) || []
+      const option = options.find(item => String(item.value) === String(value))
+      return option ? option.label : `状态 ${value}`
+    },
+    shortTrace(value) {
+      if (!value || value.length <= 12) return value || '-'
+      return `${value.slice(0, 6)}…${value.slice(-4)}`
+    },
+    copyText(value) {
+      const text = value || ''
+      const textarea = document.createElement('textarea')
+      textarea.value = text
+      textarea.style.position = 'fixed'
+      textarea.style.opacity = '0'
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textarea)
+      this.$message.success('已复制')
     },
     hasLogDetail(log) {
       return Boolean(log.requestUrl || log.requestBody || log.responseBody || log.changedFields)
@@ -863,13 +926,45 @@ export default {
   gap: 12px;
 }
 
-.process-log-header .el-select {
-  width: 132px;
-  margin-right: 8px;
+.process-log-count {
+  margin-left: 10px;
+  color: #909399;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.process-log-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 12px;
+  background: #f5f7fa;
+  border-radius: 6px;
+}
+
+.dimension-switch {
+  white-space: nowrap;
+}
+
+.process-log-filters {
+  display: flex;
+  gap: 8px;
+}
+
+.process-log-filters .el-select {
+  width: 140px;
 }
 
 .process-log-summary strong {
   margin: 0 8px;
+}
+
+.process-log-title {
+  display: flex;
+  align-items: center;
+  min-width: 0;
 }
 
 .process-log-meta {
@@ -879,6 +974,27 @@ export default {
   gap: 12px;
   color: #909399;
   font-size: 12px;
+}
+
+.status-flow {
+  color: #606266;
+}
+
+.trace-button {
+  max-width: 148px;
+  overflow: hidden;
+  padding: 0;
+  color: #909399;
+  font: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+}
+
+.trace-button:hover {
+  color: #409eff;
 }
 
 .process-log-error {
@@ -894,6 +1010,11 @@ export default {
   border-bottom: 0;
 }
 
+.payload-tabs {
+  margin-top: 4px;
+  box-shadow: none;
+}
+
 .payload-block {
   margin-bottom: 12px;
 
@@ -902,8 +1023,13 @@ export default {
     font-weight: 600;
   }
 
+  > .el-button {
+    float: right;
+    padding: 0;
+  }
+
   pre {
-    max-height: 320px;
+    max-height: 240px;
     overflow: auto;
     margin: 6px 0 0;
     padding: 12px;
@@ -912,6 +1038,45 @@ export default {
     border-radius: 4px;
     white-space: pre-wrap;
     word-break: break-all;
+  }
+}
+
+@media (max-width: 1100px) {
+  .process-log-toolbar,
+  .process-log-summary {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .process-log-meta {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 760px) {
+  .process-log-toolbar,
+  .process-log-filters {
+    width: 100%;
+  }
+
+  .dimension-switch {
+    display: flex;
+    width: 100%;
+  }
+
+  .dimension-switch ::v-deep .el-radio-button {
+    flex: 1;
+  }
+
+  .dimension-switch ::v-deep .el-radio-button__inner {
+    width: 100%;
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .process-log-filters .el-select {
+    flex: 1;
+    width: auto;
   }
 }
 </style>
