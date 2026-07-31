@@ -162,8 +162,11 @@
           </template>
         </el-table-column>
         <!--        <el-table-column label="备注" align="center" prop="remark"/>-->
-        <el-table-column label="操作" width="120" align="left" fixed="right" class-name="small-padding fixed-width">
+        <el-table-column label="操作" width="180" align="left" fixed="right" class-name="small-padding fixed-width">
           <template slot-scope="scope">
+            <el-link :underline="false" type="primary" @click="handleDetail(scope.row)"
+              v-hasPermi="['stockorder:stockorder:query']">详情
+            </el-link>
             <el-link :underline="false" type="primary" @click="handleUpdate(scope.row)"
               v-hasPermi="['stockorder:stockorder:edit']">修改
             </el-link>
@@ -293,6 +296,85 @@
       </div>
     </el-drawer>
 
+    <!-- 订单详情与过程日志 -->
+    <el-drawer custom-class="order-detail-drawer" :visible.sync="detailOpen" :size="960" append-to-body>
+      <template #title>
+        <div class="detail-title">订单详情</div>
+      </template>
+      <div v-loading="detailLoading" class="detail-container">
+        <el-card shadow="never" class="detail-card">
+          <div slot="header" class="detail-section-title">订单信息</div>
+          <el-row :gutter="20">
+            <el-col :span="8"><div class="detail-item"><span>订单号</span>{{ detailOrder.orderNo || '-' }}</div></el-col>
+            <el-col :span="8"><div class="detail-item"><span>分销商订单号</span>{{ detailOrder.externalOrderNo || '-' }}</div></el-col>
+            <el-col :span="8"><div class="detail-item"><span>供应商订单号</span>{{ detailOrder.supplierOrderNo || '-' }}</div></el-col>
+            <el-col :span="8"><div class="detail-item"><span>客户手机号</span>{{ detailOrder.phone || '-' }}</div></el-col>
+            <el-col :span="8"><div class="detail-item"><span>商品</span>{{ detailOrder.goodsName || detailOrder.goodsCode || '-' }}</div></el-col>
+            <el-col :span="8"><div class="detail-item"><span>供应商</span>{{ detailOrder.supplierCode || '-' }}</div></el-col>
+            <el-col :span="8"><div class="detail-item"><span>订单状态</span><dict-tag :options="dict.type.self_stock_status" :value="detailOrder.orderStatus" /></div></el-col>
+            <el-col :span="8"><div class="detail-item"><span>下单时间</span>{{ parseTime(detailOrder.orderTime) || '-' }}</div></el-col>
+            <el-col :span="8"><div class="detail-item"><span>更新时间</span>{{ parseTime(detailOrder.updateTime) || '-' }}</div></el-col>
+          </el-row>
+          <div class="detail-item detail-item-full"><span>当前备注</span>{{ detailOrder.remark || '-' }}</div>
+        </el-card>
+
+        <el-card shadow="never" class="detail-card process-log-card">
+          <div slot="header" class="process-log-header">
+            <span class="detail-section-title">订单过程日志</span>
+            <div>
+              <el-select v-model="logQuery.logType" size="small" clearable placeholder="日志类型" @change="handleLogFilter">
+                <el-option v-for="item in logTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+              <el-select v-model="logQuery.resultStatus" size="small" clearable placeholder="执行结果" @change="handleLogFilter">
+                <el-option label="成功" value="SUCCESS" />
+                <el-option label="失败" value="FAILED" />
+                <el-option label="执行中" value="RUNNING" />
+                <el-option label="结果未知" value="UNKNOWN" />
+              </el-select>
+              <el-button size="small" icon="el-icon-refresh" @click="loadProcessLogs">刷新</el-button>
+            </div>
+          </div>
+
+          <div v-loading="processLogLoading" class="process-log-list">
+            <el-empty v-if="!processLogs.length && !processLogLoading"
+              description="暂无过程日志（仅展示日志功能上线后的调用）" />
+            <el-timeline v-else>
+              <el-timeline-item v-for="log in processLogs" :key="log.id"
+                :timestamp="parseTime(log.startTime)" placement="top" :type="timelineType(log.resultStatus)">
+                <el-card shadow="hover" class="process-log-item">
+                  <div class="process-log-summary">
+                    <div>
+                      <el-tag size="mini" effect="plain">{{ logTypeLabel(log.logType) }}</el-tag>
+                      <strong>{{ log.eventName }}</strong>
+                      <el-tag size="mini" :type="resultTagType(log.resultStatus)">{{ resultStatusLabel(log.resultStatus) }}</el-tag>
+                    </div>
+                    <div class="process-log-meta">
+                      <span v-if="log.beforeStatus !== null && log.beforeStatus !== undefined">
+                        状态 {{ log.beforeStatus }} → {{ log.afterStatus }}
+                      </span>
+                      <span v-if="log.durationMs !== null && log.durationMs !== undefined">耗时 {{ log.durationMs }}ms</span>
+                      <span>Trace {{ log.traceId }}</span>
+                    </div>
+                  </div>
+                  <div v-if="log.errorMessage" class="process-log-error">{{ log.errorMessage }}</div>
+                  <el-collapse v-if="hasLogDetail(log)" v-model="processLogActiveNames">
+                    <el-collapse-item title="查看请求、响应和字段变化" :name="String(log.id)">
+                      <div v-if="log.requestUrl" class="payload-block"><span>请求地址</span><pre>{{ log.requestUrl }}</pre></div>
+                      <div v-if="log.requestBody" class="payload-block"><span>请求参数</span><pre>{{ prettyPayload(log.requestBody) }}</pre></div>
+                      <div v-if="log.responseBody" class="payload-block"><span>响应参数</span><pre>{{ prettyPayload(log.responseBody) }}</pre></div>
+                      <div v-if="log.changedFields" class="payload-block"><span>字段变化</span><pre>{{ prettyPayload(log.changedFields) }}</pre></div>
+                    </el-collapse-item>
+                  </el-collapse>
+                </el-card>
+              </el-timeline-item>
+            </el-timeline>
+          </div>
+          <pagination v-show="logTotal > 0" :total="logTotal" :page.sync="logQuery.pageNum"
+            :limit.sync="logQuery.pageSize" @pagination="loadProcessLogs" />
+        </el-card>
+      </div>
+    </el-drawer>
+
     <!-- 添加退订导入对话框 -->
     <el-dialog :title="upload3.title" :visible.sync="upload3.open" width="400px" append-to-body>
       <el-upload ref="upload3" :limit="1" accept=".xlsx, .xls"
@@ -328,7 +410,8 @@ import {
   getStockorder,
   delStockorder,
   addStockorder,
-  updateStockorder
+  updateStockorder,
+  getStockorderProcessLogs
 } from '@/api/stockorder/stockorder'
 import { getToken } from '@/utils/auth'
 
@@ -355,6 +438,28 @@ export default {
       title: '',
       // 是否显示弹出层
       open: false,
+      detailOpen: false,
+      detailLoading: false,
+      processLogLoading: false,
+      detailOrder: {},
+      processLogs: [],
+      processLogActiveNames: [],
+      logTotal: 0,
+      logQuery: {
+        pageNum: 1,
+        pageSize: 20,
+        logType: null,
+        resultStatus: null
+      },
+      logTypeOptions: [
+        { label: '分销商调用', value: 'DISTRIBUTOR_API' },
+        { label: '订单变更', value: 'ORDER_MUTATION' },
+        { label: '供应商调用', value: 'SUPPLIER_API' },
+        { label: '供应商回调', value: 'SUPPLIER_CALLBACK' },
+        { label: '定时查单', value: 'SCHEDULE_QUERY' },
+        { label: '订单任务', value: 'ORDER_TASK' },
+        { label: '人工操作', value: 'MANUAL_OPERATION' }
+      ],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -508,6 +613,67 @@ export default {
         this.title = '修改权益包订单'
       })
     },
+    /** 查看订单详情及过程日志 */
+    handleDetail(row) {
+      this.detailOpen = true
+      this.detailLoading = true
+      this.detailOrder = {}
+      this.processLogs = []
+      this.processLogActiveNames = []
+      this.logQuery.pageNum = 1
+      this.logQuery.logType = null
+      this.logQuery.resultStatus = null
+      getStockorder(row.orderId).then(response => {
+        this.detailOrder = response.data || {}
+        return this.loadProcessLogs()
+      }).finally(() => {
+        this.detailLoading = false
+      })
+    },
+    loadProcessLogs() {
+      if (!this.detailOrder.orderId) {
+        return Promise.resolve()
+      }
+      this.processLogLoading = true
+      return getStockorderProcessLogs(this.detailOrder.orderId, this.logQuery).then(response => {
+        this.processLogs = response.rows || []
+        this.logTotal = response.total || 0
+      }).finally(() => {
+        this.processLogLoading = false
+      })
+    },
+    handleLogFilter() {
+      this.logQuery.pageNum = 1
+      this.loadProcessLogs()
+    },
+    logTypeLabel(value) {
+      const option = this.logTypeOptions.find(item => item.value === value)
+      return option ? option.label : value
+    },
+    resultStatusLabel(value) {
+      const labels = { SUCCESS: '成功', FAILED: '失败', RUNNING: '执行中', UNKNOWN: '结果未知' }
+      return labels[value] || value
+    },
+    resultTagType(value) {
+      const types = { SUCCESS: 'success', FAILED: 'danger', RUNNING: 'warning', UNKNOWN: 'info' }
+      return types[value] || 'info'
+    },
+    timelineType(value) {
+      return this.resultTagType(value)
+    },
+    hasLogDetail(log) {
+      return Boolean(log.requestUrl || log.requestBody || log.responseBody || log.changedFields)
+    },
+    prettyPayload(value) {
+      if (!value) {
+        return ''
+      }
+      try {
+        return JSON.stringify(JSON.parse(value), null, 2)
+      } catch (e) {
+        return value
+      }
+    },
     /** 提交按钮 */
     submitForm() {
       this.$refs['form'].validate(valid => {
@@ -645,5 +811,107 @@ export default {
   background: #fff;
   width: 100%;
   z-index: 9;
+}
+
+.order-detail-drawer {
+  .el-drawer__body {
+    overflow-y: auto;
+  }
+}
+
+.detail-title {
+  font-size: 20px;
+  color: #303133;
+}
+
+.detail-container {
+  padding: 0 24px 30px;
+}
+
+.detail-card {
+  margin-bottom: 18px;
+}
+
+.detail-section-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.detail-item {
+  min-height: 48px;
+  line-height: 22px;
+  padding: 7px 0;
+  color: #303133;
+  word-break: break-all;
+
+  > span:first-child {
+    display: block;
+    color: #909399;
+    font-size: 12px;
+  }
+}
+
+.detail-item-full {
+  border-top: 1px solid #ebeef5;
+}
+
+.process-log-header,
+.process-log-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.process-log-header .el-select {
+  width: 132px;
+  margin-right: 8px;
+}
+
+.process-log-summary strong {
+  margin: 0 8px;
+}
+
+.process-log-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  color: #909399;
+  font-size: 12px;
+}
+
+.process-log-error {
+  margin-top: 12px;
+  padding: 10px 12px;
+  color: #f56c6c;
+  background: #fef0f0;
+  border-radius: 4px;
+}
+
+.process-log-item .el-collapse {
+  margin-top: 10px;
+  border-bottom: 0;
+}
+
+.payload-block {
+  margin-bottom: 12px;
+
+  > span {
+    color: #606266;
+    font-weight: 600;
+  }
+
+  pre {
+    max-height: 320px;
+    overflow: auto;
+    margin: 6px 0 0;
+    padding: 12px;
+    color: #303133;
+    background: #f5f7fa;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
 }
 </style>

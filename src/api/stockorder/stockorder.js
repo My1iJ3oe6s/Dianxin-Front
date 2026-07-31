@@ -17,6 +17,15 @@ export function getStockorder(orderId) {
   })
 }
 
+// 查询订单过程日志
+export function getStockorderProcessLogs(orderId, query) {
+  return request({
+    url: '/stockorder/stockorder/' + orderId + '/process-logs',
+    method: 'get',
+    params: query
+  })
+}
+
 // 新增权益包订单
 export function addStockorder(data) {
   return request({
