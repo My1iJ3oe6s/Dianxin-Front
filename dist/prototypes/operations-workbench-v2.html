@@ -1,0 +1,2015 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="讯翼行分销管理平台工作台与订单列表升级原型">
+  <title>讯翼行运营工作台 V2 原型</title>
+  <style>
+    :root {
+      --brand-700: #1559c9;
+      --brand-600: #1f6fe5;
+      --brand-500: #2f7cf6;
+      --brand-100: #eaf2ff;
+      --brand-050: #f4f8ff;
+      --ink-900: #172033;
+      --ink-700: #35405a;
+      --ink-500: #69738a;
+      --ink-400: #8d96a9;
+      --line-300: #d9dfeb;
+      --line-200: #e6eaf1;
+      --line-100: #eef1f6;
+      --surface: #ffffff;
+      --canvas: #f5f7fb;
+      --success-700: #16784a;
+      --success-100: #e8f7ef;
+      --warning-700: #a45a0a;
+      --warning-100: #fff4df;
+      --danger-700: #c43b3f;
+      --danger-100: #fff0f0;
+      --neutral-100: #f1f3f7;
+      --sidebar-width: 228px;
+      --topbar-height: 64px;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --shadow-drawer: 0 20px 60px rgba(22, 32, 51, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      height: 100%;
+      background: var(--canvas);
+    }
+
+    body {
+      min-width: 1180px;
+      min-height: 100%;
+      margin: 0;
+      color: var(--ink-900);
+      background: var(--canvas);
+      font-family: "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button,
+    select,
+    input[type="checkbox"] {
+      cursor: pointer;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 3px solid rgba(47, 124, 246, 0.28);
+      outline-offset: 2px;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 30;
+      width: var(--sidebar-width);
+      color: #d9e5f8;
+      background: #152541;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      height: var(--topbar-height);
+      padding: 0 22px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .brand-copy strong {
+      display: block;
+      color: #ffffff;
+      font-size: 16px;
+      letter-spacing: 0.03em;
+    }
+
+    .brand-copy span {
+      color: #9fb3d3;
+      font-size: 11px;
+    }
+
+    .nav-section-label {
+      margin: 22px 20px 8px;
+      color: #7186a8;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+    }
+
+    .nav-list {
+      display: grid;
+      gap: 4px;
+      margin: 0;
+      padding: 0 12px;
+      list-style: none;
+    }
+
+    .nav-button {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      min-height: 42px;
+      padding: 0 12px;
+      color: #bdcbe1;
+      background: transparent;
+      border: 0;
+      border-radius: 8px;
+      text-align: left;
+    }
+
+    .nav-button:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-button.is-active {
+      color: #ffffff;
+      background: rgba(47, 124, 246, 0.22);
+    }
+
+    .nav-button.is-active::before {
+      position: absolute;
+      left: 0;
+      width: 3px;
+      height: 20px;
+      content: "";
+      background: #62a0ff;
+      border-radius: 3px;
+    }
+
+    .nav-count {
+      min-width: 24px;
+      padding: 1px 7px;
+      color: #ffffff;
+      background: var(--danger-700);
+      border-radius: 999px;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .sidebar-footer {
+      position: absolute;
+      right: 16px;
+      bottom: 18px;
+      left: 16px;
+      padding-top: 14px;
+      color: #7186a8;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 11px;
+    }
+
+    .topbar {
+      position: fixed;
+      inset: 0 0 auto var(--sidebar-width);
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: var(--topbar-height);
+      padding: 0 28px;
+      background: rgba(255, 255, 255, 0.97);
+      border-bottom: 1px solid var(--line-200);
+    }
+
+    .global-search {
+      position: relative;
+      width: 360px;
+    }
+
+    .global-search input {
+      width: 100%;
+      height: 38px;
+      padding: 0 84px 0 13px;
+      color: var(--ink-900);
+      background: var(--canvas);
+      border: 1px solid transparent;
+      border-radius: 8px;
+    }
+
+    .global-search input:hover,
+    .global-search input:focus {
+      background: #ffffff;
+      border-color: var(--brand-500);
+      outline: none;
+    }
+
+    .search-hint {
+      position: absolute;
+      top: 9px;
+      right: 10px;
+      color: var(--ink-400);
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .prototype-chip {
+      padding: 4px 9px;
+      color: var(--warning-700);
+      background: var(--warning-100);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .user-block {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      color: var(--brand-700);
+      background: var(--brand-100);
+      border-radius: 50%;
+      font-weight: 700;
+    }
+
+    .user-copy strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .user-copy span {
+      color: var(--ink-500);
+      font-size: 11px;
+    }
+
+    .main {
+      min-height: 100vh;
+      margin-left: var(--sidebar-width);
+      padding: calc(var(--topbar-height) + 26px) 28px 40px;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.is-active {
+      display: block;
+    }
+
+    .page-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+
+    .page-heading h1 {
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    .page-heading p {
+      margin: 7px 0 0;
+      color: var(--ink-500);
+    }
+
+    .page-actions,
+    .inline-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 15px;
+      color: var(--ink-700);
+      background: #ffffff;
+      border: 1px solid var(--line-300);
+      border-radius: 7px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .button:hover {
+      color: var(--brand-700);
+      border-color: var(--brand-500);
+    }
+
+    .button.primary {
+      color: #ffffff;
+      background: var(--brand-600);
+      border-color: var(--brand-600);
+    }
+
+    .button.primary:hover {
+      color: #ffffff;
+      background: var(--brand-700);
+      border-color: var(--brand-700);
+    }
+
+    .button.danger {
+      color: var(--danger-700);
+      background: var(--danger-100);
+      border-color: transparent;
+    }
+
+    .button.text {
+      min-height: 32px;
+      padding: 0 6px;
+      color: var(--brand-700);
+      background: transparent;
+      border-color: transparent;
+    }
+
+    .button.small {
+      min-height: 32px;
+      padding: 0 11px;
+      font-size: 13px;
+    }
+
+    .metric-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin-bottom: 20px;
+      background: var(--surface);
+      border: 1px solid var(--line-200);
+      border-radius: var(--radius-lg);
+    }
+
+    .metric {
+      position: relative;
+      min-height: 126px;
+      padding: 23px 25px 20px;
+    }
+
+    .metric + .metric {
+      border-left: 1px solid var(--line-200);
+    }
+
+    .metric-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--ink-500);
+      font-weight: 600;
+    }
+
+    .metric-value {
+      margin-top: 10px;
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    .metric-note {
+      margin-top: 4px;
+      color: var(--ink-500);
+      font-size: 12px;
+    }
+
+    .metric-note strong {
+      color: var(--success-700);
+    }
+
+    .metric.is-danger .metric-value,
+    .metric.is-danger .metric-note strong {
+      color: var(--danger-700);
+    }
+
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.75fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line-200);
+      border-radius: var(--radius-lg);
+    }
+
+    .panel + .panel {
+      margin-top: 20px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 62px;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--line-200);
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .panel-header p {
+      margin: 2px 0 0;
+      color: var(--ink-500);
+      font-size: 12px;
+    }
+
+    .queue-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      background: var(--neutral-100);
+      border-radius: 8px;
+    }
+
+    .queue-tab {
+      min-height: 30px;
+      padding: 0 10px;
+      color: var(--ink-500);
+      background: transparent;
+      border: 0;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .queue-tab.is-active {
+      color: var(--brand-700);
+      background: #ffffff;
+    }
+
+    .queue-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .queue-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) 120px 120px 100px 92px;
+      gap: 16px;
+      align-items: center;
+      min-height: 78px;
+      padding: 12px 20px;
+    }
+
+    .queue-row + .queue-row {
+      border-top: 1px solid var(--line-100);
+    }
+
+    .queue-row:hover {
+      background: var(--brand-050);
+    }
+
+    .queue-order strong,
+    .table-order strong {
+      display: block;
+      overflow: hidden;
+      color: var(--ink-900);
+      font-size: 13px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .queue-order span,
+    .table-order span,
+    .muted {
+      color: var(--ink-500);
+      font-size: 12px;
+    }
+
+    .priority {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 8px;
+      color: var(--danger-700);
+      background: var(--danger-100);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .priority.medium {
+      color: var(--warning-700);
+      background: var(--warning-100);
+    }
+
+    .priority.normal {
+      color: var(--ink-500);
+      background: var(--neutral-100);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .status.failed {
+      color: var(--danger-700);
+      background: var(--danger-100);
+    }
+
+    .status.pending {
+      color: var(--warning-700);
+      background: var(--warning-100);
+    }
+
+    .status.processing {
+      color: var(--brand-700);
+      background: var(--brand-100);
+    }
+
+    .status.success {
+      color: var(--success-700);
+      background: var(--success-100);
+    }
+
+    .status.closed {
+      color: var(--ink-500);
+      background: var(--neutral-100);
+    }
+
+    .panel-footer {
+      display: flex;
+      justify-content: flex-end;
+      min-height: 54px;
+      padding: 10px 16px;
+      border-top: 1px solid var(--line-200);
+    }
+
+    .health-list,
+    .alert-list {
+      margin: 0;
+      padding: 4px 18px 8px;
+      list-style: none;
+    }
+
+    .health-row,
+    .alert-row {
+      display: grid;
+      gap: 9px;
+      padding: 13px 2px;
+    }
+
+    .health-row + .health-row,
+    .alert-row + .alert-row {
+      border-top: 1px solid var(--line-100);
+    }
+
+    .health-line,
+    .alert-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .health-line strong,
+    .alert-line strong {
+      font-size: 13px;
+    }
+
+    .health-meta,
+    .alert-meta {
+      color: var(--ink-500);
+      font-size: 12px;
+    }
+
+    progress {
+      width: 100%;
+      height: 7px;
+      overflow: hidden;
+      appearance: none;
+      background: var(--line-100);
+      border: 0;
+      border-radius: 999px;
+    }
+
+    progress::-webkit-progress-bar {
+      background: var(--line-100);
+      border-radius: 999px;
+    }
+
+    progress::-webkit-progress-value {
+      background: var(--brand-500);
+      border-radius: 999px;
+    }
+
+    progress.warning::-webkit-progress-value {
+      background: #e9932f;
+    }
+
+    progress.danger::-webkit-progress-value {
+      background: var(--danger-700);
+    }
+
+    .orders-overview {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      background: var(--surface);
+      border: 1px solid var(--line-200);
+      border-radius: var(--radius-md);
+    }
+
+    .status-filter-list {
+      display: flex;
+      align-items: stretch;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .status-filter {
+      position: relative;
+      min-width: 112px;
+      min-height: 66px;
+      padding: 12px 18px 10px;
+      color: var(--ink-500);
+      background: transparent;
+      border: 0;
+      border-right: 1px solid var(--line-200);
+      text-align: left;
+    }
+
+    .status-filter strong {
+      display: block;
+      margin-top: 2px;
+      color: var(--ink-900);
+      font-size: 19px;
+    }
+
+    .status-filter.is-active {
+      color: var(--brand-700);
+      background: var(--brand-050);
+    }
+
+    .status-filter.is-active::after {
+      position: absolute;
+      right: 18px;
+      bottom: 0;
+      left: 18px;
+      height: 3px;
+      content: "";
+      background: var(--brand-500);
+      border-radius: 3px 3px 0 0;
+    }
+
+    .overview-note {
+      margin-right: 18px;
+      color: var(--ink-500);
+      font-size: 12px;
+    }
+
+    .filter-panel {
+      margin-bottom: 14px;
+      padding: 16px 18px;
+      background: var(--surface);
+      border: 1px solid var(--line-200);
+      border-radius: var(--radius-md);
+    }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: minmax(260px, 1.35fr) repeat(3, minmax(160px, 0.7fr)) auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .filter-field {
+      position: relative;
+    }
+
+    .filter-field input,
+    .filter-field select {
+      width: 100%;
+      height: 38px;
+      padding: 0 11px;
+      color: var(--ink-900);
+      background: #ffffff;
+      border: 1px solid var(--line-300);
+      border-radius: 7px;
+    }
+
+    .filter-field input:hover,
+    .filter-field select:hover,
+    .filter-field input:focus,
+    .filter-field select:focus {
+      border-color: var(--brand-500);
+      outline: none;
+    }
+
+    .advanced-filters {
+      display: none;
+      grid-template-columns: repeat(4, minmax(170px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line-100);
+    }
+
+    .advanced-filters.is-open {
+      display: grid;
+    }
+
+    .filter-label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--ink-500);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .table-panel {
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--line-200);
+      border-radius: var(--radius-md);
+    }
+
+    .table-toolbar {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 58px;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--line-200);
+    }
+
+    .table-toolbar strong {
+      font-size: 15px;
+    }
+
+    .column-menu-wrap {
+      position: relative;
+    }
+
+    .column-menu {
+      position: absolute;
+      top: 42px;
+      right: 0;
+      z-index: 8;
+      display: none;
+      width: 210px;
+      padding: 10px;
+      background: #ffffff;
+      border: 1px solid var(--line-200);
+      border-radius: 9px;
+      box-shadow: 0 12px 28px rgba(22, 32, 51, 0.12);
+    }
+
+    .column-menu.is-open {
+      display: grid;
+      gap: 4px;
+    }
+
+    .column-menu label {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 34px;
+      padding: 0 7px;
+      border-radius: 6px;
+    }
+
+    .column-menu label:hover {
+      background: var(--canvas);
+    }
+
+    .batch-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 54px;
+      padding: 8px 16px;
+      color: var(--brand-700);
+      background: var(--brand-050);
+      border-bottom: 1px solid #d9e7ff;
+    }
+
+    .batch-bar.is-visible {
+      display: flex;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1120px;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      padding: 13px 12px;
+      border-bottom: 1px solid var(--line-100);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      color: var(--ink-500);
+      background: #fafbfc;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    tbody tr:hover {
+      background: var(--brand-050);
+    }
+
+    tbody tr.is-selected {
+      background: #edf4ff;
+    }
+
+    .checkbox-cell {
+      width: 46px;
+      text-align: center;
+    }
+
+    .customer-cell strong,
+    .product-cell strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .reason {
+      display: -webkit-box;
+      overflow: hidden;
+      color: var(--danger-700);
+      font-size: 12px;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    .table-action {
+      color: var(--brand-700);
+      background: transparent;
+      border: 0;
+      font-weight: 600;
+    }
+
+    .table-action:hover {
+      text-decoration: underline;
+    }
+
+    .empty-state {
+      display: none;
+      padding: 58px 20px;
+      color: var(--ink-500);
+      text-align: center;
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 58px;
+      padding: 0 16px;
+      color: var(--ink-500);
+    }
+
+    .page-list {
+      display: flex;
+      gap: 6px;
+    }
+
+    .page-button {
+      min-width: 32px;
+      height: 32px;
+      color: var(--ink-700);
+      background: #ffffff;
+      border: 1px solid var(--line-300);
+      border-radius: 6px;
+    }
+
+    .page-button.is-active {
+      color: #ffffff;
+      background: var(--brand-600);
+      border-color: var(--brand-600);
+    }
+
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: none;
+      background: rgba(23, 32, 51, 0.28);
+    }
+
+    .drawer-backdrop.is-open {
+      display: block;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 100;
+      width: min(760px, 68vw);
+      height: 100vh;
+      overflow-y: auto;
+      background: #ffffff;
+      box-shadow: var(--shadow-drawer);
+      transform: translateX(102%);
+      transition: transform 180ms ease;
+    }
+
+    .drawer.is-open {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 66px;
+      padding: 0 24px;
+      background: rgba(255, 255, 255, 0.98);
+      border-bottom: 1px solid var(--line-200);
+    }
+
+    .drawer-header h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .drawer-close {
+      width: 36px;
+      height: 36px;
+      color: var(--ink-700);
+      background: var(--neutral-100);
+      border: 0;
+      border-radius: 8px;
+      font-size: 20px;
+    }
+
+    .drawer-body {
+      padding: 22px 24px 88px;
+    }
+
+    .order-state-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 20px;
+      padding: 18px 20px;
+      background: var(--brand-050);
+      border: 1px solid #d8e6ff;
+      border-radius: var(--radius-md);
+    }
+
+    .order-state-banner h3 {
+      margin: 0 0 3px;
+      font-size: 18px;
+    }
+
+    .order-state-banner p {
+      margin: 0;
+      color: var(--ink-500);
+    }
+
+    .detail-section {
+      padding: 18px 0 20px;
+      border-bottom: 1px solid var(--line-200);
+    }
+
+    .detail-section h3 {
+      margin: 0 0 14px;
+      font-size: 15px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px 20px;
+    }
+
+    .detail-item span {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink-500);
+      font-size: 12px;
+    }
+
+    .detail-item strong {
+      display: block;
+      overflow-wrap: anywhere;
+      font-size: 13px;
+    }
+
+    .timeline {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding: 0 0 24px 24px;
+    }
+
+    .timeline-item::before {
+      position: absolute;
+      top: 5px;
+      left: 3px;
+      width: 8px;
+      height: 8px;
+      content: "";
+      background: var(--brand-500);
+      border: 3px solid #dbe9ff;
+      border-radius: 50%;
+    }
+
+    .timeline-item:not(:last-child)::after {
+      position: absolute;
+      top: 18px;
+      bottom: 0;
+      left: 9px;
+      width: 1px;
+      content: "";
+      background: var(--line-300);
+    }
+
+    .timeline-item time {
+      display: block;
+      color: var(--ink-500);
+      font-size: 11px;
+    }
+
+    .timeline-item strong {
+      display: block;
+      margin: 3px 0;
+      font-size: 13px;
+    }
+
+    .timeline-item p {
+      margin: 0;
+      color: var(--ink-500);
+      font-size: 12px;
+    }
+
+    .drawer-footer {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      z-index: 102;
+      display: none;
+      width: min(760px, 68vw);
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      min-height: 66px;
+      padding: 0 24px;
+      background: #ffffff;
+      border-top: 1px solid var(--line-200);
+    }
+
+    .drawer-footer.is-open {
+      display: flex;
+    }
+
+    .toast {
+      position: fixed;
+      top: 78px;
+      left: 50%;
+      z-index: 200;
+      padding: 10px 16px;
+      color: #ffffff;
+      background: #20304c;
+      border-radius: 8px;
+      box-shadow: 0 10px 24px rgba(22, 32, 51, 0.18);
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -10px);
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+
+    .toast.is-visible {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @media (max-width: 1280px) {
+      body {
+        min-width: 1024px;
+      }
+
+      :root {
+        --sidebar-width: 208px;
+      }
+
+      .main {
+        padding-right: 20px;
+        padding-left: 20px;
+      }
+
+      .topbar {
+        padding-right: 20px;
+        padding-left: 20px;
+      }
+
+      .workspace-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .workspace-side {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+      }
+
+      .workspace-side .panel + .panel {
+        margin-top: 0;
+      }
+
+      .queue-row {
+        grid-template-columns: minmax(0, 1.2fr) 105px 105px 90px 84px;
+        gap: 10px;
+      }
+
+      .filter-row {
+        grid-template-columns: minmax(220px, 1.2fr) repeat(3, minmax(145px, 0.7fr)) auto;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="主导航">
+      <div class="brand">
+        <div class="brand-copy">
+          <strong>讯翼行</strong>
+          <span>分销管理平台</span>
+        </div>
+      </div>
+
+      <div class="nav-section-label">运营中心</div>
+      <ul class="nav-list">
+        <li><button class="nav-button is-active" type="button" data-view-target="workbench">工作台</button></li>
+        <li>
+          <button class="nav-button" type="button" data-view-target="orders">
+            <span>订单中心</span><span class="nav-count">18</span>
+          </button>
+        </li>
+        <li><button class="nav-button" type="button" data-prototype-only>异常处理</button></li>
+        <li><button class="nav-button" type="button" data-prototype-only>商品与渠道</button></li>
+        <li><button class="nav-button" type="button" data-prototype-only>客户与号码</button></li>
+      </ul>
+
+      <div class="nav-section-label">管理与分析</div>
+      <ul class="nav-list">
+        <li><button class="nav-button" type="button" data-prototype-only>数据分析</button></li>
+        <li><button class="nav-button" type="button" data-prototype-only>系统与集成</button></li>
+      </ul>
+
+      <div class="sidebar-footer">V2 页面原型 · 2026-08-01</div>
+    </aside>
+
+    <header class="topbar">
+      <form class="global-search" id="global-search-form" role="search">
+        <label class="sr-only" for="global-search">全局搜索订单</label>
+        <input id="global-search" type="search" placeholder="搜索订单号、手机号或客户姓名">
+        <span class="search-hint">回车搜索</span>
+      </form>
+      <div class="topbar-actions">
+        <span class="prototype-chip">原型数据</span>
+        <div class="user-block">
+          <div class="avatar" aria-hidden="true">运</div>
+          <div class="user-copy">
+            <strong>运营管理员</strong>
+            <span>华中运营组</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="view is-active" id="workbench-view" aria-labelledby="workbench-title">
+        <div class="page-heading">
+          <div>
+            <h1 id="workbench-title">早上好，运营管理员</h1>
+            <p>截至 2026-08-01 10:30，当前有 18 笔订单需要关注。</p>
+          </div>
+          <div class="page-actions">
+            <button class="button" type="button" data-go-orders="all">查看全部订单</button>
+            <button class="button primary" type="button" data-go-orders="failed">处理异常订单</button>
+          </div>
+        </div>
+
+        <section class="metric-strip" aria-label="核心经营指标">
+          <article class="metric">
+            <div class="metric-label"><span>今日订单</span><span>截至 10:30</span></div>
+            <div class="metric-value">1,286</div>
+            <div class="metric-note">较昨日同期 <strong>+12.4%</strong></div>
+          </article>
+          <article class="metric">
+            <div class="metric-label"><span>待处理</span><span>需人工介入</span></div>
+            <div class="metric-value">18</div>
+            <div class="metric-note">其中 6 笔已超过 30 分钟</div>
+          </article>
+          <article class="metric is-danger">
+            <div class="metric-label"><span>失败订单</span><span>今日累计</span></div>
+            <div class="metric-value">32</div>
+            <div class="metric-note">较昨日 <strong>+8</strong></div>
+          </article>
+          <article class="metric">
+            <div class="metric-label"><span>成功率</span><span>全渠道</span></div>
+            <div class="metric-value">96.8%</div>
+            <div class="metric-note">目标 97.5%，相差 0.7%</div>
+          </article>
+        </section>
+
+        <div class="workspace-grid">
+          <section class="panel" aria-labelledby="queue-title">
+            <div class="panel-header">
+              <div>
+                <h2 id="queue-title">待处理订单</h2>
+                <p>按优先级和等待时长排序</p>
+              </div>
+              <div class="queue-tabs" role="tablist" aria-label="待办队列">
+                <button class="queue-tab is-active" type="button" role="tab" aria-selected="true" data-queue="all">全部 18</button>
+                <button class="queue-tab" type="button" role="tab" aria-selected="false" data-queue="failed">失败 11</button>
+                <button class="queue-tab" type="button" role="tab" aria-selected="false" data-queue="pending">超时 7</button>
+              </div>
+            </div>
+            <ul class="queue-list" id="work-queue"></ul>
+            <div class="panel-footer">
+              <button class="button text" type="button" data-go-orders="pending">进入完整待办队列</button>
+            </div>
+          </section>
+
+          <div class="workspace-side">
+            <section class="panel" aria-labelledby="health-title">
+              <div class="panel-header">
+                <div>
+                  <h2 id="health-title">供应商接口健康</h2>
+                  <p>最近 30 分钟</p>
+                </div>
+                <button class="button text small" type="button" data-prototype-only>查看监控</button>
+              </div>
+              <ul class="health-list">
+                <li class="health-row">
+                  <div class="health-line"><strong>新网</strong><span class="status success">正常 99.6%</span></div>
+                  <progress max="100" value="99.6" aria-label="新网接口成功率 99.6%"></progress>
+                  <div class="health-meta">平均响应 286ms · 1 次失败</div>
+                </li>
+                <li class="health-row">
+                  <div class="health-line"><strong>浩客</strong><span class="status pending">波动 94.2%</span></div>
+                  <progress class="warning" max="100" value="94.2" aria-label="浩客接口成功率 94.2%"></progress>
+                  <div class="health-meta">平均响应 1.8s · 12 次失败</div>
+                </li>
+                <li class="health-row">
+                  <div class="health-line"><strong>湖北电信</strong><span class="status success">正常 98.9%</span></div>
+                  <progress max="100" value="98.9" aria-label="湖北电信接口成功率 98.9%"></progress>
+                  <div class="health-meta">平均响应 432ms · 3 次失败</div>
+                </li>
+              </ul>
+            </section>
+
+            <section class="panel" aria-labelledby="pool-title">
+              <div class="panel-header">
+                <div>
+                  <h2 id="pool-title">号码池预警</h2>
+                  <p>低于安全库存的号码池</p>
+                </div>
+                <button class="button text small" type="button" data-prototype-only>管理号码池</button>
+              </div>
+              <ul class="alert-list">
+                <li class="alert-row">
+                  <div class="alert-line"><strong>湖北移动权益包</strong><span class="priority">仅剩 86</span></div>
+                  <div class="alert-meta">安全库存 300 · 预计 2.1 小时耗尽</div>
+                </li>
+                <li class="alert-row">
+                  <div class="alert-line"><strong>湖南联通新客</strong><span class="priority medium">仅剩 214</span></div>
+                  <div class="alert-meta">安全库存 500 · 今日已使用 1,086</div>
+                </li>
+              </ul>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="orders-view" aria-labelledby="orders-title">
+        <div class="page-heading">
+          <div>
+            <h1 id="orders-title">订单中心</h1>
+            <p>集中查询、识别异常并处理跨渠道订单。</p>
+          </div>
+          <div class="page-actions">
+            <button class="button" type="button" data-prototype-only>导入订单</button>
+            <button class="button primary" type="button" data-prototype-only>新建订单</button>
+          </div>
+        </div>
+
+        <section class="orders-overview" aria-label="订单状态概览">
+          <ul class="status-filter-list">
+            <li><button class="status-filter is-active" type="button" data-status="all"><span>全部订单</span><strong>8,642</strong></button></li>
+            <li><button class="status-filter" type="button" data-status="pending"><span>待处理</span><strong>18</strong></button></li>
+            <li><button class="status-filter" type="button" data-status="processing"><span>处理中</span><strong>163</strong></button></li>
+            <li><button class="status-filter" type="button" data-status="failed"><span>失败</span><strong>32</strong></button></li>
+            <li><button class="status-filter" type="button" data-status="success"><span>已完成</span><strong>8,391</strong></button></li>
+          </ul>
+          <div class="overview-note">数据更新时间：10:30:18</div>
+        </section>
+
+        <section class="filter-panel" aria-label="订单筛选">
+          <div class="filter-row">
+            <div class="filter-field">
+              <label class="sr-only" for="order-keyword">搜索订单</label>
+              <input id="order-keyword" type="search" placeholder="订单号、外部订单号、手机号或客户姓名">
+            </div>
+            <div class="filter-field">
+              <label class="sr-only" for="order-source">订单来源</label>
+              <select id="order-source">
+                <option value="all">全部来源</option>
+                <option value="抖音">抖音</option>
+                <option value="快手">快手</option>
+                <option value="自营渠道">自营渠道</option>
+                <option value="分销商 API">分销商 API</option>
+              </select>
+            </div>
+            <div class="filter-field">
+              <label class="sr-only" for="order-province">省份</label>
+              <select id="order-province">
+                <option value="all">全部省份</option>
+                <option value="湖北">湖北</option>
+                <option value="湖南">湖南</option>
+                <option value="江西">江西</option>
+                <option value="广东">广东</option>
+              </select>
+            </div>
+            <div class="filter-field">
+              <label class="sr-only" for="order-time">创建时间</label>
+              <select id="order-time">
+                <option value="today">今天</option>
+                <option value="yesterday">昨天</option>
+                <option value="week">近 7 天</option>
+                <option value="month">近 30 天</option>
+              </select>
+            </div>
+            <div class="inline-actions">
+              <button class="button primary" type="button" id="search-orders">查询</button>
+              <button class="button text" type="button" id="toggle-advanced" aria-expanded="false">高级筛选</button>
+            </div>
+          </div>
+          <div class="advanced-filters" id="advanced-filters">
+            <div>
+              <label class="filter-label" for="supplier-filter">供应商</label>
+              <select id="supplier-filter">
+                <option value="all">全部供应商</option>
+                <option value="新网">新网</option>
+                <option value="浩客">浩客</option>
+                <option value="湖北电信">湖北电信</option>
+              </select>
+            </div>
+            <div>
+              <label class="filter-label" for="failure-filter">异常状态</label>
+              <select id="failure-filter">
+                <option value="all">全部</option>
+                <option value="only">仅查看有失败原因</option>
+              </select>
+            </div>
+            <div>
+              <label class="filter-label" for="owner-filter">处理人</label>
+              <select id="owner-filter">
+                <option value="all">全部处理人</option>
+                <option value="未分配">未分配</option>
+                <option value="张敏">张敏</option>
+                <option value="李宁">李宁</option>
+              </select>
+            </div>
+            <div>
+              <label class="filter-label" for="elapsed-filter">等待时长</label>
+              <select id="elapsed-filter">
+                <option value="all">全部时长</option>
+                <option value="30">超过 30 分钟</option>
+                <option value="60">超过 1 小时</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="table-panel" aria-labelledby="order-table-title">
+          <div class="table-toolbar">
+            <div><strong id="order-table-title">订单列表</strong> <span class="muted" id="result-count">共 7 条原型记录</span></div>
+            <div class="inline-actions">
+              <button class="button small" type="button" id="reset-filters">重置筛选</button>
+              <div class="column-menu-wrap">
+                <button class="button small" type="button" id="toggle-columns" aria-expanded="false">显示字段</button>
+                <div class="column-menu" id="column-menu">
+                  <label><input type="checkbox" checked data-column-toggle="customer">客户信息</label>
+                  <label><input type="checkbox" checked data-column-toggle="product">商品</label>
+                  <label><input type="checkbox" checked data-column-toggle="route">渠道与供应商</label>
+                  <label><input type="checkbox" checked data-column-toggle="created">创建时间</label>
+                  <label><input type="checkbox" checked data-column-toggle="reason">失败原因</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="batch-bar" id="batch-bar">
+            <strong>已选择 <span id="selected-count">0</span> 笔订单</strong>
+            <div class="inline-actions">
+              <button class="button small" type="button" data-batch-action="导出">批量导出</button>
+              <button class="button small" type="button" data-batch-action="转单">批量转单</button>
+              <button class="button text small" type="button" id="clear-selection">取消选择</button>
+            </div>
+          </div>
+
+          <div class="table-scroll" id="table-scroll">
+            <table>
+              <colgroup>
+                <col style="width: 46px">
+                <col style="width: 158px">
+                <col data-column-col="customer" style="width: 154px">
+                <col data-column-col="product" style="width: 170px">
+                <col data-column-col="route" style="width: 150px">
+                <col style="width: 104px">
+                <col data-column-col="created" style="width: 132px">
+                <col data-column-col="reason" style="width: 180px">
+                <col style="width: 92px">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="checkbox-cell"><input type="checkbox" id="select-all" aria-label="选择当前页全部订单"></th>
+                  <th>订单</th>
+                  <th data-column="customer">客户信息</th>
+                  <th data-column="product">商品</th>
+                  <th data-column="route">渠道 / 供应商</th>
+                  <th>状态</th>
+                  <th data-column="created">创建时间</th>
+                  <th data-column="reason">失败原因</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="orders-body"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="empty-state">
+            <strong>没有找到匹配订单</strong>
+            <div>请调整筛选条件后重试。</div>
+          </div>
+          <div class="pagination">
+            <span>每页 20 条 · 当前显示原型数据</span>
+            <div class="page-list" aria-label="分页">
+              <button class="page-button" type="button" disabled aria-label="上一页">‹</button>
+              <button class="page-button is-active" type="button" aria-current="page">1</button>
+              <button class="page-button" type="button" data-prototype-only>2</button>
+              <button class="page-button" type="button" data-prototype-only>3</button>
+              <button class="page-button" type="button" data-prototype-only aria-label="下一页">›</button>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="drawer" id="order-drawer" aria-labelledby="drawer-title" aria-hidden="true">
+    <div class="drawer-header">
+      <h2 id="drawer-title">订单详情</h2>
+      <button class="drawer-close" type="button" id="close-drawer" aria-label="关闭订单详情">×</button>
+    </div>
+    <div class="drawer-body" id="drawer-body"></div>
+  </aside>
+  <div class="drawer-footer" id="drawer-footer">
+    <button class="button" type="button" data-prototype-only>添加处理备注</button>
+    <button class="button primary" type="button" id="drawer-primary-action">重新查询供应商</button>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const orders = [
+      {
+        id: "XY2026080100186",
+        externalNo: "DY-8493027186",
+        customer: "王女士",
+        phone: "138****6621",
+        idCard: "4201**********482X",
+        province: "湖北 武汉",
+        source: "抖音",
+        supplier: "浩客",
+        product: "湖北移动 29 元权益包",
+        status: "failed",
+        statusLabel: "供应商失败",
+        reason: "供应商返回：号码状态不符合办理条件",
+        owner: "未分配",
+        createdAt: "08-01 09:12",
+        elapsed: 78,
+        priority: "high"
+      },
+      {
+        id: "XY2026080100179",
+        externalNo: "KS-2378941152",
+        customer: "刘先生",
+        phone: "186****1038",
+        idCard: "4301**********1032",
+        province: "湖南 长沙",
+        source: "快手",
+        supplier: "新网",
+        product: "湖南联通新客礼包",
+        status: "pending",
+        statusLabel: "等待验证码",
+        reason: "",
+        owner: "张敏",
+        createdAt: "08-01 09:28",
+        elapsed: 62,
+        priority: "high"
+      },
+      {
+        id: "XY2026080100163",
+        externalNo: "API-202608011631",
+        customer: "陈女士",
+        phone: "133****7290",
+        idCard: "3601**********2408",
+        province: "江西 南昌",
+        source: "分销商 API",
+        supplier: "湖北电信",
+        product: "翼支付会员权益",
+        status: "processing",
+        statusLabel: "供应商处理中",
+        reason: "",
+        owner: "李宁",
+        createdAt: "08-01 09:43",
+        elapsed: 47,
+        priority: "medium"
+      },
+      {
+        id: "XY2026080100148",
+        externalNo: "ZY-64921634",
+        customer: "周先生",
+        phone: "159****3386",
+        idCard: "4401**********5516",
+        province: "广东 广州",
+        source: "自营渠道",
+        supplier: "新网",
+        product: "视频会员月卡",
+        status: "success",
+        statusLabel: "办理成功",
+        reason: "",
+        owner: "系统自动",
+        createdAt: "08-01 09:51",
+        elapsed: 12,
+        priority: "normal"
+      },
+      {
+        id: "XY2026080100132",
+        externalNo: "DY-8493026922",
+        customer: "赵女士",
+        phone: "177****9815",
+        idCard: "4206**********2026",
+        province: "湖北 襄阳",
+        source: "抖音",
+        supplier: "浩客",
+        product: "湖北移动 19 元权益包",
+        status: "failed",
+        statusLabel: "回调失败",
+        reason: "回调连续失败 3 次，等待人工重放",
+        owner: "未分配",
+        createdAt: "08-01 10:02",
+        elapsed: 28,
+        priority: "high"
+      },
+      {
+        id: "XY2026080100119",
+        externalNo: "API-202608011197",
+        customer: "吴先生",
+        phone: "189****4407",
+        idCard: "4304**********8818",
+        province: "湖南 衡阳",
+        source: "分销商 API",
+        supplier: "新网",
+        product: "湖南联通新客礼包",
+        status: "processing",
+        statusLabel: "订单查询中",
+        reason: "",
+        owner: "系统自动",
+        createdAt: "08-01 10:11",
+        elapsed: 19,
+        priority: "normal"
+      },
+      {
+        id: "XY2026080100098",
+        externalNo: "KS-2378939056",
+        customer: "郑女士",
+        phone: "181****7522",
+        idCard: "3607**********6624",
+        province: "江西 赣州",
+        source: "快手",
+        supplier: "湖北电信",
+        product: "翼支付会员权益",
+        status: "closed",
+        statusLabel: "已退订",
+        reason: "客户主动退订",
+        owner: "张敏",
+        createdAt: "08-01 10:18",
+        elapsed: 8,
+        priority: "normal"
+      }
+    ];
+
+    const queueOrders = orders.filter(order => ["failed", "pending", "processing"].includes(order.status));
+    const state = {
+      view: "workbench",
+      queue: "all",
+      status: "all",
+      selected: new Set(),
+      visibleColumns: new Set(["customer", "product", "route", "created", "reason"]),
+      drawerOrder: null
+    };
+
+    const statusMap = {
+      failed: "供应商失败",
+      pending: "待处理",
+      processing: "处理中",
+      success: "已完成",
+      closed: "已关闭"
+    };
+
+    const priorityMap = {
+      high: ["高优先", ""],
+      medium: ["中优先", "medium"],
+      normal: ["普通", "normal"]
+    };
+
+    const statusClass = status => status === "closed" ? "closed" : status;
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("is-visible");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("is-visible"), 2200);
+    }
+
+    function switchView(view, status = null) {
+      state.view = view;
+      document.querySelectorAll(".view").forEach(section => {
+        section.classList.toggle("is-active", section.id === `${view}-view`);
+      });
+      document.querySelectorAll("[data-view-target]").forEach(button => {
+        button.classList.toggle("is-active", button.dataset.viewTarget === view);
+      });
+      if (view === "orders") {
+        if (status) setStatus(status);
+        window.setTimeout(() => document.getElementById("order-keyword").focus(), 0);
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderQueue() {
+      const list = document.getElementById("work-queue");
+      const rows = queueOrders.filter(order => {
+        if (state.queue === "all") return true;
+        if (state.queue === "pending") return order.elapsed >= 30;
+        return order.status === state.queue;
+      }).slice(0, 4);
+
+      list.innerHTML = rows.map(order => {
+        const [priorityText, priorityClass] = priorityMap[order.priority];
+        return `
+          <li class="queue-row">
+            <div class="queue-order">
+              <strong>${order.id}</strong>
+              <span>${order.customer} · ${order.phone} · ${order.product}</span>
+            </div>
+            <div><strong>${order.supplier}</strong><div class="muted">${order.source}</div></div>
+            <div><span class="status ${statusClass(order.status)}">${order.statusLabel}</span></div>
+            <div><span class="priority ${priorityClass}">${priorityText}</span><div class="muted">等待 ${order.elapsed} 分</div></div>
+            <button class="button text small" type="button" data-open-order="${order.id}">处理</button>
+          </li>`;
+      }).join("");
+    }
+
+    function getFilteredOrders() {
+      const keyword = document.getElementById("order-keyword").value.trim().toLowerCase();
+      const source = document.getElementById("order-source").value;
+      const province = document.getElementById("order-province").value;
+      const supplier = document.getElementById("supplier-filter").value;
+      const failureOnly = document.getElementById("failure-filter").value === "only";
+      const owner = document.getElementById("owner-filter").value;
+      const elapsed = Number(document.getElementById("elapsed-filter").value) || 0;
+
+      return orders.filter(order => {
+        const keywordMatch = !keyword || [order.id, order.externalNo, order.customer, order.phone, order.product]
+          .some(value => value.toLowerCase().includes(keyword));
+        return keywordMatch
+          && (state.status === "all" || order.status === state.status)
+          && (source === "all" || order.source === source)
+          && (province === "all" || order.province.startsWith(province))
+          && (supplier === "all" || order.supplier === supplier)
+          && (!failureOnly || Boolean(order.reason))
+          && (owner === "all" || order.owner === owner)
+          && (!elapsed || order.elapsed >= elapsed);
+      });
+    }
+
+    function renderOrders() {
+      const body = document.getElementById("orders-body");
+      const filtered = getFilteredOrders();
+      document.getElementById("result-count").textContent = `共 ${filtered.length} 条原型记录`;
+      document.getElementById("table-scroll").style.display = filtered.length ? "block" : "none";
+      document.getElementById("empty-state").style.display = filtered.length ? "none" : "block";
+
+      body.innerHTML = filtered.map(order => `
+        <tr class="${state.selected.has(order.id) ? "is-selected" : ""}">
+          <td class="checkbox-cell"><input type="checkbox" aria-label="选择订单 ${order.id}" data-select-order="${order.id}" ${state.selected.has(order.id) ? "checked" : ""}></td>
+          <td><div class="table-order"><strong>${order.id}</strong><span>外部：${order.externalNo}</span></div></td>
+          <td data-column="customer"><div class="customer-cell"><strong>${order.customer}</strong><span class="muted">${order.phone}<br>${order.province}</span></div></td>
+          <td data-column="product"><div class="product-cell"><strong>${order.product}</strong><span class="muted">证件 ${order.idCard}</span></div></td>
+          <td data-column="route"><strong>${order.source}</strong><div class="muted">供应商：${order.supplier}</div></td>
+          <td><span class="status ${statusClass(order.status)}">${order.statusLabel}</span><div class="muted">${order.owner}</div></td>
+          <td data-column="created"><strong>${order.createdAt}</strong><div class="muted">等待 ${order.elapsed} 分钟</div></td>
+          <td data-column="reason"><span class="reason">${order.reason || "—"}</span></td>
+          <td><button class="table-action" type="button" data-open-order="${order.id}">查看详情</button></td>
+        </tr>`).join("");
+
+      syncColumnVisibility();
+      updateBatchBar();
+      const allVisibleSelected = filtered.length > 0 && filtered.every(order => state.selected.has(order.id));
+      const selectAll = document.getElementById("select-all");
+      selectAll.checked = allVisibleSelected;
+      selectAll.indeterminate = !allVisibleSelected && filtered.some(order => state.selected.has(order.id));
+    }
+
+    function setStatus(status) {
+      state.status = status;
+      document.querySelectorAll(".status-filter").forEach(button => {
+        button.classList.toggle("is-active", button.dataset.status === status);
+      });
+      renderOrders();
+    }
+
+    function updateBatchBar() {
+      const count = state.selected.size;
+      document.getElementById("selected-count").textContent = count;
+      document.getElementById("batch-bar").classList.toggle("is-visible", count > 0);
+    }
+
+    function clearSelection() {
+      state.selected.clear();
+      renderOrders();
+    }
+
+    function syncColumnVisibility() {
+      ["customer", "product", "route", "created", "reason"].forEach(column => {
+        const visible = state.visibleColumns.has(column);
+        document.querySelectorAll(`[data-column="${column}"], [data-column-col="${column}"]`).forEach(element => {
+          element.style.display = visible ? "" : "none";
+        });
+      });
+    }
+
+    function openDrawer(orderId) {
+      const order = orders.find(item => item.id === orderId);
+      if (!order) return;
+      state.drawerOrder = order;
+      document.getElementById("drawer-title").textContent = `订单详情 · ${order.id}`;
+      document.getElementById("drawer-primary-action").textContent = order.status === "failed" ? "重新查询供应商" : "刷新订单状态";
+      document.getElementById("drawer-body").innerHTML = `
+        <section class="order-state-banner">
+          <div>
+            <span class="status ${statusClass(order.status)}">${order.statusLabel}</span>
+            <h3>${order.status === "failed" ? "订单需要人工处理" : "订单正在正常流转"}</h3>
+            <p>${order.reason || "最近一次状态已同步，无需人工介入。"}</p>
+          </div>
+          <button class="button primary" type="button" data-drawer-action>${order.status === "failed" ? "重新查询" : "刷新状态"}</button>
+        </section>
+        <section class="detail-section">
+          <h3>订单信息</h3>
+          <div class="detail-grid">
+            <div class="detail-item"><span>系统订单号</span><strong>${order.id}</strong></div>
+            <div class="detail-item"><span>外部订单号</span><strong>${order.externalNo}</strong></div>
+            <div class="detail-item"><span>创建时间</span><strong>2026-${order.createdAt}</strong></div>
+            <div class="detail-item"><span>来源渠道</span><strong>${order.source}</strong></div>
+            <div class="detail-item"><span>供应商</span><strong>${order.supplier}</strong></div>
+            <div class="detail-item"><span>当前处理人</span><strong>${order.owner}</strong></div>
+          </div>
+        </section>
+        <section class="detail-section">
+          <h3>客户与商品</h3>
+          <div class="detail-grid">
+            <div class="detail-item"><span>客户</span><strong>${order.customer}</strong></div>
+            <div class="detail-item"><span>手机号</span><strong>${order.phone}</strong></div>
+            <div class="detail-item"><span>证件号码</span><strong>${order.idCard}</strong></div>
+            <div class="detail-item"><span>归属地</span><strong>${order.province}</strong></div>
+            <div class="detail-item" style="grid-column: span 2"><span>商品</span><strong>${order.product}</strong></div>
+          </div>
+        </section>
+        <section class="detail-section">
+          <h3>订单过程</h3>
+          <ol class="timeline">
+            <li class="timeline-item"><time>2026-${order.createdAt}</time><strong>接收渠道订单</strong><p>${order.source} 提交订单，系统校验通过。</p></li>
+            <li class="timeline-item"><time>2026-08-01 10:03</time><strong>路由至供应商</strong><p>根据地区和商品规则选择 ${order.supplier}。</p></li>
+            <li class="timeline-item"><time>2026-08-01 10:04</time><strong>${order.statusLabel}</strong><p>${order.reason || "供应商已受理，等待下一次状态同步。"}</p></li>
+          </ol>
+        </section>`;
+
+      document.getElementById("drawer-backdrop").classList.add("is-open");
+      document.getElementById("order-drawer").classList.add("is-open");
+      document.getElementById("drawer-footer").classList.add("is-open");
+      document.getElementById("order-drawer").setAttribute("aria-hidden", "false");
+      document.getElementById("close-drawer").focus();
+    }
+
+    function closeDrawer() {
+      document.getElementById("drawer-backdrop").classList.remove("is-open");
+      document.getElementById("order-drawer").classList.remove("is-open");
+      document.getElementById("drawer-footer").classList.remove("is-open");
+      document.getElementById("order-drawer").setAttribute("aria-hidden", "true");
+      state.drawerOrder = null;
+    }
+
+    function resetFilters() {
+      document.getElementById("order-keyword").value = "";
+      document.getElementById("order-source").value = "all";
+      document.getElementById("order-province").value = "all";
+      document.getElementById("order-time").value = "today";
+      document.getElementById("supplier-filter").value = "all";
+      document.getElementById("failure-filter").value = "all";
+      document.getElementById("owner-filter").value = "all";
+      document.getElementById("elapsed-filter").value = "all";
+      setStatus("all");
+    }
+
+    document.addEventListener("click", event => {
+      const viewButton = event.target.closest("[data-view-target]");
+      if (viewButton) switchView(viewButton.dataset.viewTarget);
+
+      const goOrders = event.target.closest("[data-go-orders]");
+      if (goOrders) switchView("orders", goOrders.dataset.goOrders === "all" ? "all" : goOrders.dataset.goOrders);
+
+      const queueTab = event.target.closest("[data-queue]");
+      if (queueTab) {
+        state.queue = queueTab.dataset.queue;
+        document.querySelectorAll(".queue-tab").forEach(button => {
+          const active = button === queueTab;
+          button.classList.toggle("is-active", active);
+          button.setAttribute("aria-selected", String(active));
+        });
+        renderQueue();
+      }
+
+      const statusButton = event.target.closest("[data-status]");
+      if (statusButton) setStatus(statusButton.dataset.status);
+
+      const openOrder = event.target.closest("[data-open-order]");
+      if (openOrder) openDrawer(openOrder.dataset.openOrder);
+
+      if (event.target.closest("[data-prototype-only]")) {
+        showToast("该入口将在正式开发阶段接入，本页仅演示核心流程");
+      }
+
+      const batchAction = event.target.closest("[data-batch-action]");
+      if (batchAction) showToast(`已模拟${batchAction.dataset.batchAction} ${state.selected.size} 笔订单`);
+
+      if (event.target.closest("[data-drawer-action]") || event.target.id === "drawer-primary-action") {
+        showToast("已模拟提交供应商状态查询");
+      }
+    });
+
+    document.addEventListener("change", event => {
+      const selectOrder = event.target.closest("[data-select-order]");
+      if (selectOrder) {
+        if (selectOrder.checked) state.selected.add(selectOrder.dataset.selectOrder);
+        else state.selected.delete(selectOrder.dataset.selectOrder);
+        renderOrders();
+      }
+
+      const columnToggle = event.target.closest("[data-column-toggle]");
+      if (columnToggle) {
+        if (columnToggle.checked) state.visibleColumns.add(columnToggle.dataset.columnToggle);
+        else state.visibleColumns.delete(columnToggle.dataset.columnToggle);
+        syncColumnVisibility();
+      }
+
+      if (["order-source", "order-province", "supplier-filter", "failure-filter", "owner-filter", "elapsed-filter"].includes(event.target.id)) {
+        renderOrders();
+      }
+    });
+
+    document.getElementById("global-search-form").addEventListener("submit", event => {
+      event.preventDefault();
+      const value = document.getElementById("global-search").value.trim();
+      document.getElementById("order-keyword").value = value;
+      switchView("orders", "all");
+      renderOrders();
+    });
+
+    document.getElementById("order-keyword").addEventListener("input", renderOrders);
+    document.getElementById("search-orders").addEventListener("click", renderOrders);
+    document.getElementById("reset-filters").addEventListener("click", resetFilters);
+    document.getElementById("clear-selection").addEventListener("click", clearSelection);
+
+    document.getElementById("toggle-advanced").addEventListener("click", event => {
+      const filters = document.getElementById("advanced-filters");
+      const open = filters.classList.toggle("is-open");
+      event.currentTarget.setAttribute("aria-expanded", String(open));
+      event.currentTarget.textContent = open ? "收起筛选" : "高级筛选";
+    });
+
+    document.getElementById("toggle-columns").addEventListener("click", event => {
+      const menu = document.getElementById("column-menu");
+      const open = menu.classList.toggle("is-open");
+      event.currentTarget.setAttribute("aria-expanded", String(open));
+    });
+
+    document.getElementById("select-all").addEventListener("change", event => {
+      getFilteredOrders().forEach(order => {
+        if (event.target.checked) state.selected.add(order.id);
+        else state.selected.delete(order.id);
+      });
+      renderOrders();
+    });
+
+    document.getElementById("close-drawer").addEventListener("click", closeDrawer);
+    document.getElementById("drawer-backdrop").addEventListener("click", closeDrawer);
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        closeDrawer();
+        document.getElementById("column-menu").classList.remove("is-open");
+      }
+    });
+
+    renderQueue();
+    renderOrders();
+  </script>
+</body>
+</html>
