@@ -302,22 +302,65 @@
         <div class="detail-title">订单详情</div>
       </template>
       <div v-loading="detailLoading" class="detail-container">
-        <el-card shadow="never" class="detail-card">
-          <div slot="header" class="detail-section-title">订单信息</div>
-          <el-row :gutter="20">
-            <el-col :span="8"><div class="detail-item"><span>订单号</span>{{ detailOrder.orderNo || '-' }}</div></el-col>
-            <el-col :span="8"><div class="detail-item"><span>分销商订单号</span>{{ detailOrder.externalOrderNo || '-' }}</div></el-col>
-            <el-col :span="8"><div class="detail-item"><span>供应商订单号</span>{{ detailOrder.supplierOrderNo || '-' }}</div></el-col>
-            <el-col :span="8"><div class="detail-item"><span>客户手机号</span>{{ detailOrder.phone || '-' }}</div></el-col>
-            <el-col :span="8"><div class="detail-item"><span>商品</span>{{ detailOrder.goodsName || detailOrder.goodsCode || '-' }}</div></el-col>
-            <el-col :span="8"><div class="detail-item"><span>供应商</span>{{ detailOrder.supplierCode || '-' }}</div></el-col>
-            <el-col :span="8"><div class="detail-item"><span>订单状态</span><dict-tag :options="dict.type.self_stock_status" :value="detailOrder.orderStatus" /></div></el-col>
-            <el-col :span="8"><div class="detail-item"><span>下单时间</span>{{ parseTime(detailOrder.orderTime) || '-' }}</div></el-col>
-            <el-col :span="8"><div class="detail-item"><span>更新时间</span>{{ parseTime(detailOrder.updateTime) || '-' }}</div></el-col>
-          </el-row>
-          <div class="detail-item detail-item-full"><span>当前备注</span>{{ detailOrder.remark || '-' }}</div>
-        </el-card>
-
+        <el-tabs v-model="detailTab" class="detail-tabs">
+          <el-tab-pane label="基础信息" name="basic">
+            <el-card shadow="never" class="detail-card">
+              <div slot="header" class="detail-section-title">订单信息</div>
+              <el-row :gutter="20">
+                <el-col :span="8"><div class="detail-item"><span>订单ID</span>{{ detailOrder.orderId || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>订单号</span>{{ detailOrder.orderNo || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>分销商订单号</span>{{ detailOrder.externalOrderNo || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>供应商订单号</span>{{ detailOrder.supplierOrderNo || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>客户手机号</span>{{ detailOrder.phone || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>短信验证码</span>{{ detailOrder.smsNum || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>订单状态</span><dict-tag :options="dict.type.self_stock_status" :value="detailOrder.orderStatus" /></div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>下单时间</span>{{ parseTime(detailOrder.orderTime) || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>创建人</span>{{ detailOrder.createBy || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>创建时间</span>{{ parseTime(detailOrder.createTime) || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>更新人</span>{{ detailOrder.updateBy || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>更新时间</span>{{ parseTime(detailOrder.updateTime) || '-' }}</div></el-col>
+              </el-row>
+            </el-card>
+            <el-card shadow="never" class="detail-card">
+              <div slot="header" class="detail-section-title">分销商与来源</div>
+              <el-row :gutter="20">
+                <el-col :span="8"><div class="detail-item"><span>分销商编码</span>{{ detailOrder.distributorCode || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>营销地址</span>{{ detailOrder.distributorUrl || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>来源触点</span>{{ detailOrder.platform || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>省份</span>{{ detailOrder.province || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>城市</span>{{ detailOrder.cityName || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>城市编码</span>{{ detailOrder.cityCode || '-' }}</div></el-col>
+              </el-row>
+              <div class="detail-item detail-item-full"><span>URL参数</span>{{ detailOrder.urlParams || '-' }}</div>
+              <div class="detail-item detail-item-full"><span>来源数据</span>{{ detailOrder.sourceData || '-' }}</div>
+            </el-card>
+            <el-card shadow="never" class="detail-card">
+              <div slot="header" class="detail-section-title">商品与供应商</div>
+              <el-row :gutter="20">
+                <el-col :span="8"><div class="detail-item"><span>商品名称</span>{{ detailOrder.goodsName || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>商品编码</span>{{ detailOrder.goodsCode || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>商品明细ID</span>{{ detailOrder.goodsDetailId || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>供应商编码</span>{{ detailOrder.supplierCode || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>供应商商品编码</span>{{ detailOrder.supplierGoodsCode || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>供应商商品明细编码</span>{{ detailOrder.supplierGoodsDetailCode || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>工号</span>{{ detailOrder.gongHao || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>供应商订单地址</span>{{ detailOrder.supplierOrderUrl || '-' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>商品截图地址</span>{{ detailOrder.goodsScreenshotUrl || '-' }}</div></el-col>
+              </el-row>
+            </el-card>
+            <el-card shadow="never" class="detail-card">
+              <div slot="header" class="detail-section-title">处理与业务状态</div>
+              <el-row :gutter="20">
+                <el-col :span="8"><div class="detail-item"><span>是否扣减</span>{{ detailOrder.isDeduct === 1 ? '是' : '否' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>是否退订</span>{{ detailOrder.isUnsubscribe === 1 ? '是' : '否' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>是否拉黑</span>{{ detailOrder.isBlacklist === 1 ? '是' : '否' }}</div></el-col>
+                <el-col :span="8"><div class="detail-item"><span>退订时间</span>{{ parseTime(detailOrder.unsubscribeTime) || '-' }}</div></el-col>
+              </el-row>
+              <div class="detail-item detail-item-full"><span>同步订单消息</span>{{ detailOrder.syncOrderMessage || '-' }}</div>
+              <div class="detail-item detail-item-full"><span>备注</span>{{ detailOrder.remark || '-' }}</div>
+            </el-card>
+          </el-tab-pane>
+          <el-tab-pane label="订单日志" name="logs">
         <el-card shadow="never" class="detail-card process-log-card">
           <div slot="header" class="process-log-header">
             <div>
@@ -394,6 +437,8 @@
           <pagination v-show="logTotal > 0" :total="logTotal" :page.sync="logQuery.pageNum"
             :limit.sync="logQuery.pageSize" @pagination="loadProcessLogs" />
         </el-card>
+          </el-tab-pane>
+        </el-tabs>
       </div>
     </el-drawer>
 
@@ -463,6 +508,7 @@ export default {
       detailOpen: false,
       detailLoading: false,
       processLogLoading: false,
+      detailTab: 'basic',
       detailOrder: {},
       processLogs: [],
       processLogActiveNames: [],
@@ -647,6 +693,7 @@ export default {
     /** 查看订单详情及过程日志 */
     handleDetail(row) {
       this.detailOpen = true
+      this.detailTab = 'basic'
       this.detailLoading = true
       this.detailOrder = {}
       this.processLogs = []
