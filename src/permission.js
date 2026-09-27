@@ -10,9 +10,15 @@ import Cookies from "js-cookie";
 NProgress.configure({ showSpinner: false })
 
 const whiteList = ['/login', '/register']
+const isPublicRoute = route => route.matched.some(record => record.meta && record.meta.public)
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
+  if (isPublicRoute(to)) {
+    to.meta.title && store.dispatch('settings/setTitle', to.meta.title)
+    next()
+    return
+  }
   if (getToken()) {
     to.meta.title && store.dispatch('settings/setTitle', to.meta.title)
     /* has token*/

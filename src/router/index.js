@@ -52,6 +52,13 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/open/stock-order/:orderNo',
+    component: () => import('@/views/open/stock-order-detail'),
+    name: 'OpenStockOrderDetail',
+    hidden: true,
+    meta: { title: '权益订单详情', public: true }
+  },
+  {
     path: '/404',
     component: () => import('@/views/error/404'),
     hidden: true
