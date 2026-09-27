@@ -169,6 +169,7 @@ export default {
       loadError: '',
       activeTab: 'basic',
       order: {},
+      logsLoaded: false,
       processLogLoading: false,
       processLogs: [],
       processLogActiveNames: [],
@@ -250,6 +251,13 @@ export default {
   created() {
     this.loadDetail()
   },
+  watch: {
+    activeTab(value) {
+      if (value === 'logs' && !this.logsLoaded) {
+        this.loadProcessLogs()
+      }
+    }
+  },
   methods: {
     loadDetail() {
       this.loading = true
@@ -257,7 +265,6 @@ export default {
       getOpenStockOrder(this.orderNo).then(response => {
         this.order = response.data || {}
         document.title = `权益订单详情 - ${this.order.orderNo || this.orderNo}`
-        return this.loadProcessLogs()
       }).catch(() => {
         this.loadError = '订单不存在或暂时无法加载，请核对订单号后重试。'
       }).finally(() => {
@@ -270,6 +277,7 @@ export default {
       return getOpenStockOrderProcessLogs(this.order.orderNo, this.logQuery).then(response => {
         this.processLogs = response.rows || []
         this.logTotal = response.total || 0
+        this.logsLoaded = true
       }).finally(() => {
         this.processLogLoading = false
       })
