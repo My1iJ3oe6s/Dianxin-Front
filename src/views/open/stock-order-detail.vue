@@ -2,13 +2,18 @@
   <div class="open-order-page">
     <header class="page-header">
       <div class="header-inner">
-        <div>
-          <div class="brand">讯翼行分销管理平台</div>
-          <h1>权益订单详情</h1>
+        <div class="header-heading">
+          <span class="brand-icon" aria-hidden="true"><i class="el-icon-tickets" /></span>
+          <div class="header-title">
+            <h1>权益订单详情</h1>
+            <div class="brand">讯翼行分销管理平台 · 开放订单查询</div>
+          </div>
         </div>
         <div v-if="order.orderNo" class="order-summary">
-          <span>订单号</span>
-          <strong>{{ order.orderNo }}</strong>
+          <div class="order-number">
+            <span>订单号</span>
+            <strong>{{ order.orderNo }}</strong>
+          </div>
           <el-tag size="small" :type="statusType(order.orderStatus)">{{ orderStatusLabel(order.orderStatus) }}</el-tag>
         </div>
       </div>
@@ -22,8 +27,19 @@
           <section class="detail-section">
             <h2>订单信息</h2>
             <el-row :gutter="20">
-              <el-col v-for="item in orderInfo" :key="item.label" :xs="24" :sm="12" :lg="8">
-                <div class="detail-item"><span>{{ item.label }}</span>{{ item.value }}</div>
+              <el-col v-for="item in orderInfo" :key="item.label" :xs="12" :sm="12" :lg="6">
+                <div class="detail-item" :title="item.sensitive ? '' : String(item.value)">
+                  <span>{{ item.label }}</span>
+                  <span v-if="item.sensitive" class="sensitive-value">
+                    <span>{{ sensitiveValue(item.rawValue, item.field) }}</span>
+                    <el-tooltip v-if="hasSensitiveValue(item.rawValue)" :content="isSensitiveVisible(item.field) ? '隐藏内容' : '查看内容'" placement="top">
+                      <button type="button" class="sensitive-toggle" :class="{ 'is-revealed': isSensitiveVisible(item.field) }" :aria-label="isSensitiveVisible(item.field) ? '隐藏内容' : '查看内容'" @click="toggleSensitive(item.field)">
+                        <i class="el-icon-view" />
+                      </button>
+                    </el-tooltip>
+                  </span>
+                  <span v-else class="detail-value">{{ item.value }}</span>
+                </div>
               </el-col>
             </el-row>
           </section>
@@ -31,22 +47,49 @@
           <section class="detail-section">
             <h2>分销商与来源</h2>
             <el-row :gutter="20">
-              <el-col v-for="item in sourceInfo" :key="item.label" :xs="24" :sm="12" :lg="8">
-                <div class="detail-item"><span>{{ item.label }}</span>{{ item.value }}</div>
+              <el-col v-for="item in sourceInfo" :key="item.label" :xs="12" :sm="12" :lg="6">
+                <div class="detail-item" :title="item.sensitive ? '' : String(item.value)">
+                  <span>{{ item.label }}</span>
+                  <span v-if="item.sensitive" class="sensitive-value">
+                    <a v-if="isSensitiveVisible(item.field) && safeUrl(item.rawValue)" :href="safeUrl(item.rawValue)" target="_blank" rel="noopener noreferrer">{{ sensitiveValue(item.rawValue, item.field) }}</a>
+                    <span v-else>{{ sensitiveValue(item.rawValue, item.field) }}</span>
+                    <el-tooltip v-if="hasSensitiveValue(item.rawValue)" :content="isSensitiveVisible(item.field) ? '隐藏内容' : '查看内容'" placement="top">
+                      <button type="button" class="sensitive-toggle" :class="{ 'is-revealed': isSensitiveVisible(item.field) }" :aria-label="isSensitiveVisible(item.field) ? '隐藏内容' : '查看内容'" @click="toggleSensitive(item.field)">
+                        <i class="el-icon-view" />
+                      </button>
+                    </el-tooltip>
+                  </span>
+                  <span v-else class="detail-value">{{ item.value }}</span>
+                </div>
               </el-col>
             </el-row>
-            <div class="detail-item detail-item-full"><span>URL参数</span>{{ value(order.urlParams) }}</div>
-            <div class="detail-item detail-item-full"><span>来源数据</span>{{ value(order.sourceData) }}</div>
+            <div class="detail-wide-grid">
+              <div class="detail-item detail-item-full" :title="String(value(order.urlParams))">
+                <span>URL参数</span><span class="detail-value">{{ value(order.urlParams) }}</span>
+              </div>
+              <div class="detail-item detail-item-full" :title="String(value(order.sourceData))">
+                <span>来源数据</span><span class="detail-value">{{ value(order.sourceData) }}</span>
+              </div>
+            </div>
           </section>
 
           <section class="detail-section">
             <h2>商品与供应商</h2>
             <el-row :gutter="20">
-              <el-col v-for="item in goodsInfo" :key="item.label" :xs="24" :sm="12" :lg="8">
-                <div class="detail-item">
+              <el-col v-for="item in goodsInfo" :key="item.label" :xs="12" :sm="12" :lg="8">
+                <div class="detail-item" :title="item.sensitive ? '' : String(item.value)">
                   <span>{{ item.label }}</span>
-                  <a v-if="item.url" :href="item.url" target="_blank" rel="noopener noreferrer">{{ item.value }}</a>
-                  <template v-else>{{ item.value }}</template>
+                  <span v-if="item.sensitive" class="sensitive-value">
+                    <a v-if="isSensitiveVisible(item.field) && safeUrl(item.rawValue)" :href="safeUrl(item.rawValue)" target="_blank" rel="noopener noreferrer">{{ sensitiveValue(item.rawValue, item.field) }}</a>
+                    <span v-else>{{ sensitiveValue(item.rawValue, item.field) }}</span>
+                    <el-tooltip v-if="hasSensitiveValue(item.rawValue)" :content="isSensitiveVisible(item.field) ? '隐藏内容' : '查看内容'" placement="top">
+                      <button type="button" class="sensitive-toggle" :class="{ 'is-revealed': isSensitiveVisible(item.field) }" :aria-label="isSensitiveVisible(item.field) ? '隐藏内容' : '查看内容'" @click="toggleSensitive(item.field)">
+                        <i class="el-icon-view" />
+                      </button>
+                    </el-tooltip>
+                  </span>
+                  <a v-else-if="item.url" :href="item.url" target="_blank" rel="noopener noreferrer">{{ item.value }}</a>
+                  <span v-else class="detail-value">{{ item.value }}</span>
                 </div>
               </el-col>
             </el-row>
@@ -55,12 +98,18 @@
           <section class="detail-section">
             <h2>处理与业务状态</h2>
             <el-row :gutter="20">
-              <el-col v-for="item in businessInfo" :key="item.label" :xs="24" :sm="12" :lg="8">
-                <div class="detail-item"><span>{{ item.label }}</span>{{ item.value }}</div>
+              <el-col v-for="item in businessInfo" :key="item.label" :xs="12" :sm="12" :lg="6">
+                <div class="detail-item" :title="String(item.value)"><span>{{ item.label }}</span><span class="detail-value">{{ item.value }}</span></div>
               </el-col>
             </el-row>
-            <div class="detail-item detail-item-full"><span>同步订单消息</span>{{ value(order.syncOrderMessage) }}</div>
-            <div class="detail-item detail-item-full"><span>备注</span>{{ value(order.remark) }}</div>
+            <div class="detail-wide-grid">
+              <div class="detail-item detail-item-full" :title="String(value(order.syncOrderMessage))">
+                <span>同步订单消息</span><span class="detail-value">{{ value(order.syncOrderMessage) }}</span>
+              </div>
+              <div class="detail-item detail-item-full" :title="String(value(order.remark))">
+                <span>备注</span><span class="detail-value">{{ value(order.remark) }}</span>
+              </div>
+            </div>
           </section>
         </el-tab-pane>
 
@@ -97,8 +146,13 @@
             <div v-loading="processLogLoading" class="process-log-list">
               <el-empty v-if="!processLogs.length && !processLogLoading" description="暂无过程日志（仅展示日志功能上线后的调用）" />
               <el-timeline v-else>
-                <el-timeline-item v-for="log in processLogs" :key="log.id"
-                  :timestamp="parseTime(log.startTime)" placement="top" :type="resultTagType(log.resultStatus)">
+                <el-timeline-item
+                  v-for="log in processLogs"
+                  :key="log.id"
+                  :timestamp="parseTime(log.startTime)"
+                  placement="top"
+                  :type="resultTagType(log.resultStatus)"
+                >
                   <article class="process-log-item">
                     <div class="process-log-summary">
                       <div class="process-log-title">
@@ -137,9 +191,15 @@
                 </el-timeline-item>
               </el-timeline>
             </div>
-            <el-pagination v-if="logTotal > logQuery.pageSize" background layout="prev, pager, next"
-              :current-page="logQuery.pageNum" :page-size="logQuery.pageSize" :total="logTotal"
-              @current-change="handleLogPageChange" />
+            <el-pagination
+              v-if="logTotal > logQuery.pageSize"
+              background
+              layout="prev, pager, next"
+              :current-page="logQuery.pageNum"
+              :page-size="logQuery.pageSize"
+              :total="logTotal"
+              @current-change="handleLogPageChange"
+            />
           </section>
         </el-tab-pane>
       </el-tabs>
@@ -169,6 +229,7 @@ export default {
       loadError: '',
       activeTab: 'basic',
       order: {},
+      revealedFields: {},
       logsLoaded: false,
       processLogLoading: false,
       processLogs: [],
@@ -200,8 +261,8 @@ export default {
       return [
         { label: '订单ID', value: this.value(this.order.orderId) },
         { label: '订单号', value: this.value(this.order.orderNo) },
-        { label: '分销商订单号', value: this.value(this.order.externalOrderNo) },
-        { label: '供应商订单号', value: this.value(this.order.supplierOrderNo) },
+        { label: '分销商订单号', field: 'externalOrderNo', rawValue: this.order.externalOrderNo, sensitive: true },
+        { label: '供应商订单号', field: 'supplierOrderNo', rawValue: this.order.supplierOrderNo, sensitive: true },
         { label: '客户手机号', value: this.value(this.order.phone) },
         { label: '短信验证码', value: this.value(this.order.smsNum) },
         { label: '订单状态', value: this.orderStatusLabel(this.order.orderStatus) },
@@ -214,8 +275,8 @@ export default {
     },
     sourceInfo() {
       return [
-        { label: '分销商编码', value: this.value(this.order.distributorCode) },
-        { label: '营销地址', value: this.value(this.order.distributorUrl) },
+        { label: '分销商编码', field: 'distributorCode', rawValue: this.order.distributorCode, sensitive: true },
+        { label: '营销地址', field: 'distributorUrl', rawValue: this.order.distributorUrl, sensitive: true },
         { label: '来源触点', value: this.value(this.order.platform) },
         { label: '省份', value: this.value(this.order.province) },
         { label: '城市', value: this.value(this.order.cityName) },
@@ -227,11 +288,11 @@ export default {
         { label: '商品名称', value: this.value(this.order.goodsName) },
         { label: '商品编码', value: this.value(this.order.goodsCode) },
         { label: '商品明细ID', value: this.value(this.order.goodsDetailId) },
-        { label: '供应商编码', value: this.value(this.order.supplierCode) },
-        { label: '供应商商品编码', value: this.value(this.order.supplierGoodsCode) },
-        { label: '供应商商品明细编码', value: this.value(this.order.supplierGoodsDetailCode) },
-        { label: '工号', value: this.value(this.order.gongHao) },
-        { label: '供应商订单地址', value: this.value(this.order.supplierOrderUrl), url: this.safeUrl(this.order.supplierOrderUrl) },
+        { label: '供应商编码', field: 'supplierCode', rawValue: this.order.supplierCode, sensitive: true },
+        { label: '供应商商品编码', field: 'supplierGoodsCode', rawValue: this.order.supplierGoodsCode, sensitive: true },
+        { label: '供应商商品明细编码', field: 'supplierGoodsDetailCode', rawValue: this.order.supplierGoodsDetailCode, sensitive: true },
+        { label: '工号', field: 'gongHao', rawValue: this.order.gongHao, sensitive: true },
+        { label: '供应商订单地址', field: 'supplierOrderUrl', rawValue: this.order.supplierOrderUrl, sensitive: true },
         { label: '商品截图地址', value: this.value(this.order.goodsScreenshotUrl), url: this.safeUrl(this.order.goodsScreenshotUrl) }
       ]
     },
@@ -248,15 +309,15 @@ export default {
       return this.logTypeOptions.filter(item => item.dimension === this.logQuery.logDimension)
     }
   },
-  created() {
-    this.loadDetail()
-  },
   watch: {
     activeTab(value) {
       if (value === 'logs' && !this.logsLoaded) {
         this.loadProcessLogs()
       }
     }
+  },
+  created() {
+    this.loadDetail()
   },
   methods: {
     loadDetail() {
@@ -298,6 +359,21 @@ export default {
     },
     value(value) {
       return value === null || value === undefined || value === '' ? '-' : value
+    },
+    toggleSensitive(field) {
+      this.$set(this.revealedFields, field, !this.isSensitiveVisible(field))
+    },
+    isSensitiveVisible(field) {
+      return Boolean(this.revealedFields[field])
+    },
+    hasSensitiveValue(value) {
+      return value !== null && value !== undefined && value !== ''
+    },
+    sensitiveValue(value, field) {
+      const displayValue = this.value(value)
+      if (this.isSensitiveVisible(field) || displayValue === '-') return displayValue
+      if (String(displayValue).length <= 4) return '••••'
+      return `${String(displayValue).slice(0, 2)}••••${String(displayValue).slice(-2)}`
     },
     timeValue(value) {
       return value ? this.parseTime(value) : '-'
@@ -372,76 +448,123 @@ export default {
 .open-order-page {
   min-height: 100vh;
   color: #303133;
-  background: #f4f6f8;
+  background: #eef1f4;
   letter-spacing: 0;
 }
 
 .page-header {
-  color: #fff;
-  background: #18212f;
-  border-bottom: 4px solid #2d8b57;
+  color: #1f2937;
+  background: #fff;
+  border-bottom: 1px solid #dfe4ea;
+  box-shadow: 0 2px 8px rgba(31, 41, 55, 0.06);
 }
 
 .header-inner {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  max-width: 1280px;
-  min-height: 128px;
-  margin: 0 auto;
-  padding: 28px 32px 24px;
+  width: 100%;
+  min-height: 70px;
+  padding: 10px 24px;
+  border-top: 3px solid #238453;
+}
+
+.header-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.brand-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  color: #1f7a4c;
+  font-size: 20px;
+  background: #eaf6ef;
+  border: 1px solid #cce8d7;
+  border-radius: 6px;
+}
+
+.header-title {
+  min-width: 0;
 }
 
 .brand {
-  margin-bottom: 8px;
-  color: #9fb0c5;
-  font-size: 14px;
+  margin-top: 2px;
+  color: #8a94a3;
+  font-size: 12px;
+  line-height: 16px;
 }
 
 h1 {
   margin: 0;
-  font-size: 28px;
-  line-height: 1.3;
+  color: #182230;
+  font-size: 21px;
+  line-height: 26px;
 }
 
 .order-summary {
-  display: grid;
-  grid-template-columns: auto auto;
+  display: flex;
   align-items: center;
-  gap: 5px 12px;
-  max-width: 60%;
-  text-align: right;
+  gap: 14px;
+  min-width: 0;
+  padding-left: 22px;
+  border-left: 1px solid #e1e6eb;
 }
 
-.order-summary span {
-  color: #9fb0c5;
+.order-number {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  min-width: 0;
+}
+
+.order-number span {
+  color: #8a94a3;
   font-size: 12px;
 }
 
-.order-summary strong {
+.order-number strong {
+  color: #253142;
+  font-size: 14px;
   overflow-wrap: anywhere;
 }
 
 .order-summary .el-tag {
-  grid-column: 2;
-  justify-self: end;
+  flex: 0 0 auto;
 }
 
 .page-content {
-  max-width: 1280px;
-  min-height: 420px;
-  margin: 0 auto;
-  padding: 24px 32px 48px;
+  width: 100%;
+  padding: 12px 20px 16px;
 }
 
 .detail-tabs {
-  padding: 0 20px 20px;
+  width: 100%;
+  padding: 0 16px 12px;
   background: #fff;
   border: 1px solid #dfe4ea;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(31, 41, 55, 0.04);
+}
+
+.detail-tabs ::v-deep .el-tabs__header {
+  margin-bottom: 0;
+}
+
+.detail-tabs ::v-deep .el-tabs__item {
+  height: 36px;
+  padding: 0 18px;
+  line-height: 36px;
 }
 
 .detail-section {
-  padding: 22px 4px 12px;
+  padding: 9px 4px 5px;
   border-bottom: 1px solid #e6e9ed;
 }
 
@@ -450,22 +573,75 @@ h1 {
 }
 
 .detail-section h2 {
-  margin: 0 0 16px;
-  font-size: 16px;
-  line-height: 1.4;
+  margin: 0 0 5px;
+  color: #202b3c;
+  font-size: 14px;
+  line-height: 22px;
 }
 
 .detail-item {
-  min-height: 58px;
-  padding: 8px 0;
-  line-height: 22px;
+  min-height: 32px;
+  padding: 3px 0;
+  font-size: 13px;
+  line-height: 20px;
   overflow-wrap: anywhere;
 }
 
 .detail-item > span:first-child {
   display: block;
-  color: #909399;
+  color: #8a94a3;
   font-size: 12px;
+  line-height: 20px;
+}
+
+.detail-value {
+  min-width: 0;
+}
+
+.sensitive-value {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  gap: 6px;
+  overflow-wrap: anywhere;
+}
+
+.sensitive-value > span,
+.sensitive-value > a {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.sensitive-toggle {
+  position: relative;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  color: #8a96a6;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+}
+
+.sensitive-toggle:not(.is-revealed)::after {
+  position: absolute;
+  top: 9px;
+  left: 3px;
+  width: 14px;
+  height: 1px;
+  content: '';
+  background: currentColor;
+  transform: rotate(-42deg);
+}
+
+.sensitive-toggle:hover,
+.sensitive-toggle:focus {
+  color: #2877c7;
+  outline: none;
 }
 
 .detail-item a {
@@ -473,10 +649,23 @@ h1 {
 }
 
 .detail-item-full {
-  min-height: auto;
-  padding: 12px 0;
-  border-top: 1px solid #ebeef5;
-  white-space: pre-wrap;
+  min-width: 0;
+  min-height: 30px;
+  padding: 4px 8px;
+  background: #f7f8fa;
+}
+
+.detail-item-full .detail-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detail-wide-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 3px;
 }
 
 .section-header,
@@ -502,8 +691,8 @@ h1 {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin: 18px 0;
-  padding: 12px;
+  margin: 8px 0;
+  padding: 8px 10px;
   background: #f5f7fa;
   border: 1px solid #ebeef5;
   border-radius: 4px;
@@ -519,7 +708,7 @@ h1 {
 }
 
 .process-log-item {
-  padding: 16px;
+  padding: 12px 14px;
   background: #fff;
   border: 1px solid #e4e7ed;
   border-radius: 4px;
@@ -614,34 +803,108 @@ h1 {
   text-align: right;
 }
 
+@media (min-width: 768px) {
+  .detail-item {
+    display: grid;
+    grid-template-columns: 104px minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+  }
+
+  .detail-item > span:first-child {
+    white-space: nowrap;
+  }
+
+  .detail-item > .detail-value,
+  .detail-item > a {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sensitive-value > span,
+  .sensitive-value > a {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
 @media (max-width: 767px) {
   .header-inner {
     align-items: flex-start;
     flex-direction: column;
-    gap: 20px;
+    gap: 8px;
     min-height: 0;
-    padding: 22px 16px;
+    padding: 9px 12px 10px;
+  }
+
+  .brand-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
   }
 
   h1 {
-    font-size: 24px;
+    font-size: 19px;
+    line-height: 24px;
+  }
+
+  .brand {
+    margin-top: 0;
   }
 
   .order-summary {
+    flex-wrap: wrap;
+    gap: 5px 8px;
+    width: 100%;
     max-width: 100%;
+    padding: 7px 0 0;
     text-align: left;
+    border-top: 1px solid #edf0f3;
+    border-left: 0;
   }
 
-  .order-summary .el-tag {
-    justify-self: start;
+  .order-number {
+    flex-wrap: wrap;
+    gap: 4px 8px;
+  }
+
+  .order-summary strong {
+    font-size: 13px;
   }
 
   .page-content {
-    padding: 12px 10px 32px;
+    padding: 7px 6px 10px;
   }
 
   .detail-tabs {
-    padding: 0 12px 12px;
+    padding: 0 10px 10px;
+  }
+
+  .detail-section {
+    padding-top: 9px;
+  }
+
+  .detail-item {
+    min-height: 39px;
+    word-break: break-all;
+  }
+
+  .detail-item > .detail-value,
+  .detail-item > a,
+  .sensitive-value > span,
+  .sensitive-value > a {
+    display: block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-all;
+  }
+
+  .detail-wide-grid {
+    gap: 5px;
   }
 
   .process-log-toolbar,
